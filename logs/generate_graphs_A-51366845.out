@@ -1,0 +1,67 @@
+==========================================
+SDL vs Non-SDL (AI PAPERS)  Graph Generation
+Started at: Mon Oct 27 02:32:18 EDT 2025
+Job ID: 51366845
+Running on node: nl11003
+==========================================
+
+Python environment:
+Python 3.11.5
+
+============================================================
+Extracting SDL Topics
+============================================================
+
+Processing year 2012...
+Processing year 2013...
+Processing year 2014...
+Processing year 2015...
+Processing year 2016...
+Processing year 2017...
+Processing year 2018...
+Processing year 2019...
+Processing year 2020...
+Processing year 2021...
+Processing year 2022...
+Processing year 2023...
+Processing year 2024...
+Processing year 2025...
+
+============================================================
+SUMMARY
+============================================================
+Total unique topics: 58
+
+Top 10 topics by SDL paper count:
+                                                      Topic  SDL_Paper_Count
+                      Machine Learning in Materials Science              134
+Innovative Microfluidic and Catalytic Techniques Innovation              115
+                     Advanced battery technologies research               17
+                      Perovskite Materials and Applications               16
+       Metal-Organic Frameworks: Synthesis and Applications               13
+                      Modular Robots and Swarm Intelligence               11
+                     Advanced Battery Technologies Research                9
+                      Quantum Dots Synthesis And Properties                6
+                Advanced Battery Materials and Technologies                6
+                         3D Printing in Biomedical Research                6
+
+Full list saved to: /project/def-kmcel/hridansh/openalex_project/results/sdl_topics_list.csv
+============================================================
+
+==========================================
+Completed at: Mon Oct 27 02:46:33 EDT 2025
+==========================================
+
+Generated files:
+total 1.4M
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 26 22:30 combined_team_size_all.png
+-rw-r-----. 1 hridansh def-kmcel 116K Oct 26 22:40 combined_team_size_same_journals.png
+-rw-r-----. 1 hridansh def-kmcel 119K Oct 27 01:14 combined_team_size_same_journals_and_topics.png
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 26 23:01 combined_team_size_same_topics.png
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 27 01:50 combined_team_size_sdl_vs_ai.png
+-rw-r-----. 1 hridansh def-kmcel 117K Oct 27 00:31 combined_team_size_sdl_vs_robotics.png
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 27 01:32 engineering_team_size_all_data.png
+-rw-r-----. 1 hridansh def-kmcel 116K Oct 27 01:19 engineering_team_size_same_journals.png
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 27 00:51 engineering_team_size_same_topics.png
+-rw-r-----. 1 hridansh def-kmcel 2.4K Oct 27 02:46 sdl_topics_list.csv
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 27 02:26 team_size_all_data.png

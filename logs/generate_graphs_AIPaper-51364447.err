@@ -1,0 +1,16 @@
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:808: DtypeWarning: Columns (14) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:788: DtypeWarning: Columns (8) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(mat_file, sep='\t', usecols=['journal', 'raw_data', 'SDL'], chunksize=CHUNK_SIZE):
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:808: DtypeWarning: Columns (14) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:808: DtypeWarning: Columns (17) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:892: DtypeWarning: Columns (5,14) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:865: DtypeWarning: Columns (5,8) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(mat_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:892: DtypeWarning: Columns (5,14) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',
+/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:892: DtypeWarning: Columns (17) have mixed types. Specify dtype option on import or set low_memory=False.
+  for chunk in pd.read_csv(eng_file, sep='\t',

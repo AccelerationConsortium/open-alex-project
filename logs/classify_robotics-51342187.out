@@ -1,0 +1,28 @@
+==========================================
+Robotics Paper Classification for Engineering
+Started at: Sun Oct 26 18:22:57 EDT 2025
+Job ID: 51342187
+==========================================
+
+Robotics Paper Classification for Engineering
+============================================================
+
+Loading Robotics keywords from /project/def-kmcel/hridansh/openalex_project/data/keywords/robotics_Keywords.csv...
+Loaded 198 unique keywords
+
+Processing year 2012
+  Papers: 902940, Robotics: 9355
+Processing year 2022
+  Papers: 966848, Robotics: 16713
+
+============================================================
+OVERALL SUMMARY
+============================================================
+Total papers processed: 1869788
+Total Robotics papers: 26068
+============================================================
+
+
+==========================================
+Completed at: Sun Oct 26 19:32:41 EDT 2025
+==========================================

@@ -1,0 +1,73 @@
+==========================================
+SDL vs Non-SDL Graph Generation
+Started at: Sun Oct 26 22:21:08 EDT 2025
+Job ID: 51357312
+Running on node: nl11102
+==========================================
+
+Python environment:
+Python 3.11.5
+
+
+============================================================
+Extracting ALL data (no filtering)
+============================================================
+
+Processing year 2012...
+  SDL: 3, Non-SDL: 1848170
+Processing year 2013...
+  SDL: 6, Non-SDL: 1350601
+Processing year 2014...
+  SDL: 5, Non-SDL: 1316580
+Processing year 2015...
+  SDL: 14, Non-SDL: 1402567
+Processing year 2016...
+  SDL: 11, Non-SDL: 1387008
+Processing year 2017...
+  SDL: 19, Non-SDL: 1399904
+Processing year 2018...
+  SDL: 26, Non-SDL: 1495737
+Processing year 2019...
+  SDL: 35, Non-SDL: 1531437
+Processing year 2020...
+  SDL: 50, Non-SDL: 1502991
+Processing year 2021...
+  SDL: 45, Non-SDL: 1414656
+Processing year 2022...
+  SDL: 86, Non-SDL: 2034324
+Processing year 2023...
+  SDL: 78, Non-SDL: 1514079
+Processing year 2024...
+  SDL: 20, Non-SDL: 1525958
+
+Total SDL papers: 398
+Total Non-SDL papers: 19724012
+Saved plot: /project/def-kmcel/hridansh/openalex_project/results/team_size_all_data.png
+
+SUMMARY STATISTICS
+
+Year    SDL Mean    SDL Std    Non-SDL Mean    Non-SDL Std    Difference
+--------------------------------------------------------------------------------
+2012    2.33        0.47       3.15            2.83           -0.82
+2013    5.33        2.69       3.18            2.59           2.15
+2014    8.60        4.80       3.11            2.58           5.49
+2015    6.21        4.25       3.26            2.67           2.95
+2016    6.45        3.68       3.46            2.70           2.99
+2017    5.42        4.07       3.54            2.80           1.89
+2018    6.46        3.41       3.51            2.80           2.95
+2019    7.00        3.82       3.67            3.00           3.33
+2020    7.22        3.87       3.78            3.03           3.44
+2021    7.38        3.82       4.09            3.05           3.29
+2022    7.86        4.81       4.36            3.01           3.50
+2023    9.13        8.45       4.28            3.24           4.84
+2024    8.90        3.62       4.53            3.17           4.37
+--------------------------------------------------------------------------------
+OVERALL 7.58        5.36       3.71            2.94           3.87
+
+==========================================
+Completed at: Sun Oct 26 22:30:27 EDT 2025
+==========================================
+
+Generated files:
+total 140K
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 26 22:30 team_size_all_data.png

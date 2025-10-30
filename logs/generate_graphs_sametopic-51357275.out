@@ -1,0 +1,18 @@
+==========================================
+SDL vs Non-SDL (Same Topic) Graph Generation
+Started at: Sun Oct 26 22:17:18 EDT 2025
+Job ID: 51357275
+Running on node: nl11102
+==========================================
+
+Python environment:
+Python 3.11.5
+
+
+==========================================
+Completed at: Sun Oct 26 22:17:18 EDT 2025
+==========================================
+
+Generated files:
+total 140K
+-rw-r-----. 1 hridansh def-kmcel 115K Oct 26 13:40 team_size_all_data.png
