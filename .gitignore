@@ -1,6 +1,7 @@
 # Data folder
 data/
-
+logs/
+not_in_use/
 # Python
 __pycache__/
 *.pyc
