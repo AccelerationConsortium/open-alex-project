@@ -1,0 +1,4804 @@
+Field,Year,Article_ID,Title,Raw_Authorships
+Chemistry,2012,W2062269633,Introduction to Metal–Organic Frameworks,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5035298559"",
+      ""display_name"": ""Hong\u2010Cai Zhou"",
+      ""orcid"": ""https://orcid.org/0000-0002-9029-3788""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I2801613365"",
+        ""display_name"": ""Mitchell Institute"",
+        ""ror"": ""https://ror.org/03ds72003"",
+        ""country_code"": ""US"",
+        ""type"": ""nonprofit"",
+        ""lineage"": [
+          ""https://openalex.org/I2801613365""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I91045830"",
+        ""display_name"": ""Texas A&M University"",
+        ""ror"": ""https://ror.org/01f5ytq51"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I91045830""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Hong-Cai Zhou"",
+    ""raw_affiliation_strings"": [
+      ""Texas A&M University""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Texas A&M University"",
+        ""institution_ids"": [
+          ""https://openalex.org/I2801613365"",
+          ""https://openalex.org/I91045830""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5042591801"",
+      ""display_name"": ""Jeffrey R. Long"",
+      ""orcid"": ""https://orcid.org/0000-0002-5324-1321""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I95457486"",
+        ""display_name"": ""University of California, Berkeley"",
+        ""ror"": ""https://ror.org/01an7q238"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jeffrey R. Long"",
+    ""raw_affiliation_strings"": [
+      ""University of California, Berkeley""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""University of California, Berkeley"",
+        ""institution_ids"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5044268160"",
+      ""display_name"": ""Omar M. Yaghi"",
+      ""orcid"": ""https://orcid.org/0000-0002-5611-3325""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I95457486"",
+        ""display_name"": ""University of California, Berkeley"",
+        ""ror"": ""https://ror.org/01an7q238"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Omar M. Yaghi"",
+    ""raw_affiliation_strings"": [
+      ""University of California, Berkeley""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""University of California, Berkeley"",
+        ""institution_ids"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ]
+  }
+]"
+Chemistry,2012,W2020451212,Gold Nanoparticles in Chemical and Biological Sensing,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5080214400"",
+      ""display_name"": ""Krishnendu Saha"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I24603500"",
+        ""display_name"": ""University of Massachusetts Amherst"",
+        ""ror"": ""https://ror.org/0072zz521"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Krishnendu Saha"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts 01003, United States""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts 01003, United States"",
+        ""institution_ids"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5058410732"",
+      ""display_name"": ""Sarit S. Agasti"",
+      ""orcid"": ""https://orcid.org/0000-0001-7216-0490""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I24603500"",
+        ""display_name"": ""University of Massachusetts Amherst"",
+        ""ror"": ""https://ror.org/0072zz521"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Sarit S. Agasti"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States"",
+        ""institution_ids"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5005037982"",
+      ""display_name"": ""Chaekyu Kim"",
+      ""orcid"": ""https://orcid.org/0000-0002-3269-6095""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I24603500"",
+        ""display_name"": ""University of Massachusetts Amherst"",
+        ""ror"": ""https://ror.org/0072zz521"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Chaekyu Kim"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States"",
+        ""institution_ids"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5100619626"",
+      ""display_name"": ""Xiaoning Li"",
+      ""orcid"": ""https://orcid.org/0000-0001-5991-0955""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I24603500"",
+        ""display_name"": ""University of Massachusetts Amherst"",
+        ""ror"": ""https://ror.org/0072zz521"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Xiaoning Li"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States"",
+        ""institution_ids"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5076949431"",
+      ""display_name"": ""Vincent M. Rotello"",
+      ""orcid"": ""https://orcid.org/0000-0002-5184-5439""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I24603500"",
+        ""display_name"": ""University of Massachusetts Amherst"",
+        ""ror"": ""https://ror.org/0072zz521"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Vincent M. Rotello"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemistry, University of Massachusetts, 710 North Pleasant Street, Amherst, Massachusetts#R#01003, United States"",
+        ""institution_ids"": [
+          ""https://openalex.org/I24603500""
+        ]
+      }
+    ]
+  }
+]"
+Chemistry,2012,W1551656287,Molecular Fluorescence,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5023602274"",
+      ""display_name"": ""Bernard Valeur"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Bernard Valeur"",
+    ""raw_affiliation_strings"": [],
+    ""affiliations"": []
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5030720602"",
+      ""display_name"": ""M\u00e1rio N. Berberan\u2010Santos"",
+      ""orcid"": ""https://orcid.org/0000-0002-2946-1498""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""M\u00e1rio Nuno Berberan\u2010Santos"",
+    ""raw_affiliation_strings"": [],
+    ""affiliations"": []
+  }
+]"
+Chemistry,2012,W1973268693,Insights into the regulation of protein abundance from proteomic and transcriptomic analyses,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5035122021"",
+      ""display_name"": ""Christine Vogel"",
+      ""orcid"": ""https://orcid.org/0000-0002-2856-3118""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I57206974"",
+        ""display_name"": ""New York University"",
+        ""ror"": ""https://ror.org/0190ak572"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I57206974""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Christine Vogel"",
+    ""raw_affiliation_strings"": [
+      ""Center for Genomics and Systems Biology, New York University, New York 10003, USA.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Genomics and Systems Biology, New York University, New York 10003, USA."",
+        ""institution_ids"": [
+          ""https://openalex.org/I57206974""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5079751395"",
+      ""display_name"": ""Edward M. Marcotte"",
+      ""orcid"": ""https://orcid.org/0000-0001-8808-180X""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Edward M. Marcotte"",
+    ""raw_affiliation_strings"": [
+      ""Molecular Biosciences""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Molecular Biosciences"",
+        ""institution_ids"": []
+      }
+    ]
+  }
+]"
+Chemistry,2012,W2081465448,A cross-platform toolkit for mass spectrometry and proteomics,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5032364322"",
+      ""display_name"": ""Matthew Chambers"",
+      ""orcid"": ""https://orcid.org/0000-0001-8085-373X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I200719446"",
+        ""display_name"": ""Vanderbilt University"",
+        ""ror"": ""https://ror.org/02vm5rt34"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I200719446""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Matthew C Chambers"",
+    ""raw_affiliation_strings"": [
+      ""Department of Biomedical Informatics, Vanderbilt University, Nashville, USA.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Biomedical Informatics, Vanderbilt University, Nashville, USA."",
+        ""institution_ids"": [
+          ""https://openalex.org/I200719446""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5031754851"",
+      ""display_name"": ""Brendan MacLean"",
+      ""orcid"": ""https://orcid.org/0000-0002-9575-0255""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Brendan Maclean"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701"",
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5062774406"",
+      ""display_name"": ""Robert Burke"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Robert Burke"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5066197394"",
+      ""display_name"": ""Dario Amodei"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I97018004"",
+        ""display_name"": ""Stanford University"",
+        ""ror"": ""https://ror.org/00f54p054"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I97018004""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Dario Amodei"",
+    ""raw_affiliation_strings"": [
+      ""Canary Center for Cancer Early Detection, Stanford University, Stanford, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Canary Center for Cancer Early Detection, Stanford University, Stanford, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I97018004""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5072855876"",
+      ""display_name"": ""Daniel Ruderman"",
+      ""orcid"": ""https://orcid.org/0000-0001-5787-5009""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Daniel L Ruderman"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5038786156"",
+      ""display_name"": ""Steffen Neumann"",
+      ""orcid"": ""https://orcid.org/0000-0002-7899-7192""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210110463"",
+        ""display_name"": ""Leibniz Institute of Plant Biochemistry"",
+        ""ror"": ""https://ror.org/01mzk5576"",
+        ""country_code"": ""DE"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I315704651"",
+          ""https://openalex.org/I4210110463""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""DE""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Steffen Neumann"",
+    ""raw_affiliation_strings"": [
+      ""Department of Stress & Developmental Biology, Leibniz Institute for Plant Biochemistry, Halle (Saale), Germany""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Stress & Developmental Biology, Leibniz Institute for Plant Biochemistry, Halle (Saale), Germany"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210110463""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5064560423"",
+      ""display_name"": ""Laurent Gatto"",
+      ""orcid"": ""https://orcid.org/0000-0002-1520-2268""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Laurent Gatto"",
+    ""raw_affiliation_strings"": [
+      ""Proteomics Services, Cambridge Centre for Proteomics, Cambridge, England""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Proteomics Services, Cambridge Centre for Proteomics, Cambridge, England"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5087826232"",
+      ""display_name"": ""Bernd Fischer"",
+      ""orcid"": ""https://orcid.org/0000-0001-9437-2099""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1303153112"",
+        ""display_name"": ""European Bioinformatics Institute"",
+        ""ror"": ""https://ror.org/02catss52"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1303153112"",
+          ""https://openalex.org/I4210138560""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Bernd Fischer"",
+    ""raw_affiliation_strings"": [
+      ""Genome Biology; EMBL; Heidelberg Germany""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Genome Biology; EMBL; Heidelberg Germany"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1303153112""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5020721422"",
+      ""display_name"": ""Brian Pratt"",
+      ""orcid"": ""https://orcid.org/0000-0001-5880-6734""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I4210118119"",
+        ""display_name"": ""Insilicos (United States)"",
+        ""ror"": ""https://ror.org/02p5qdz58"",
+        ""country_code"": ""US"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I4210118119""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Brian Pratt"",
+    ""raw_affiliation_strings"": [
+      ""Insilicos, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Insilicos, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I4210118119""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5019552048"",
+      ""display_name"": ""Jarrett D. Egertson"",
+      ""orcid"": ""https://orcid.org/0000-0001-7083-3858""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jarrett Egertson"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701"",
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5018908381"",
+      ""display_name"": ""Katherine Hoff"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Katherine Hoff"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5086343247"",
+      ""display_name"": ""Darren Kessner"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Darren Kessner"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5020317064"",
+      ""display_name"": ""Natalie Tasman"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I4210118119"",
+        ""display_name"": ""Insilicos (United States)"",
+        ""ror"": ""https://ror.org/02p5qdz58"",
+        ""country_code"": ""US"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I4210118119""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Natalie Tasman"",
+    ""raw_affiliation_strings"": [
+      ""Insilicos, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Insilicos, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I4210118119""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5041963504"",
+      ""display_name"": ""Nicholas Shulman"",
+      ""orcid"": ""https://orcid.org/0000-0003-1674-0794""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Nicholas Shulman"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701"",
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5064153307"",
+      ""display_name"": ""Barbara Frewen"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Barbara Frewen"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5057067125"",
+      ""display_name"": ""Tahmina A Baker"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Tahmina A Baker"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701"",
+          ""https://openalex.org/I58610484""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5089866615"",
+      ""display_name"": ""Mi\u2010Youn Brusniak"",
+      ""orcid"": ""https://orcid.org/0000-0003-3950-1614""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I3148997608"",
+        ""display_name"": ""Institute for Systems Biology"",
+        ""ror"": ""https://ror.org/02tpgw303"",
+        ""country_code"": ""US"",
+        ""type"": ""nonprofit"",
+        ""lineage"": [
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Mi-Youn Brusniak"",
+    ""raw_affiliation_strings"": [
+      ""Institute for Systems Biology, Seattle, USA#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Institute for Systems Biology, Seattle, USA#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5051188645"",
+      ""display_name"": ""Christopher Paulse"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I3148997608"",
+        ""display_name"": ""Institute for Systems Biology"",
+        ""ror"": ""https://ror.org/02tpgw303"",
+        ""country_code"": ""US"",
+        ""type"": ""nonprofit"",
+        ""lineage"": [
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Christopher Paulse"",
+    ""raw_affiliation_strings"": [
+      ""Institute for Systems Biology, Seattle, USA#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Institute for Systems Biology, Seattle, USA#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5018415656"",
+      ""display_name"": ""David M. Creasy"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210158408"",
+        ""display_name"": ""Matrix Research (United States)"",
+        ""ror"": ""https://ror.org/04mw0p229"",
+        ""country_code"": ""US"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I4210158408""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""David Creasy"",
+    ""raw_affiliation_strings"": [
+      ""Matrix Science, Boston, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Matrix Science, Boston, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210158408""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5059293934"",
+      ""display_name"": ""Lisa Flashner"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Lisa Flashner"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5012170377"",
+      ""display_name"": ""Kian Kani"",
+      ""orcid"": ""https://orcid.org/0000-0001-7774-265X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Kian Kani"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5079011788"",
+      ""display_name"": ""Chris Moulding"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Chris Moulding"",
+    ""raw_affiliation_strings"": [
+      ""USC Stevens Institute for Innovation, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""USC Stevens Institute for Innovation, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5050639345"",
+      ""display_name"": ""Sean L. Seymour"",
+      ""orcid"": ""https://orcid.org/0000-0002-9571-8220""
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Sean L Seymour"",
+    ""raw_affiliation_strings"": [
+      ""AB SCIEX, Foster City, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""AB SCIEX, Foster City, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5021916649"",
+      ""display_name"": ""Lydia M. Nuwaysir"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Lydia M Nuwaysir"",
+    ""raw_affiliation_strings"": [
+      ""AB SCIEX, Foster City, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""AB SCIEX, Foster City, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5016249979"",
+      ""display_name"": ""Brent Lefebvre"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Brent Lefebvre"",
+    ""raw_affiliation_strings"": [
+      ""AB SCIEX, Foster City, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""AB SCIEX, Foster City, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5052840939"",
+      ""display_name"": ""Frank E. Kuhlmann"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I138285227"",
+        ""display_name"": ""Agilent Technologies (United States)"",
+        ""ror"": ""https://ror.org/02tryst02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I138285227""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Frank Kuhlmann"",
+    ""raw_affiliation_strings"": [
+      ""Agilent Technologies,Santa Clara,USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Agilent Technologies,Santa Clara,USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I138285227""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5075126028"",
+      ""display_name"": ""Joe Roark"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I138285227"",
+        ""display_name"": ""Agilent Technologies (United States)"",
+        ""ror"": ""https://ror.org/02tryst02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I138285227""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Joe Roark"",
+    ""raw_affiliation_strings"": [
+      ""Agilent Technologies,Santa Clara,USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Agilent Technologies,Santa Clara,USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I138285227""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5086028940"",
+      ""display_name"": ""Rainer Paape"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210138933"",
+        ""display_name"": ""Bruker (Germany)"",
+        ""ror"": ""https://ror.org/04excst21"",
+        ""country_code"": ""DE"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I193170854"",
+          ""https://openalex.org/I4210138933""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""DE""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Paape Rainer"",
+    ""raw_affiliation_strings"": [
+      ""Bruker Daltonik GmbH, Bremen, Germany""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Bruker Daltonik GmbH, Bremen, Germany"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210138933""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5031770237"",
+      ""display_name"": ""Detlev Suckau"",
+      ""orcid"": ""https://orcid.org/0000-0002-1859-2492""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210138933"",
+        ""display_name"": ""Bruker (Germany)"",
+        ""ror"": ""https://ror.org/04excst21"",
+        ""country_code"": ""DE"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I193170854"",
+          ""https://openalex.org/I4210138933""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""DE""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Suckau Detlev"",
+    ""raw_affiliation_strings"": [
+      ""Bruker Daltonik GmbH, Bremen, Germany""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Bruker Daltonik GmbH, Bremen, Germany"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210138933""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5081980763"",
+      ""display_name"": ""Tina Hemenway"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210142480"",
+        ""display_name"": ""Thermo Fisher Scientific (United States)"",
+        ""ror"": ""https://ror.org/03x1ewr52"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I4210142480""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Tina Hemenway"",
+    ""raw_affiliation_strings"": [
+      ""Thermo Fisher Scientific, San Jose, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Thermo Fisher Scientific, San Jose, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210142480""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5068529739"",
+      ""display_name"": ""Andreas H\u00fchmer"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I4210142480"",
+        ""display_name"": ""Thermo Fisher Scientific (United States)"",
+        ""ror"": ""https://ror.org/03x1ewr52"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I4210142480""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Andreas Huhmer"",
+    ""raw_affiliation_strings"": [
+      ""Thermo Fisher Scientific, San Jose, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Thermo Fisher Scientific, San Jose, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210142480""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5041411121"",
+      ""display_name"": ""James Langridge"",
+      ""orcid"": ""https://orcid.org/0000-0003-4104-3501""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I180980256"",
+        ""display_name"": ""Waters (United States)"",
+        ""ror"": ""https://ror.org/01h8xv021"",
+        ""country_code"": ""US"",
+        ""type"": ""company"",
+        ""lineage"": [
+          ""https://openalex.org/I180980256""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""James Langridge"",
+    ""raw_affiliation_strings"": [
+      ""Waters Corporation, Manchester, UK.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Waters Corporation, Manchester, UK."",
+        ""institution_ids"": [
+          ""https://openalex.org/I180980256""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5041660623"",
+      ""display_name"": ""B. Connolly"",
+      ""orcid"": ""https://orcid.org/0000-0001-7084-4311""
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Brian Connolly"",
+    ""raw_affiliation_strings"": [
+      ""LabKey Software, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""LabKey Software, Seattle, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5002084213"",
+      ""display_name"": ""Trey Chadick"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Trey Chadick"",
+    ""raw_affiliation_strings"": [
+      ""LabKey Software, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""LabKey Software, Seattle, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5066599357"",
+      ""display_name"": ""Krisztina Holly"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Krisztina Holly"",
+    ""raw_affiliation_strings"": [
+      ""USC Stevens Institute for Innovation, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""USC Stevens Institute for Innovation, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5032682273"",
+      ""display_name"": ""Josh Eckels"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Josh Eckels"",
+    ""raw_affiliation_strings"": [
+      ""LabKey Software, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""LabKey Software, Seattle, USA"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5070102563"",
+      ""display_name"": ""Eric W. Deutsch"",
+      ""orcid"": ""https://orcid.org/0000-0001-8732-0928""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I3148997608"",
+        ""display_name"": ""Institute for Systems Biology"",
+        ""ror"": ""https://ror.org/02tpgw303"",
+        ""country_code"": ""US"",
+        ""type"": ""nonprofit"",
+        ""lineage"": [
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Eric W Deutsch"",
+    ""raw_affiliation_strings"": [
+      ""Institute for Systems Biology, Seattle, USA#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Institute for Systems Biology, Seattle, USA#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5036737482"",
+      ""display_name"": ""Robert L. Moritz"",
+      ""orcid"": ""https://orcid.org/0000-0002-3216-9447""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I3148997608"",
+        ""display_name"": ""Institute for Systems Biology"",
+        ""ror"": ""https://ror.org/02tpgw303"",
+        ""country_code"": ""US"",
+        ""type"": ""nonprofit"",
+        ""lineage"": [
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Robert L Moritz"",
+    ""raw_affiliation_strings"": [
+      ""Institute for Systems Biology, Seattle, USA#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Institute for Systems Biology, Seattle, USA#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I3148997608""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5022615394"",
+      ""display_name"": ""Jonathan E. Katz"",
+      ""orcid"": ""https://orcid.org/0000-0001-8175-790X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jonathan E Katz"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5012095437"",
+      ""display_name"": ""David B. Agus"",
+      ""orcid"": ""https://orcid.org/0000-0002-7499-7822""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""David B Agus"",
+    ""raw_affiliation_strings"": [
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5043959168"",
+      ""display_name"": ""Michael J. MacCoss"",
+      ""orcid"": ""https://orcid.org/0000-0003-1853-0256""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I58610484"",
+        ""display_name"": ""Seattle University"",
+        ""ror"": ""https://ror.org/02jqc0m91"",
+        ""country_code"": ""US"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I58610484""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Michael MacCoss"",
+    ""raw_affiliation_strings"": [
+      ""Department of Genome Sciences, University of Washington, Seattle, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Genome Sciences, University of Washington, Seattle, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I58610484"",
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5062939937"",
+      ""display_name"": ""David L. Tabb"",
+      ""orcid"": ""https://orcid.org/0000-0001-7223-578X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I200719446"",
+        ""display_name"": ""Vanderbilt University"",
+        ""ror"": ""https://ror.org/02vm5rt34"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I200719446""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""David L Tabb"",
+    ""raw_affiliation_strings"": [
+      ""Department of Biomedical Informatics, Vanderbilt University, Nashville, USA.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Biomedical Informatics, Vanderbilt University, Nashville, USA."",
+        ""institution_ids"": [
+          ""https://openalex.org/I200719446""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5004807599"",
+      ""display_name"": ""Parag Mallick"",
+      ""orcid"": ""https://orcid.org/0000-0002-0505-2032""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1174212"",
+        ""display_name"": ""University of Southern California"",
+        ""ror"": ""https://ror.org/03taz7m60"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1174212""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I97018004"",
+        ""display_name"": ""Stanford University"",
+        ""ror"": ""https://ror.org/00f54p054"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I97018004""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Parag Mallick"",
+    ""raw_affiliation_strings"": [
+      ""Canary Center for Cancer Early Detection, Stanford University, Stanford, USA"",
+      ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Applied Molecular Medicine, University of Southern California, Los Angeles, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1174212""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Canary Center for Cancer Early Detection, Stanford University, Stanford, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I97018004""
+        ]
+      }
+    ]
+  }
+]"
+Materials Science,2012,W2115786064,Electronics and optoelectronics of two-dimensional transition metal dichalcogenides,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5022376808"",
+      ""display_name"": ""Qing Hua Wang"",
+      ""orcid"": ""https://orcid.org/0000-0002-7982-7275""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I63966007"",
+        ""display_name"": ""Massachusetts Institute of Technology"",
+        ""ror"": ""https://ror.org/042nb2s44"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I63966007""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Qing Hua Wang"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemical Engineering, Massachusetts Institute of Technology, Cambridge, 02139-4307, Massachusetts, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemical Engineering, Massachusetts Institute of Technology, Cambridge, 02139-4307, Massachusetts, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I63966007""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5067220816"",
+      ""display_name"": ""Kourosh Kalantar\u2010zadeh"",
+      ""orcid"": ""https://orcid.org/0000-0001-6109-132X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I82951845"",
+        ""display_name"": ""RMIT University"",
+        ""ror"": ""https://ror.org/04ttjf776"",
+        ""country_code"": ""AU"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I82951845""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""AU""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Kourosh Kalantar-Zadeh"",
+    ""raw_affiliation_strings"": [
+      ""School of Electrical and Computer Engineering, RMIT University, Melbourne, Victoria, Australia""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Electrical and Computer Engineering, RMIT University, Melbourne, Victoria, Australia"",
+        ""institution_ids"": [
+          ""https://openalex.org/I82951845""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5026176713"",
+      ""display_name"": ""Andr\u00e1s Kis"",
+      ""orcid"": ""https://orcid.org/0000-0002-3426-7702""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Andras Kis"",
+    ""raw_affiliation_strings"": [
+      ""Electrical Engineering Institute, \u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne (EPFL), Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Electrical Engineering Institute, \u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne (EPFL), Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5030331900"",
+      ""display_name"": ""Jonathan N. Coleman"",
+      ""orcid"": ""https://orcid.org/0000-0001-9659-9721""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I205274468"",
+        ""display_name"": ""Trinity College Dublin"",
+        ""ror"": ""https://ror.org/02tyrky19"",
+        ""country_code"": ""IE"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I205274468""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""IE""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jonathan N. Coleman"",
+    ""raw_affiliation_strings"": [
+      ""School of Physics, Trinity College Dublin, Dublin, 2, Ireland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Physics, Trinity College Dublin, Dublin, 2, Ireland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I205274468""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5041330438"",
+      ""display_name"": ""Michael S. Strano"",
+      ""orcid"": ""https://orcid.org/0000-0003-2944-808X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I63966007"",
+        ""display_name"": ""Massachusetts Institute of Technology"",
+        ""ror"": ""https://ror.org/042nb2s44"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I63966007""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Michael S. Strano"",
+    ""raw_affiliation_strings"": [
+      ""Department of Chemical Engineering, Massachusetts Institute of Technology, Cambridge, 02139-4307, Massachusetts, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Chemical Engineering, Massachusetts Institute of Technology, Cambridge, 02139-4307, Massachusetts, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I63966007""
+        ]
+      }
+    ]
+  }
+]"
+Materials Science,2012,W1990170643,<i>WinGX</i>and<i>ORTEP for Windows</i>: an update,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5083617813"",
+      ""display_name"": ""Louis J. Farrugia"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I7882870"",
+        ""display_name"": ""University of Glasgow"",
+        ""ror"": ""https://ror.org/00vtgdb53"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I7882870""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": true,
+    ""raw_author_name"": ""Louis J. Farrugia"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemistry, Joseph Black Building, University of Glasgow, Glasgow G12 8QQ, Scotland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemistry, Joseph Black Building, University of Glasgow, Glasgow G12 8QQ, Scotland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I7882870""
+        ]
+      }
+    ]
+  }
+]"
+Materials Science,2012,W2163980958,A roadmap for graphene,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5072248970"",
+      ""display_name"": ""Kostya S. Novoselov"",
+      ""orcid"": ""https://orcid.org/0000-0003-4972-5371""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I28407311"",
+        ""display_name"": ""University of Manchester"",
+        ""ror"": ""https://ror.org/027m9bs27"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I28407311""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": true,
+    ""raw_author_name"": ""K. S. Novoselov"",
+    ""raw_affiliation_strings"": [
+      ""School of Physics and Astronomy, University of Manchester, Oxford Road, Manchester M13 9PL, UK,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Physics and Astronomy, University of Manchester, Oxford Road, Manchester M13 9PL, UK,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I28407311""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5005745398"",
+      ""display_name"": ""Vladimir I. Fal\u2019ko"",
+      ""orcid"": ""https://orcid.org/0000-0003-0828-0310""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I67415387"",
+        ""display_name"": ""Lancaster University"",
+        ""ror"": ""https://ror.org/04f2nsd36"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I67415387""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""V. I. Fal\u2032ko"",
+    ""raw_affiliation_strings"": [
+      ""Department of Physics, Lancaster University, Lancaster LA1 4YB, UK,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Physics, Lancaster University, Lancaster LA1 4YB, UK,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I67415387""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5077599795"",
+      ""display_name"": ""Luigi Colombo"",
+      ""orcid"": ""https://orcid.org/0000-0002-9048-3565""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I74760111"",
+        ""display_name"": ""Texas Instruments (United States)"",
+        ""ror"": ""https://ror.org/03vsmv677"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I74760111""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""L. Colombo"",
+    ""raw_affiliation_strings"": [
+      ""Texas Instruments Incorporated, 13121 TI Boulevard, MS-365 Dallas, Texas 75243, USA,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Texas Instruments Incorporated, 13121 TI Boulevard, MS-365 Dallas, Texas 75243, USA,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I74760111""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5076407919"",
+      ""display_name"": ""Paul Gellert"",
+      ""orcid"": ""https://orcid.org/0000-0001-7492-7210""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I105036370"",
+        ""display_name"": ""AstraZeneca (United Kingdom)"",
+        ""ror"": ""https://ror.org/04r9x1a08"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I105036370""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""P. R. Gellert"",
+    ""raw_affiliation_strings"": [
+      ""AstraZeneca, Alderley Park, Macclesfield, Cheshire SK10 4TG, UK,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""AstraZeneca, Alderley Park, Macclesfield, Cheshire SK10 4TG, UK,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I105036370""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5057183308"",
+      ""display_name"": ""Matthias Schwab"",
+      ""orcid"": ""https://orcid.org/0000-0002-9984-075X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I889804353"",
+        ""display_name"": ""Robert Bosch (Germany)"",
+        ""ror"": ""https://ror.org/01fe0jt45"",
+        ""country_code"": ""DE"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I889804353""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""DE""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""M. G. Schwab"",
+    ""raw_affiliation_strings"": [
+      ""BASF SE, Carbon Materials Innovation Center, Carl-Bosch-Stra\u00dfe 38, 67056 Ludwigshafen, Germany,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""BASF SE, Carbon Materials Innovation Center, Carl-Bosch-Stra\u00dfe 38, 67056 Ludwigshafen, Germany,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I889804353""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5082857138"",
+      ""display_name"": ""K. Kim"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I2250650973"",
+        ""display_name"": ""Samsung (South Korea)"",
+        ""ror"": ""https://ror.org/04w3jy968"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2250650973""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""K. Kim"",
+    ""raw_affiliation_strings"": [
+      ""Samsung Advanced Institute of Technology (SAIT), Samsung Electronics, Yongin-Si, Gyeonggi-Do 446-712, South Korea,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Samsung Advanced Institute of Technology (SAIT), Samsung Electronics, Yongin-Si, Gyeonggi-Do 446-712, South Korea,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I2250650973""
+        ]
+      }
+    ]
+  }
+]"
+Materials Science,2012,W2154197653,Towards automated crystallographic structure refinement with <i>phenix.refine</i>,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5027485418"",
+      ""display_name"": ""Pavel V. Afonine"",
+      ""orcid"": ""https://orcid.org/0000-0002-5052-991X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Pavel V. Afonine"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5110342059"",
+      ""display_name"": ""Ralf W. Grosse\u2010Kunstleve"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Ralf W. Grosse-Kunstleve"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5112138120"",
+      ""display_name"": ""Nathaniel Echols"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Nathaniel Echols"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5027195057"",
+      ""display_name"": ""Jeffrey J. Headd"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jeffrey J. Headd"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5084490031"",
+      ""display_name"": ""Nigel W. Moriarty"",
+      ""orcid"": ""https://orcid.org/0000-0001-8857-9464""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Nigel W. Moriarty"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5073038108"",
+      ""display_name"": ""Marat Mustyakimov"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1343871089"",
+        ""display_name"": ""Los Alamos National Laboratory"",
+        ""ror"": ""https://ror.org/01e41cf67"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I1343871089"",
+          ""https://openalex.org/I198811213"",
+          ""https://openalex.org/I4210120050""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Marat Mustyakimov"",
+    ""raw_affiliation_strings"": [
+      ""Los Alamos National Laboratory, M888, Los Alamos, NM 87545, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Los Alamos National Laboratory, M888, Los Alamos, NM 87545, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1343871089""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5090015351"",
+      ""display_name"": ""Thomas C. Terwilliger"",
+      ""orcid"": ""https://orcid.org/0000-0001-6384-0320""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1343871089"",
+        ""display_name"": ""Los Alamos National Laboratory"",
+        ""ror"": ""https://ror.org/01e41cf67"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I1343871089"",
+          ""https://openalex.org/I198811213"",
+          ""https://openalex.org/I4210120050""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Thomas C. Terwilliger"",
+    ""raw_affiliation_strings"": [
+      ""Los Alamos National Laboratory, M888, Los Alamos, NM 87545, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Los Alamos National Laboratory, M888, Los Alamos, NM 87545, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1343871089""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5112873282"",
+      ""display_name"": ""Alexandre Urzhumtsev"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I154526488"",
+        ""display_name"": ""Inserm"",
+        ""ror"": ""https://ror.org/02vjkv261"",
+        ""country_code"": ""FR"",
+        ""type"": ""government"",
+        ""lineage"": [
+          ""https://openalex.org/I154526488""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I1294671590"",
+        ""display_name"": ""Centre National de la Recherche Scientifique"",
+        ""ror"": ""https://ror.org/02feahw73"",
+        ""country_code"": ""FR"",
+        ""type"": ""government"",
+        ""lineage"": [
+          ""https://openalex.org/I1294671590""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I90183372"",
+        ""display_name"": ""Universit\u00e9 de Lorraine"",
+        ""ror"": ""https://ror.org/04vfs2w97"",
+        ""country_code"": ""FR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I90183372""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I4210086872"",
+        ""display_name"": ""Institut de g\u00e9n\u00e9tique et de biologie mol\u00e9culaire et cellulaire"",
+        ""ror"": ""https://ror.org/0015ws592"",
+        ""country_code"": ""FR"",
+        ""type"": ""facility"",
+        ""lineage"": [
+          ""https://openalex.org/I1294671590"",
+          ""https://openalex.org/I154526488"",
+          ""https://openalex.org/I4210086872"",
+          ""https://openalex.org/I4210096427"",
+          ""https://openalex.org/I68947357""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""FR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Alexandre Urzhumtsev"",
+    ""raw_affiliation_strings"": [
+      ""D\u00e9partement de Physique, Facult\u00e9 des Sciences et des Technologies, Universit\u00e9 Henri Poincar\u00e9, Nancy 1, BP 239, 54506 Vandoeuvre-l\u00e8s-Nancy, France"",
+      ""IGBMC, CNRS\u2013INSERM\u2013UdS, 1 Rue Laurent Fries, BP 10142, 67404 Illkirch, France""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""IGBMC, CNRS\u2013INSERM\u2013UdS, 1 Rue Laurent Fries, BP 10142, 67404 Illkirch, France"",
+        ""institution_ids"": [
+          ""https://openalex.org/I154526488"",
+          ""https://openalex.org/I1294671590"",
+          ""https://openalex.org/I4210086872""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""D\u00e9partement de Physique, Facult\u00e9 des Sciences et des Technologies, Universit\u00e9 Henri Poincar\u00e9, Nancy 1, BP 239, 54506 Vandoeuvre-l\u00e8s-Nancy, France"",
+        ""institution_ids"": [
+          ""https://openalex.org/I90183372""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5081770773"",
+      ""display_name"": ""Peter H. Zwart"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Peter H. Zwart"",
+    ""raw_affiliation_strings"": [
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5027915011"",
+      ""display_name"": ""Paul D. Adams"",
+      ""orcid"": ""https://orcid.org/0000-0001-9333-8219""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I148283060"",
+        ""display_name"": ""Lawrence Berkeley National Laboratory"",
+        ""ror"": ""https://ror.org/02jbv0t02"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I148283060"",
+          ""https://openalex.org/I39565521""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I95457486"",
+        ""display_name"": ""University of California, Berkeley"",
+        ""ror"": ""https://ror.org/01an7q238"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Paul D. Adams"",
+    ""raw_affiliation_strings"": [
+      ""Department of Bioengineering, University of California Berkeley, Berkeley, CA 94720, USA"",
+      ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Lawrence Berkeley National Laboratory, One Cyclotron Road, MS64R0121, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I148283060""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Department of Bioengineering, University of California Berkeley, Berkeley, CA 94720, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I95457486""
+        ]
+      }
+    ]
+  }
+]"
+Materials Science,2012,W2034932701,"Coupled Spin and Valley Physics in Monolayers of<mml:math xmlns:mml=""http://www.w3.org/1998/Math/MathML"" display=""inline""><mml:msub><mml:mi>MoS</mml:mi><mml:mn>2</mml:mn></mml:msub></mml:math>and Other Group-VI Dichalcogenides","[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5102986800"",
+      ""display_name"": ""Di Xiao"",
+      ""orcid"": ""https://orcid.org/0000-0003-0165-6848""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I1289243028"",
+        ""display_name"": ""Oak Ridge National Laboratory"",
+        ""ror"": ""https://ror.org/01qz5mb56"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1289243028"",
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I39565521"",
+          ""https://openalex.org/I4210159294""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Di Xiao"",
+    ""raw_affiliation_strings"": [
+      ""Materials Science and Technology Division, Oak Ridge National Laboratory, Oak Ridge, Tennessee, 37831, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Materials Science and Technology Division, Oak Ridge National Laboratory, Oak Ridge, Tennessee, 37831, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1289243028""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5014672382"",
+      ""display_name"": ""Gui\u2010Bin Liu"",
+      ""orcid"": ""https://orcid.org/0000-0001-5935-7555""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I889458895"",
+        ""display_name"": ""University of Hong Kong"",
+        ""ror"": ""https://ror.org/02zhqgq86"",
+        ""country_code"": ""HK"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I889458895""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""HK""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Gui-Bin Liu"",
+    ""raw_affiliation_strings"": [
+      ""Department of Physics and Center of Theoretical and Computational Physics, The University of Hong Kong, Hong Kong, China""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Physics and Center of Theoretical and Computational Physics, The University of Hong Kong, Hong Kong, China"",
+        ""institution_ids"": [
+          ""https://openalex.org/I889458895""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5100655401"",
+      ""display_name"": ""Wanxiang Feng"",
+      ""orcid"": ""https://orcid.org/0000-0001-8488-1949""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I75027704"",
+        ""display_name"": ""University of Tennessee at Knoxville"",
+        ""ror"": ""https://ror.org/020f3ap87"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I75027704""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I1289243028"",
+        ""display_name"": ""Oak Ridge National Laboratory"",
+        ""ror"": ""https://ror.org/01qz5mb56"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I1289243028"",
+          ""https://openalex.org/I1330989302"",
+          ""https://openalex.org/I39565521"",
+          ""https://openalex.org/I4210159294""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I4210164793"",
+        ""display_name"": ""National Laboratory for Superconductivity"",
+        ""ror"": ""https://ror.org/05tekqt96"",
+        ""country_code"": ""CN"",
+        ""type"": ""facility"",
+        ""lineage"": [
+          ""https://openalex.org/I19820366"",
+          ""https://openalex.org/I4210159876"",
+          ""https://openalex.org/I4210164793""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I4210159876"",
+        ""display_name"": ""Institute of Physics"",
+        ""ror"": ""https://ror.org/05cvf7v30"",
+        ""country_code"": ""CN"",
+        ""type"": ""facility"",
+        ""lineage"": [
+          ""https://openalex.org/I19820366"",
+          ""https://openalex.org/I4210159876""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I19820366"",
+        ""display_name"": ""Chinese Academy of Sciences"",
+        ""ror"": ""https://ror.org/034t30j35"",
+        ""country_code"": ""CN"",
+        ""type"": ""government"",
+        ""lineage"": [
+          ""https://openalex.org/I19820366""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CN"",
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Wanxiang Feng"",
+    ""raw_affiliation_strings"": [
+      ""Department of Physics and Astronomy, University of Tennessee, Knoxville, Tennessee 37996, USA"",
+      ""Institute of Physics and Beijing National Laboratory for Condensed Matter Physics, Chinese Academy of Sciences, Beijing 100190, China"",
+      ""Materials Science and Technology Division, Oak Ridge National Laboratory, Oak Ridge, Tennessee, 37831, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Physics and Astronomy, University of Tennessee, Knoxville, Tennessee 37996, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I75027704""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Materials Science and Technology Division, Oak Ridge National Laboratory, Oak Ridge, Tennessee, 37831, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I1289243028""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Institute of Physics and Beijing National Laboratory for Condensed Matter Physics, Chinese Academy of Sciences, Beijing 100190, China"",
+        ""institution_ids"": [
+          ""https://openalex.org/I4210164793"",
+          ""https://openalex.org/I4210159876"",
+          ""https://openalex.org/I19820366""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5004224533"",
+      ""display_name"": ""Xiaodong Xu"",
+      ""orcid"": ""https://orcid.org/0000-0003-0348-2095""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I201448701"",
+        ""display_name"": ""University of Washington"",
+        ""ror"": ""https://ror.org/00cvxb145"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Xiaodong Xu"",
+    ""raw_affiliation_strings"": [
+      ""Department of Material Science and Engineering, University of Washington, Seattle, Washington 98195, USA"",
+      ""Department of Physics, University of Washington, Seattle, Washington 98195, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Material Science and Engineering, University of Washington, Seattle, Washington 98195, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Department of Physics, University of Washington, Seattle, Washington 98195, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I201448701""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5042709292"",
+      ""display_name"": ""Wang Yao"",
+      ""orcid"": ""https://orcid.org/0000-0003-2883-4528""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I889458895"",
+        ""display_name"": ""University of Hong Kong"",
+        ""ror"": ""https://ror.org/02zhqgq86"",
+        ""country_code"": ""HK"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I889458895""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""HK""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Wang Yao"",
+    ""raw_affiliation_strings"": [
+      ""Department of Physics and Center of Theoretical and Computational Physics, The University of Hong Kong, Hong Kong, China""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Physics and Center of Theoretical and Computational Physics, The University of Hong Kong, Hong Kong, China"",
+        ""institution_ids"": [
+          ""https://openalex.org/I889458895""
+        ]
+      }
+    ]
+  }
+]"
+Engineering,2012,W1965464747,Efficient Hybrid Solar Cells Based on Meso-Superstructured Organometal Halide Perovskites,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5090150583"",
+      ""display_name"": ""Michael M. Lee"",
+      ""orcid"": ""https://orcid.org/0000-0001-7912-1785""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I40120149"",
+        ""display_name"": ""University of Oxford"",
+        ""ror"": ""https://ror.org/052gg0110"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Michael M. Lee"",
+    ""raw_affiliation_strings"": [
+      ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK."",
+        ""institution_ids"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5050627450"",
+      ""display_name"": ""Jo\u00ebl Teuscher"",
+      ""orcid"": ""https://orcid.org/0000-0002-0611-5103""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I40120149"",
+        ""display_name"": ""University of Oxford"",
+        ""ror"": ""https://ror.org/052gg0110"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jo\u00ebl Teuscher"",
+    ""raw_affiliation_strings"": [
+      ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK."",
+        ""institution_ids"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5030322278"",
+      ""display_name"": ""Tsutomu Miyasaka"",
+      ""orcid"": ""https://orcid.org/0000-0001-8535-7911""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I86917102"",
+        ""display_name"": ""Toin University of Yokohama"",
+        ""ror"": ""https://ror.org/020pjpv69"",
+        ""country_code"": ""JP"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I86917102""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Tsutomu Miyasaka"",
+    ""raw_affiliation_strings"": [
+      ""Graduate School of Engineering, Toin University of Yokohama, 1614 Kurogane, Aoba, Yokohama 225-8503, Japan.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Graduate School of Engineering, Toin University of Yokohama, 1614 Kurogane, Aoba, Yokohama 225-8503, Japan."",
+        ""institution_ids"": [
+          ""https://openalex.org/I86917102""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5020189714"",
+      ""display_name"": ""Takurou N. Murakami"",
+      ""orcid"": ""https://orcid.org/0000-0002-2066-3982""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I86917102"",
+        ""display_name"": ""Toin University of Yokohama"",
+        ""ror"": ""https://ror.org/020pjpv69"",
+        ""country_code"": ""JP"",
+        ""type"": ""education"",
+        ""lineage"": [
+          ""https://openalex.org/I86917102""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I73613424"",
+        ""display_name"": ""National Institute of Advanced Industrial Science and Technology"",
+        ""ror"": ""https://ror.org/01703db54"",
+        ""country_code"": ""JP"",
+        ""type"": ""government"",
+        ""lineage"": [
+          ""https://openalex.org/I73613424""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Takurou N. Murakami"",
+    ""raw_affiliation_strings"": [
+      ""Graduate School of Engineering, Toin University of Yokohama, 1614 Kurogane, Aoba, Yokohama 225-8503, Japan."",
+      ""Research Center for Photovoltaic Technologies, National Institute of Advanced Industrial Science and Technology, Central 5, 1-1-1 Higashi, Tsukuba, Ibaraki 305-8565, Japan.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Graduate School of Engineering, Toin University of Yokohama, 1614 Kurogane, Aoba, Yokohama 225-8503, Japan."",
+        ""institution_ids"": [
+          ""https://openalex.org/I86917102""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Research Center for Photovoltaic Technologies, National Institute of Advanced Industrial Science and Technology, Central 5, 1-1-1 Higashi, Tsukuba, Ibaraki 305-8565, Japan."",
+        ""institution_ids"": [
+          ""https://openalex.org/I73613424""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5081428881"",
+      ""display_name"": ""Henry J. Snaith"",
+      ""orcid"": ""https://orcid.org/0000-0001-8511-790X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I40120149"",
+        ""display_name"": ""University of Oxford"",
+        ""ror"": ""https://ror.org/052gg0110"",
+        ""country_code"": ""GB"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""GB""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Henry J. Snaith"",
+    ""raw_affiliation_strings"": [
+      ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK.""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Clarendon Laboratory, Department of Physics, University of Oxford, Oxford OX1 3PU, UK."",
+        ""institution_ids"": [
+          ""https://openalex.org/I40120149""
+        ]
+      }
+    ]
+  }
+]"
+Engineering,2012,W2118246710,SLIC Superpixels Compared to State-of-the-Art Superpixel Methods,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5083791711"",
+      ""display_name"": ""Radhakrishna Achanta"",
+      ""orcid"": ""https://orcid.org/0000-0001-7894-275X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I29607241"",
+        ""display_name"": ""\u00c9cole Normale Sup\u00e9rieure - PSL"",
+        ""ror"": ""https://ror.org/05a0dhs15"",
+        ""country_code"": ""FR"",
+        ""type"": ""other"",
+        ""lineage"": [
+          ""https://openalex.org/I2746051580"",
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""FR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""R. Achanta"",
+    ""raw_affiliation_strings"": [
+      ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5071201754"",
+      ""display_name"": ""Anil Shaji"",
+      ""orcid"": ""https://orcid.org/0000-0002-1574-8885""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I29607241"",
+        ""display_name"": ""\u00c9cole Normale Sup\u00e9rieure - PSL"",
+        ""ror"": ""https://ror.org/05a0dhs15"",
+        ""country_code"": ""FR"",
+        ""type"": ""other"",
+        ""lineage"": [
+          ""https://openalex.org/I2746051580"",
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""FR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""A. Shaji"",
+    ""raw_affiliation_strings"": [
+      ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5069299612"",
+      ""display_name"": ""Kevin Smith"",
+      ""orcid"": ""https://orcid.org/0000-0002-6163-191X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I35440088"",
+        ""display_name"": ""ETH Zurich"",
+        ""ror"": ""https://ror.org/05a28rw58"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I35440088""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""K. Smith"",
+    ""raw_affiliation_strings"": [
+      ""Zurich Light Microscopy Center, ETH Zurich, Zurich, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Zurich Light Microscopy Center, ETH Zurich, Zurich, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I35440088""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5060064717"",
+      ""display_name"": ""Aur\u00e9lien Lucchi"",
+      ""orcid"": ""https://orcid.org/0000-0001-7015-2710""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I97565354"",
+        ""display_name"": ""University of Lausanne"",
+        ""ror"": ""https://ror.org/019whta54"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I97565354""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""A. Lucchi"",
+    ""raw_affiliation_strings"": [
+      ""Comput. Vision Lab., Polytech. Fed. de Lausanne, Lausanne, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Comput. Vision Lab., Polytech. Fed. de Lausanne, Lausanne, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I97565354""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5038674741"",
+      ""display_name"": ""Pascal Fua"",
+      ""orcid"": ""https://orcid.org/0000-0002-6702-9970""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I97565354"",
+        ""display_name"": ""University of Lausanne"",
+        ""ror"": ""https://ror.org/019whta54"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I97565354""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""P. Fua"",
+    ""raw_affiliation_strings"": [
+      ""Comput. Vision Lab., Polytech. Fed. de Lausanne, Lausanne, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Comput. Vision Lab., Polytech. Fed. de Lausanne, Lausanne, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I97565354""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5078201467"",
+      ""display_name"": ""Sabine S\u00fcsstrunk"",
+      ""orcid"": ""https://orcid.org/0000-0002-0441-6068""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I29607241"",
+        ""display_name"": ""\u00c9cole Normale Sup\u00e9rieure - PSL"",
+        ""ror"": ""https://ror.org/05a0dhs15"",
+        ""country_code"": ""FR"",
+        ""type"": ""other"",
+        ""lineage"": [
+          ""https://openalex.org/I2746051580"",
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""FR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Sabine S\u00fcsstrunk"",
+    ""raw_affiliation_strings"": [
+      ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Images & Visual Representation Group, Ecole Polytech. Fed. de Lausanne, Lausanne, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I29607241""
+        ]
+      }
+    ]
+  }
+]"
+Engineering,2012,W2169328609,Lead Iodide Perovskite Sensitized All-Solid-State Submicron Thin Film Mesoscopic Solar Cell with Efficiency Exceeding 9%,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5045257022"",
+      ""display_name"": ""Hui\u2010Seon Kim"",
+      ""orcid"": ""https://orcid.org/0000-0002-9928-3033""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I848706"",
+        ""display_name"": ""Sungkyunkwan University"",
+        ""ror"": ""https://ror.org/04q78tk20"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Hui-Seon Kim"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea"",
+        ""institution_ids"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5089863600"",
+      ""display_name"": ""Chang-Ryul Lee"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I848706"",
+        ""display_name"": ""Sungkyunkwan University"",
+        ""ror"": ""https://ror.org/04q78tk20"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Chang-Ryul Lee"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea"",
+        ""institution_ids"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5112092254"",
+      ""display_name"": ""Jeong\u2010Hyeok Im"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I848706"",
+        ""display_name"": ""Sungkyunkwan University"",
+        ""ror"": ""https://ror.org/04q78tk20"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jeong-Hyeok Im"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea"",
+        ""institution_ids"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5112503238"",
+      ""display_name"": ""Ki-beom LEE"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I848706"",
+        ""display_name"": ""Sungkyunkwan University"",
+        ""ror"": ""https://ror.org/04q78tk20"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Ki-Beom Lee"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea"",
+        ""institution_ids"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5027849717"",
+      ""display_name"": ""Thomas Moehl"",
+      ""orcid"": ""https://orcid.org/0000-0002-4733-4839""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Thomas Moehl"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5085261191"",
+      ""display_name"": ""Arianna Marchioro"",
+      ""orcid"": ""https://orcid.org/0000-0002-5838-8517""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Arianna Marchioro"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5083352997"",
+      ""display_name"": ""Soo\u2010Jin Moon"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Soo-Jin Moon"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5079377895"",
+      ""display_name"": ""Robin Humphry\u2010Baker"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Robin Humphry-Baker"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5023745286"",
+      ""display_name"": ""Jun\u2010Ho Yum"",
+      ""orcid"": ""https://orcid.org/0000-0001-8386-2922""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jun-Ho Yum"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5025323916"",
+      ""display_name"": ""Jacques\u2010E. Moser"",
+      ""orcid"": ""https://orcid.org/0000-0003-0747-4666""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jacques E. Moser"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5109160404"",
+      ""display_name"": ""Micha\u00ebl Gr\u00e4tzel"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I5124864"",
+        ""display_name"": ""\u00c9cole Polytechnique F\u00e9d\u00e9rale de Lausanne"",
+        ""ror"": ""https://ror.org/02s376052"",
+        ""country_code"": ""CH"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I2799323385"",
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CH""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Michael Gr\u00e4tzel"",
+    ""raw_affiliation_strings"": [
+      ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Laboratory for Photonics and Interfaces, Institute of Chemical Sciences and Engineering, School of Basic Sciences, Ecole Polytechnique F\u00e9d\u00e9rale de Lausanne, Lausanne, CH-1015, Switzerland"",
+        ""institution_ids"": [
+          ""https://openalex.org/I5124864""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5013544504"",
+      ""display_name"": ""Nam\u2010Gyu Park"",
+      ""orcid"": ""https://orcid.org/0000-0003-2368-6300""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I848706"",
+        ""display_name"": ""Sungkyunkwan University"",
+        ""ror"": ""https://ror.org/04q78tk20"",
+        ""country_code"": ""KR"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""KR""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Nam-Gyu Park"",
+    ""raw_affiliation_strings"": [
+      ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Chemical Engineering and Department of Energy Science, Sungkyunkwan University, Suwon, 440-746, Korea"",
+        ""institution_ids"": [
+          ""https://openalex.org/I848706""
+        ]
+      }
+    ]
+  }
+]"
+Engineering,2012,W2150702843,Highly efficient organic light-emitting diodes from delayed fluorescence,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5040079599"",
+      ""display_name"": ""H. Uoyama"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I135598925"",
+        ""display_name"": ""Kyushu University"",
+        ""ror"": ""https://ror.org/00p4k0j84"",
+        ""country_code"": ""JP"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Hiroki Uoyama"",
+    ""raw_affiliation_strings"": [
+      ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5006615596"",
+      ""display_name"": ""Kenichi Goushi"",
+      ""orcid"": ""https://orcid.org/0000-0001-8869-1165""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I135598925"",
+        ""display_name"": ""Kyushu University"",
+        ""ror"": ""https://ror.org/00p4k0j84"",
+        ""country_code"": ""JP"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Kenichi Goushi"",
+    ""raw_affiliation_strings"": [
+      ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5045297049"",
+      ""display_name"": ""Katsuyuki Shizu"",
+      ""orcid"": ""https://orcid.org/0000-0002-1835-0418""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I135598925"",
+        ""display_name"": ""Kyushu University"",
+        ""ror"": ""https://ror.org/00p4k0j84"",
+        ""country_code"": ""JP"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Katsuyuki Shizu"",
+    ""raw_affiliation_strings"": [
+      ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5022411393"",
+      ""display_name"": ""Hiroko Nomura"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I135598925"",
+        ""display_name"": ""Kyushu University"",
+        ""ror"": ""https://ror.org/00p4k0j84"",
+        ""country_code"": ""JP"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Hiroko Nomura"",
+    ""raw_affiliation_strings"": [
+      ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Center for Organic Photonics and Electronics Research, Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5022077244"",
+      ""display_name"": ""Chihaya Adachi"",
+      ""orcid"": ""https://orcid.org/0000-0001-6117-9604""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I135598925"",
+        ""display_name"": ""Kyushu University"",
+        ""ror"": ""https://ror.org/00p4k0j84"",
+        ""country_code"": ""JP"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""JP""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Chihaya Adachi"",
+    ""raw_affiliation_strings"": [
+      ""International Institute for Carbon Neutral Energy Research (WPI-I2CNER), Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""International Institute for Carbon Neutral Energy Research (WPI-I2CNER), Kyushu University, 744 Motooka, Nishi, Fukuoka 819-0395, Japan,"",
+        ""institution_ids"": [
+          ""https://openalex.org/I135598925""
+        ]
+      }
+    ]
+  }
+]"
+Engineering,2012,W2168100296,Flexible triboelectric generator,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5042030040"",
+      ""display_name"": ""Feng Ru Fan"",
+      ""orcid"": ""https://orcid.org/0000-0001-6474-471X""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I130701444"",
+        ""display_name"": ""Georgia Institute of Technology"",
+        ""ror"": ""https://ror.org/01zkghx44"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I130701444""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I191208505"",
+        ""display_name"": ""Xiamen University"",
+        ""ror"": ""https://ror.org/00mcjh785"",
+        ""country_code"": ""CN"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I191208505""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CN"",
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Feng-Ru Fan"",
+    ""raw_affiliation_strings"": [
+      ""School of Material Science and Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0245, USA"",
+      ""State Key Laboratory of Physical Chemistry of Solid Surfaces, Department of Chemistry, College of Chemistry and Chemical Engineering, Xiamen University, Xiamen 361005, China""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Material Science and Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0245, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I130701444""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""State Key Laboratory of Physical Chemistry of Solid Surfaces, Department of Chemistry, College of Chemistry and Chemical Engineering, Xiamen University, Xiamen 361005, China"",
+        ""institution_ids"": [
+          ""https://openalex.org/I191208505""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5100371744"",
+      ""display_name"": ""Zhong\u2010Qun Tian"",
+      ""orcid"": ""https://orcid.org/0000-0002-9775-8189""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I191208505"",
+        ""display_name"": ""Xiamen University"",
+        ""ror"": ""https://ror.org/00mcjh785"",
+        ""country_code"": ""CN"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I191208505""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CN""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Zhong-Qun Tian"",
+    ""raw_affiliation_strings"": [
+      ""State Key Laboratory of Physical Chemistry of Solid Surfaces, Department of Chemistry, College of Chemistry and Chemical Engineering, Xiamen University, Xiamen 361005, China""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""State Key Laboratory of Physical Chemistry of Solid Surfaces, Department of Chemistry, College of Chemistry and Chemical Engineering, Xiamen University, Xiamen 361005, China"",
+        ""institution_ids"": [
+          ""https://openalex.org/I191208505""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5100376569"",
+      ""display_name"": ""Zhong Lin Wang"",
+      ""orcid"": ""https://orcid.org/0000-0002-5530-0380""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I130701444"",
+        ""display_name"": ""Georgia Institute of Technology"",
+        ""ror"": ""https://ror.org/01zkghx44"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I130701444""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": true,
+    ""raw_author_name"": ""Zhong Lin Wang"",
+    ""raw_affiliation_strings"": [
+      ""School of Material Science and Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0245, USA""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Material Science and Engineering, Georgia Institute of Technology, Atlanta, GA 30332-0245, USA"",
+        ""institution_ids"": [
+          ""https://openalex.org/I130701444""
+        ]
+      }
+    ]
+  }
+]"
+Computer Science,2012,W2163605009,ImageNet Classification with Deep Convolutional Neural Networks,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5031152245"",
+      ""display_name"": ""Alex Krizhevsky"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I185261750"",
+        ""display_name"": ""University of Toronto"",
+        ""ror"": ""https://ror.org/03dbr7087"",
+        ""country_code"": ""CA"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CA""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Alex Krizhevsky"",
+    ""raw_affiliation_strings"": [
+      ""University of Toronto""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""University of Toronto"",
+        ""institution_ids"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5006446297"",
+      ""display_name"": ""Ilya Sutskever"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I185261750"",
+        ""display_name"": ""University of Toronto"",
+        ""ror"": ""https://ror.org/03dbr7087"",
+        ""country_code"": ""CA"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CA""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Ilya Sutskever"",
+    ""raw_affiliation_strings"": [
+      ""University of Toronto""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""University of Toronto"",
+        ""institution_ids"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5108093963"",
+      ""display_name"": ""Geoffrey E. Hinton"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I185261750"",
+        ""display_name"": ""University of Toronto"",
+        ""ror"": ""https://ror.org/03dbr7087"",
+        ""country_code"": ""CA"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CA""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Geoffrey E. Hinton"",
+    ""raw_affiliation_strings"": [
+      ""University of Toronto""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""University of Toronto"",
+        ""institution_ids"": [
+          ""https://openalex.org/I185261750""
+        ]
+      }
+    ]
+  }
+]"
+Computer Science,2012,W2140190241,Data mining: concepts and techniques,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5019539533"",
+      ""display_name"": ""Jiawei Han"",
+      ""orcid"": ""https://orcid.org/0000-0002-3629-2696""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I157725225"",
+        ""display_name"": ""University of Illinois Urbana-Champaign"",
+        ""ror"": ""https://ror.org/047426m28"",
+        ""country_code"": ""US"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I157725225""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""US""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jiawei Han"",
+    ""raw_affiliation_strings"": [
+      ""Computer Science, Information Trust Institute, Beckman Institute for Advanced Science and Technology, Carl R. Woese Institute for Genomic Biology""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Computer Science, Information Trust Institute, Beckman Institute for Advanced Science and Technology, Carl R. Woese Institute for Genomic Biology"",
+        ""institution_ids"": [
+          ""https://openalex.org/I157725225""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5033935560"",
+      ""display_name"": ""Micheline Kamber"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I18014758"",
+        ""display_name"": ""Simon Fraser University"",
+        ""ror"": ""https://ror.org/0213rcc28"",
+        ""country_code"": ""CA"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I18014758""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CA""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Micheline Kamber"",
+    ""raw_affiliation_strings"": [
+      "" Simon Fraser University""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": "" Simon Fraser University"",
+        ""institution_ids"": [
+          ""https://openalex.org/I18014758""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5062247330"",
+      ""display_name"": ""Jian Pei"",
+      ""orcid"": ""https://orcid.org/0000-0002-2200-8711""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I18014758"",
+        ""display_name"": ""Simon Fraser University"",
+        ""ror"": ""https://ror.org/0213rcc28"",
+        ""country_code"": ""CA"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I18014758""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""CA""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Jian Pei"",
+    ""raw_affiliation_strings"": [
+      "" Simon Fraser University""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": "" Simon Fraser University"",
+        ""institution_ids"": [
+          ""https://openalex.org/I18014758""
+        ]
+      }
+    ]
+  }
+]"
+Computer Science,2012,W2799061466,Pattern Classification,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5083819316"",
+      ""display_name"": ""Norbert M. Seel"",
+      ""orcid"": null
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I161046081"",
+        ""display_name"": ""University of Freiburg"",
+        ""ror"": ""https://ror.org/0245cg223"",
+        ""country_code"": ""DE"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I161046081""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""DE""
+    ],
+    ""is_corresponding"": true,
+    ""raw_author_name"": ""Norbert M. Seel"",
+    ""raw_affiliation_strings"": [
+      ""Faculty of Economics and Behavioral Sciences, Department of Education, University of Freiburg, 79085, Freiburg, Germany""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Faculty of Economics and Behavioral Sciences, Department of Education, University of Freiburg, 79085, Freiburg, Germany"",
+        ""institution_ids"": [
+          ""https://openalex.org/I161046081""
+        ]
+      }
+    ]
+  }
+]"
+Computer Science,2012,W1969042907,"jModelTest 2: more models, new heuristics and parallel computing","[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5087352477"",
+      ""display_name"": ""Diego Darriba"",
+      ""orcid"": ""https://orcid.org/0000-0001-5482-3932""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I11019714"",
+        ""display_name"": ""Universidade da Coru\u00f1a"",
+        ""ror"": ""https://ror.org/01qckj285"",
+        ""country_code"": ""ES"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I11019714""
+        ]
+      },
+      {
+        ""id"": ""https://openalex.org/I6289922"",
+        ""display_name"": ""Universidade de Vigo"",
+        ""ror"": ""https://ror.org/05rdf8595"",
+        ""country_code"": ""ES"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I6289922""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""ES""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Diego Darriba"",
+    ""raw_affiliation_strings"": [
+      ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain"",
+      ""Department of Biochemistry, Genetics and Immunology, University of Vigo, Vigo, Spain""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain"",
+        ""institution_ids"": [
+          ""https://openalex.org/I11019714""
+        ]
+      },
+      {
+        ""raw_affiliation_string"": ""Department of Biochemistry, Genetics and Immunology, University of Vigo, Vigo, Spain"",
+        ""institution_ids"": [
+          ""https://openalex.org/I6289922""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5049011209"",
+      ""display_name"": ""Guillermo L. Taboada"",
+      ""orcid"": ""https://orcid.org/0000-0002-6281-6641""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I11019714"",
+        ""display_name"": ""Universidade da Coru\u00f1a"",
+        ""ror"": ""https://ror.org/01qckj285"",
+        ""country_code"": ""ES"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I11019714""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""ES""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Guillermo L Taboada"",
+    ""raw_affiliation_strings"": [
+      ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I11019714""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5070686724"",
+      ""display_name"": ""Ram\u00f3n Doallo"",
+      ""orcid"": ""https://orcid.org/0000-0002-6011-3387""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I11019714"",
+        ""display_name"": ""Universidade da Coru\u00f1a"",
+        ""ror"": ""https://ror.org/01qckj285"",
+        ""country_code"": ""ES"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I11019714""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""ES""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Ram\u00f3n Doallo"",
+    ""raw_affiliation_strings"": [
+      ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain#TAB#""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Computer Architecture Group, University of A Coru\u00f1a, A Coru\u00f1a, Spain#TAB#"",
+        ""institution_ids"": [
+          ""https://openalex.org/I11019714""
+        ]
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5042649313"",
+      ""display_name"": ""David Posada"",
+      ""orcid"": ""https://orcid.org/0000-0003-1407-3406""
+    },
+    ""institutions"": [
+      {
+        ""id"": ""https://openalex.org/I6289922"",
+        ""display_name"": ""Universidade de Vigo"",
+        ""ror"": ""https://ror.org/05rdf8595"",
+        ""country_code"": ""ES"",
+        ""type"": ""funder"",
+        ""lineage"": [
+          ""https://openalex.org/I6289922""
+        ]
+      }
+    ],
+    ""countries"": [
+      ""ES""
+    ],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""David Posada"",
+    ""raw_affiliation_strings"": [
+      ""Department of Biochemistry, Genetics and Immunology; University of Vigo; Vigo Spain""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""Department of Biochemistry, Genetics and Immunology; University of Vigo; Vigo Spain"",
+        ""institution_ids"": [
+          ""https://openalex.org/I6289922""
+        ]
+      }
+    ]
+  }
+]"
+Computer Science,2012,W2604272474,Advances in Neural Information Processing Systems 25,"[
+  {
+    ""author_position"": ""first"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5070857335"",
+      ""display_name"": ""Yichuan Zhang"",
+      ""orcid"": ""https://orcid.org/0000-0003-3745-0083""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Yichuan Zhang"",
+    ""raw_affiliation_strings"": [],
+    ""affiliations"": []
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5028501178"",
+      ""display_name"": ""Charles Sutton"",
+      ""orcid"": ""https://orcid.org/0000-0002-0041-3820""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Charles Sutton"",
+    ""raw_affiliation_strings"": [
+      ""School of Informatics""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Informatics"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""middle"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5007901825"",
+      ""display_name"": ""Amos Storkey"",
+      ""orcid"": ""https://orcid.org/0000-0002-8100-506X""
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Amos Storkey"",
+    ""raw_affiliation_strings"": [
+      ""School of Informatics""
+    ],
+    ""affiliations"": [
+      {
+        ""raw_affiliation_string"": ""School of Informatics"",
+        ""institution_ids"": []
+      }
+    ]
+  },
+  {
+    ""author_position"": ""last"",
+    ""author"": {
+      ""id"": ""https://openalex.org/A5050676189"",
+      ""display_name"": ""Zoubin Ghahramani"",
+      ""orcid"": null
+    },
+    ""institutions"": [],
+    ""countries"": [],
+    ""is_corresponding"": false,
+    ""raw_author_name"": ""Zoubin Ghahramani"",
+    ""raw_affiliation_strings"": [],
+    ""affiliations"": []
+  }
+]"

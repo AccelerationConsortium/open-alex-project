@@ -1,8 +1,8 @@
 import pandas as pd, json, re, os
 
 email = "hridanshkhaitan@gmail.com"
-output_directory = "data/engineering"
-batch_size = 10000
+output_directory = "data/engineering_redownload/"
+batch_size = 500000
 words_file = "data/keywords/AI_Keywords.csv"
 keyword = 'AI'
 
@@ -62,7 +62,7 @@ def classify_papers_for_year(year, keywords):
     Right now, it classifies papers as AI/Robotics if one match found."""
     print("Processing", year)
 
-    input_file = os.path.join(output_directory, f"chemistry_{year}.tsv")
+    input_file = os.path.join(output_directory, f"engineering_{year}.tsv")
     
     
     temp_file = input_file.replace('.tsv', '_temp.tsv')
@@ -74,7 +74,7 @@ def classify_papers_for_year(year, keywords):
     keyword_dummy = keyword+'_Paper'
     
     # Used chunking to break down in batches and ensure safer checks
-    f = pd.read_csv(input_file, sep='\t', chunksize=batch_size)
+    f = pd.read_csv(input_file, sep='\t', encoding='ISO-8859-1' ,chunksize=batch_size)
     for chunk in f:
         
         chunk[keyword_count] = 0
@@ -86,11 +86,19 @@ def classify_papers_for_year(year, keywords):
             
             # Get the abstract from raw_data
             text = ""
+            # if pd.notna(chunk.at[i, 'raw_data']):
+            #     raw_data = json.loads(chunk.at[i, 'raw_data']) # Raw data column
+            #     abstract = raw_data.get('abstract_inverted_index')
+            #     text = reconstruct_abstract(abstract)
             if pd.notna(chunk.at[i, 'raw_data']):
-                raw_data = json.loads(chunk.at[i, 'raw_data']) # Raw data column
-                abstract = raw_data.get('abstract_inverted_index')
-                text = reconstruct_abstract(abstract)
-            
+                try:
+                    raw_data = json.loads(chunk.at[i, 'raw_data'])
+                    abstract = raw_data.get('abstract_inverted_index')
+                    text = reconstruct_abstract(abstract)
+                except Exception as e:
+                    print(f"Warning: Error processing row {i}: {str(e)[:100]}")
+                    continue
+
             # Count keywords and mark as AI paper if any found
             count = count_keywords(text, keywords)
             chunk.at[i, keyword_count] = count
@@ -117,7 +125,12 @@ if __name__ == "__main__":
     count_classified = 0
     # year_papers, year_classified = classify_papers_for_year(year, keywords)
 
-    for year in range(2012, 2026):
+    # for year in range(2014, 2015):
+
+    # for year in range(2018, 2019):
+    for year in range(2022, 2023):
+
+    # for year in range(2025, 2026):
         year_papers, year_classified = classify_papers_for_year(year, keywords)
         count_papers += year_papers
         count_classified += year_classified

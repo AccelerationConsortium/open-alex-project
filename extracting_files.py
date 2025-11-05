@@ -2,7 +2,7 @@ import requests
 import pandas as pd, json, os, time
 
 email = "hridanshkhaitan@gmail.com" # For API 
-output_directory = "data/engineering_redownload"
+output_directory = "data/"
 batch_size = 100000 # Can change according to total size 
 
 def api_parameters(year):
@@ -33,12 +33,12 @@ def process_article(article):
             journal = source.get('display_name', '')
     # Authors information
     authorships = article.get('authorships', [])
-    if len(authorships) > 0:
+    if authorships and len(authorships) > 0:
         author = authorships[0].get('raw_author_name', '')
     else:
         author = ''
-    author_count = len(authorships)
-    
+    author_count = len(authorships) if authorships else 0   
+      
     # Add column with entire data for easier future access
     raw_data = json.dumps(article)
     
@@ -75,43 +75,93 @@ def year_by_year_extraction(year):
         
         # Here will send teh api request. Then for each chunk of articles returned, process each article
         # and append the batch to be appended to file later.
+        # try:
+        #     response = requests.get(url, params=parameters)
+        #     if response.status_code != 200:
+        #         print("API Error", response.text)
+        #         break
+        #     year_chunk = response.json()
+        #     # articles = year_chunk.get('results')
+           
+        #     articles = year_chunk.get('results', [])  # Default to empty list
+
+        #     if not articles:  # If empty, stop
+        #         print("No more articles found")
+        #         break
+        #     # Process each article by calling function
+        #     for article in articles:
+
+        #         processed_article = process_article(article)
+        #         batch.append(processed_article)
+        #     print(len(articles), " articles processed in this batch.")
+        #     count_works += len(articles)
+        #     count_calls += 1
+            
+        #     # Progress update
+        #     print("Batch:",  {count_calls},  "Total:", {count_works} )
+            
+        #     # Df appened to output file once chunk size reached
+        #     if len(batch) >= batch_size:
+        #         df_temp = pd.DataFrame(batch)
+        #         df_temp.to_csv(output_file, sep='\t', index=False, mode='a', header=first_write)
+        #         first_write = False # Header doesnt get added anymore
+        #         batch = [] 
+
+        #         print("Appended chunk to file")
+                 
+            
+        #     cursor = year_chunk.get('meta', {}).get('next_cursor')
+
+        # except Exception as e:
+        #     #print("Error report:", e)
+        #     print("Error during API call", e)
+        #     continue
+    
         try:
             response = requests.get(url, params=parameters)
             if response.status_code != 200:
                 print("API Error", response.text)
                 break
+            
             year_chunk = response.json()
-            articles = year_chunk.get('results')
+            articles = year_chunk.get('results', [])
+
+            if not articles:
+                print("No more articles found")
+                break
 
             # Process each article by calling function
             for article in articles:
-
-                processed_article = process_article(article)
-                batch.append(processed_article)
+                try:
+                    processed_article = process_article(article)
+                    batch.append(processed_article)
+                except Exception as e:
+                    print(f"Error processing article: {e}")
+                    continue
             
+            print(len(articles), " articles processed in this batch.")
             count_works += len(articles)
             count_calls += 1
             
             # Progress update
-            print("Batch:",  {count_calls},  "Total:", {count_works} )
+            print("Batch:",  count_calls,  "Total:", count_works)
             
-            # Df appened to output file once chunk size reached
+            # Df appended to output file once chunk size reached
             if len(batch) >= batch_size:
                 df_temp = pd.DataFrame(batch)
                 df_temp.to_csv(output_file, sep='\t', index=False, mode='a', header=first_write)
-                first_write = False # Header doesnt get added anymore
-                batch = [] 
-
+                first_write = False
+                batch = []
                 print("Appended chunk to file")
-                 
             
             cursor = year_chunk.get('meta', {}).get('next_cursor')
 
         except Exception as e:
-            #print("Error report:", e)
-            print("Error during API call", e)
+            print("Error during API call:", e)
+            print("Error type:", type(e).__name__)
+            import traceback
+            traceback.print_exc()
             continue
-    
     # Append final chunk
     if len(batch) > 0:
             pd.DataFrame(batch).to_csv(output_file, sep='\t', index=False, mode='a', header=first_write)
@@ -133,5 +183,5 @@ def extract_one_row():
     
 # Execute files from here
 if __name__ == "__main__":
-    year_by_year_extraction(2020)
+    year_by_year_extraction(2022)
     # extract_one_row() 

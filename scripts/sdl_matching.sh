@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=sdl_matching
+#SBATCH --job-name=sdl_matching_engi_2022
 #SBATCH --account=def-kmcel          # CHANGE THIS
-#SBATCH --time=00:30:00                      # 30 minutes (should be enough for 3 years)
-#SBATCH --mem=16G                            # 32GB RAM
+#SBATCH --time=01:30:00                      # 30 minutes (should be enough for 3 years)
+#SBATCH --mem=32G                            # 32GB RAM
 #SBATCH --cpus-per-task=2                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "SDL Matching for Engineering (2012, 2016, 2022)"
+echo "SDL Matching for Engi 2022"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "=========================================="

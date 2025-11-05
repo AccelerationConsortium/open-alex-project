@@ -1,9 +1,9 @@
 import pandas as pd, os
 
-output_directory = "data/engineering"
+output_directory = "data/engineering_redownload/"  # CHANGE IF NEEDED
 sdl_file = "data/SDL_Database_original.csv"  
 dois_file = "data/SDL_dois.txt"
-batch_size = 10000 # Can change according to total size 
+batch_size = 500000 # Can change according to total size 
 
 def SDL_change():
     """ This function takes DOIs from the SDL database in a text file and tries to find their match in the year files.
@@ -19,11 +19,14 @@ def SDL_change():
     total_match = 0
     
     # Process each year file except 2025 (no SDL yet in 2025)
-    for year in range(2012, 2025): # CHANGE IF MORE DATA ADDED
-        input_file = os.path.join(output_directory, "chemistry_" +year+".tsv")
+    for year in range(2022, 2023): # CHANGE IF MORE DATA ADDED
+        # Define input file path with year as string
+        str_year = str(year)
+        input_file = os.path.join(output_directory, f"engineering_{str_year}.tsv")
+        # input_file = os.path.join(output_directory, "engineering_" +year+".tsv")
         print("Processing year:", year)
         
-        temp = os.path.join(output_directory, f"chemistry_{year}_updated.tsv")
+        temp = os.path.join(output_directory, f"engineering_{year}_updated.tsv")
         header = True
         matches_per_year = 0
         
@@ -57,3 +60,5 @@ def SDL_change():
 
     return total_match
 
+if __name__ == "__main__":
+    SDL_change()
