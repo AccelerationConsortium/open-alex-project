@@ -2,24 +2,23 @@ import pandas as pd
 import json
 import os
 
-OUTPUT_DIR_CHEM = "../data/chemistry"
-OUTPUT_DIR_MAT = "../data/material_science"
-OUTPUT_DIR_ENG = "../data/engineering_redownload"
-OUTPUT_DIR_COMP = "../data/computer_science"
-OUTPUT_FILE = "sample_affiliations_raw.csv"
+OUTPUT_DIR_CHEM = "../data/fields/chemistry"
+OUTPUT_DIR_MAT = "../data/fields/material_science"
+OUTPUT_DIR_ENG = "../data/fields/engineering"
+OUTPUT_DIR_COMP = "../data/fields/computer_science"
+OUTPUT_FILE = "sample_affiliations_multiple.csv"
 CHUNK_SIZE = 100000
 
-
 # Configuration for multi-affiliation check
-FIELD_TO_CHECK = "Computer Science"  # Change this to: "Chemistry", "Materials Science", "Engineering", or "Computer Science"
-FIELD_FOLDER = OUTPUT_DIR_COMP  # Change this to match the field: OUTPUT_DIR_CHEM, OUTPUT_DIR_MAT, OUTPUT_DIR_ENG, OUTPUT_DIR_COMP
-FIELD_PREFIX = "computer_science"  # Change this to match: "chemistry", "materials_science", "engineering", "computer_science"
+FIELD_TO_CHECK = "Chemistry"
+FIELD_FOLDER = OUTPUT_DIR_CHEM
+FIELD_PREFIX = "chemistry"
 
 def extract_raw_affiliations():
-    """Extract 5 sample rows with raw affiliations data"""
+    """Extract 5 sample rows where authors have multiple affiliations (>=2)"""
     
     print("="*60)
-    print("Extracting Raw Affiliations")
+    print("Extracting Samples with Multiple Affiliations")
     print("="*60 + "\n")
     
     all_samples = []
@@ -47,7 +46,7 @@ def extract_raw_affiliations():
                 continue
             
             for chunk in pd.read_csv(input_file, sep='\t', encoding='utf-8',
-                                    chunksize=CHUNK_SIZE):
+                                     chunksize=CHUNK_SIZE):
                 
                 if 'raw_data' not in chunk.columns:
                     print(f"  Warning: raw_data column not found in {field_name}")
@@ -62,8 +61,16 @@ def extract_raw_affiliations():
                             raw_data = json.loads(chunk.at[idx, 'raw_data'])
                             authorships = raw_data.get('authorships', [])
                             
-                            if len(authorships) > 0:
-                                # Store entire authorships array as raw JSON
+                            # Check if ANY author has multiple affiliations
+                            has_multiple = False
+                            for authorship in authorships:
+                                institutions = authorship.get('institutions', [])
+                                if len(institutions) >= 2:
+                                    has_multiple = True
+                                    break
+                            
+                            # Only save if paper has authors with multiple affiliations
+                            if has_multiple and len(authorships) > 0:
                                 field_samples.append({
                                     'Field': field_name,
                                     'Year': chunk.at[idx, 'publication_year'],
@@ -84,7 +91,7 @@ def extract_raw_affiliations():
     if all_samples:
         df = pd.DataFrame(all_samples)
         df.to_csv(OUTPUT_FILE, index=False)
-        print(f"Saved {len(all_samples)} raw affiliation samples to: {OUTPUT_FILE}\n")
+        print(f"Saved {len(all_samples)} samples with multiple affiliations to: {OUTPUT_FILE}\n")
     else:
         print("No samples found!")
 
@@ -111,7 +118,7 @@ def count_multiple_affiliations():
         total_papers = 0
         
         for chunk in pd.read_csv(input_file, sep='\t', encoding='utf-8',
-                                chunksize=CHUNK_SIZE):
+                                on_bad_lines='skip', chunksize=CHUNK_SIZE):
             
             if 'raw_data' not in chunk.columns:
                 print(f"  Warning: raw_data column not found")
@@ -125,12 +132,15 @@ def count_multiple_affiliations():
                         
                         total_papers += 1
                         
-                        # Check each author
+                        # Check each author in this paper
                         for authorship in authorships:
                             total_authors += 1
+                            
+                            # Count institutions for THIS author
                             institutions = authorship.get('institutions', [])
                             
-                            if len(institutions) > 1:
+                            # An author has multiple affiliations if len(institutions) >= 2
+                            if len(institutions) >= 2:
                                 authors_with_multiple += 1
                     except:
                         continue
@@ -143,11 +153,11 @@ def count_multiple_affiliations():
             'Total_Papers': total_papers,
             'Total_Authors': total_authors,
             'Authors_Multiple_Affiliations': authors_with_multiple,
-            'Percentage': round(percentage, 2)
+            'Percentage': round(percentage, 4)
         })
         
         print(f"  Papers: {total_papers:,}, Authors: {total_authors:,}, "
-              f"Multiple: {authors_with_multiple:,} ({percentage:.2f}%)\n")
+              f"Multiple: {authors_with_multiple:,} ({percentage:.4f}%)\n")
     
     # Save results
     if results:
@@ -165,5 +175,5 @@ def count_multiple_affiliations():
         print("No data found!")
 
 if __name__ == "__main__":
-    # extract_raw_affiliations()
-    count_multiple_affiliations()
+    extract_raw_affiliations()
+    # count_multiple_affiliations()

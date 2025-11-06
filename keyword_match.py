@@ -1,7 +1,7 @@
 import pandas as pd, json, re, os
 
 email = "hridanshkhaitan@gmail.com"
-output_directory = "data/engineering_redownload/"
+output_directory = "data/fields/engineering/"
 batch_size = 500000
 words_file = "data/keywords/AI_Keywords.csv"
 keyword = 'AI'
@@ -128,9 +128,9 @@ if __name__ == "__main__":
     # for year in range(2014, 2015):
 
     # for year in range(2018, 2019):
-    for year in range(2022, 2023):
+    # for year in range(2022, 2023):
 
-    # for year in range(2025, 2026):
+    for year in range(2024, 2025): 
         year_papers, year_classified = classify_papers_for_year(year, keywords)
         count_papers += year_papers
         count_classified += year_classified

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=Check_Affiliations
+#SBATCH --job-name=Check_Affiliations_chem
 #SBATCH --account=def-kmcel                  
 #SBATCH --time=00:30:00                      
 #SBATCH --mem=16G                           
@@ -8,7 +8,7 @@
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "Checking Affiliations Sample Multiple"
+echo "Checking Affiliations  Multiple"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running on node: $(hostname)"

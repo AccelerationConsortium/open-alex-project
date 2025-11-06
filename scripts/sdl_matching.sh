@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=sdl_matching_engi_2022
+#SBATCH --job-name=sdl_matching_engi_2024
 #SBATCH --account=def-kmcel          # CHANGE THIS
 #SBATCH --time=01:30:00                      # 30 minutes (should be enough for 3 years)
 #SBATCH --mem=32G                            # 32GB RAM

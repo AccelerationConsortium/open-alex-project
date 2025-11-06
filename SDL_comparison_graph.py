@@ -1,10 +1,11 @@
 import pandas as pd, matplotlib.pyplot as plt, numpy as np, json, os
 
-batch_size = 100000
+batch_size = 500000
 fields = {
-        'chemistry': 'data/chemistry',
-        'materials_science': 'data/material_science',
-        'engineering': 'data/engineering'
+        'chemistry': 'data/fields/chemistry',
+        'materials_science': 'data/fields/material_science',
+        'engineering': 'data/fields/engineering',
+        'computer_science': 'data/fields/computer_science'
 }
 
 def extract_sdl_data(years):
@@ -84,7 +85,7 @@ def get_topic(years):
     return sdl_topics
 
 
-def extract_non_sdl_data(filter='none', sdl_journals, sdl_topics, years):
+def extract_non_sdl_data(sdl_journals, sdl_topics, years, filter='none'):
     """
     Function to extract all the data where SDL = 0. This will also have a filter function to 
     extract only papers from the same journals or topics or both as the SDL papers.
@@ -118,7 +119,7 @@ def extract_non_sdl_data(filter='none', sdl_journals, sdl_topics, years):
             f = os.path.join(location, f"{field}_{year}.tsv")
             
 
-            for chunk in pd.read_csv(f, sep='\t', usecols=columns, chunksize=batch_size):
+            for chunk in pd.read_csv(f, sep='\t', usecols=columns, chunksize=batch_size, encoding='ISO-8859-1'):
                 chunk = chunk.dropna(subset=['author_count', 'SDL'])
                 non_sdlpapers = chunk[chunk['SDL'] == 0]
                 
@@ -134,31 +135,34 @@ def extract_non_sdl_data(filter='none', sdl_journals, sdl_topics, years):
 
                 elif filter == 'topics':
                     for i in non_sdlpapers.index:
-                        data = json.loads(non_sdlpapers.at[i, 'raw_data'])
-                        b = data.get('primary_topic', {})
-                        topic = b.get('display_name')
-                        
-                        if topic and topic in sdl_topics:
-                            authors.append(non_sdlpapers.at[i, 'author_count'])
+                        try:
+                            data = json.loads(non_sdlpapers.at[i, 'raw_data'])
+                            b = data.get('primary_topic', {})
+                            topic = b.get('display_name')
+                            
+                            if topic and topic in sdl_topics:
+                                authors.append(non_sdlpapers.at[i, 'author_count'])
+                        except (json.JSONDecodeError, ValueError):
+                            continue  # Skip corrupted rows
 
                 else: # both journals and topics
                     for i in non_sdlpapers.index:
+                        try:
+                            journal = chunk.at[i, 'journal']
+                            if pd.isna(journal):
+                                continue
 
-                        journal = chunk.at[i, 'journal']
-                        if pd.isna(journal):
-                            continue
-
-                        if journal not in sdl_journals:
-                            continue
-                       
-                        c = json.loads(chunk.at[i, 'raw_data'])
-                        topic = c.get('primary_topic', {}).get('display_name')
-                            
-                        if topic and topic in sdl_topics:
-                            authors.append(chunk.at[i, 'author_count'])
-
-        
-        
+                            if journal not in sdl_journals:
+                                continue
+                        
+                            c = json.loads(chunk.at[i, 'raw_data'])
+                            topic = c.get('primary_topic', {}).get('display_name')
+                                
+                            if topic and topic in sdl_topics:
+                                authors.append(chunk.at[i, 'author_count'])
+                        except (json.JSONDecodeError, ValueError):
+                            continue  
+         
         non_sdl_data.append(authors)
         year_labels.append(year)
         print(len(authors), "non-SDL papers in",  year)
@@ -170,7 +174,7 @@ def extract_non_sdl_data(filter='none', sdl_journals, sdl_topics, years):
     return non_sdl_data, year_labels
 
 
-def extract_ai_robotics_non_sdl(keyword_type='AI', years):
+def extract_ai_robotics_non_sdl( years,keyword_type):
     """
     Function will extract data based on whether paper is classified as AI/Robotics. 
     Additionally, will only extract data where SDL = 0
@@ -207,6 +211,43 @@ def extract_ai_robotics_non_sdl(keyword_type='AI', years):
     
     total = sum(len(d) for d in data)
     print(f"Total {keyword_type} papers (non-SDL): {total}\n")
+    
+    return data, year_labels
+
+def extract_ai_and_robotics_non_sdl(years):
+    """
+    Function will extract data where BOTH AI_Paper = 1 AND Robotics_Paper = 1 in the same row.
+    Additionally, will only extract data where SDL = 0
+    
+    Variables:
+        years: years to extract"""
+
+    print(f"Extracting papers where BOTH AI = 1 AND Robotics = 1 (non-SDL)")
+    
+    data, year_labels = [], []
+    
+    # Per year extraction 
+    for year in years:
+        authors = []
+        
+        for field, location in fields.items():
+            f = os.path.join(location, f"{field}_{year}.tsv")
+
+            for chunk in pd.read_csv(f, sep='\t', usecols=['author_count', 'SDL', 'AI_Paper', 'Robotics_Paper'], 
+                                    chunksize=batch_size):
+                chunk = chunk.dropna(subset=['author_count', 'SDL', 'AI_Paper', 'Robotics_Paper'])
+                
+                # Get papers that are BOTH AI AND Robotics but NOT SDL
+                filtered = chunk[(chunk['AI_Paper'] == 1) & (chunk['Robotics_Paper'] == 1) & (chunk['SDL'] == 0)]
+                authors.extend(filtered['author_count'].tolist())
+        
+        if len(authors) > 0:
+            data.append(authors)
+            year_labels.append(year)
+            print(f"  Year {year}: {len(authors)} AI+Robotics papers")
+    
+    total = sum(len(d) for d in data)
+    print(f"Total AI+Robotics papers (non-SDL): {total}\n")
     
     return data, year_labels
 
@@ -267,39 +308,49 @@ def plot_team_size_comparison(sdl_data, non_sdl_data, year_labels, title_suffix=
 
 # Calling functions from here
 if __name__ == "__main__":
-    
+
     # OPTION 1: All data (no filtering)
-    sdl_data, sdl_years = extract_sdl_data(range(2012-2026))
-    non_sdl_data, non_sdl_years = extract_non_sdl_data(filter='none')
-    plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (All Data)")
-    
-    # # OPTION 2: Same journals only
-    # sdl_data, sdl_years = extract_sdl_data()
-    # sdl_journals = get_journal()
-    # non_sdl_data, non_sdl_years = extract_non_sdl_data(filter='journals', sdl_journals=sdl_journals)
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=None, sdl_topics=None, years=years, filter='none')
+    # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (All Data)")
+
+    # OPTION 2: Same journals only
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # sdl_journals = get_journal(years)
+    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=None, years=years, filter='journals')
     # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals)")
-    
-    # # OPTION 3: Same topics only
-    # sdl_data, sdl_years = extract_sdl_data()
-    # sdl_topics = get_topic()
-    # non_sdl_data, non_sdl_years = extract_non_sdl_data(filter='topics', sdl_topics=sdl_topics)
-    # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Topics)")
-    
-    # # OPTION 4: SDL vs AI papers
-    # sdl_data, sdl_years = extract_sdl_data()
-    # ai_data, ai_years = extract_ai_robotics_non_sdl(keyword_type='AI')
+
+    # OPTION 3: Same topics only
+    years = list(range(2012, 2025))
+    sdl_data, sdl_years = extract_sdl_data(years)
+    sdl_topics = get_topic(years)
+    non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=None, sdl_topics=sdl_topics, years=years, filter='topics')
+    plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Topics)")
+
+    # OPTION 4: SDL vs AI papers
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # ai_data, ai_years = extract_ai_robotics_non_sdl( years=years, keyword_type='AI')
     # plot_team_size_comparison(sdl_data, ai_data, sdl_years, " (SDL vs AI)")
-    
-    # # OPTION 5: SDL vs Robotics papers
-    # sdl_data, sdl_years = extract_sdl_data()
-    # robotics_data, robotics_years = extract_ai_robotics_non_sdl(keyword_type='Robotics')
+
+    # OPTION 5: SDL vs Robotics papers
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # robotics_data, robotics_years = extract_ai_robotics_non_sdl( years=years, keyword_type='Robotics',)
     # plot_team_size_comparison(sdl_data, robotics_data, sdl_years, " (SDL vs Robotics)")
-    
-    # # OPTION 6: Same journals AND topics
-    # sdl_data, sdl_years = extract_sdl_data()
-    # sdl_journals = get_journal()
-    # sdl_topics = get_topic()
-    # non_sdl_data, non_sdl_years = extract_non_sdl_data(filter='both', 
-    #                                                     sdl_journals=sdl_journals, 
-    #                                                     sdl_topics=sdl_topics)
+
+    # OPTION 6: Same journals AND topics
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # sdl_journals = get_journal(years)
+    # sdl_topics = get_topic(years)
+    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=sdl_topics, years=years, filter='both')
     # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals and Topics)")
+
+    # OPTION 7: SDL vs (AI AND Robotics) papers
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # ai_robotics_data, ai_robotics_years = extract_ai_and_robotics_non_sdl(years)
+    # plot_team_size_comparison(sdl_data, ai_robotics_data, sdl_years, " (SDL vs AI+Robotics)")

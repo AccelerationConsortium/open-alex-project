@@ -1,6 +1,6 @@
 import pandas as pd, os
 
-output_directory = "data/engineering_redownload/"  # CHANGE IF NEEDED
+output_directory = "data/fields/engineering"  # CHANGE IF NEEDED
 sdl_file = "data/SDL_Database_original.csv"  
 dois_file = "data/SDL_dois.txt"
 batch_size = 500000 # Can change according to total size 
@@ -19,7 +19,7 @@ def SDL_change():
     total_match = 0
     
     # Process each year file except 2025 (no SDL yet in 2025)
-    for year in range(2022, 2023): # CHANGE IF MORE DATA ADDED
+    for year in range(2024, 2025): # CHANGE IF MORE DATA ADDED
         # Define input file path with year as string
         str_year = str(year)
         input_file = os.path.join(output_directory, f"engineering_{str_year}.tsv")

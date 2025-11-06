@@ -62,7 +62,7 @@ def analyze_dois_per_year():
     print("Total missing %: ", overall_percent)
 
 
-OUTPUT_DIR = "data/engineering_redownload/"
+OUTPUT_DIR = "data/fields/engineering/"
 
 def count_ai_robotics_papers():
     """Count AI and Robotics papers per year in engineering data"""
@@ -78,7 +78,7 @@ def count_ai_robotics_papers():
     overall_ai = 0
     overall_robotics = 0
     
-    for year in range(2022, 2023):
+    for year in range(2024, 2026):
         eng_file = os.path.join(OUTPUT_DIR, f"engineering_{year}.tsv")
         
         if not os.path.exists(eng_file):

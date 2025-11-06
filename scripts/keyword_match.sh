@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=classify_AI_engi2022
+#SBATCH --job-name=classify_engi_AI2024
 #SBATCH --account=def-kmcel          # CHANGE THIS
 #SBATCH --time=06:00:00                      # 1 hour
 #SBATCH --mem=32G                            # 32GB RAM
@@ -8,7 +8,7 @@
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "Robotics Paper Classification for Robo Engi2025"
+echo "Robotics Paper Classification for AI Engi2024"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "=========================================="

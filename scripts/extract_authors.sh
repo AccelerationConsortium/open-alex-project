@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=graphing_topics
+#SBATCH --job-name=Extract_Authors1
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=10:30:00                      
+#SBATCH --time=10:00:00                      
 #SBATCH --mem=64G                           
-#SBATCH --cpus-per-task=2                    
+#SBATCH --cpus-per-task=1                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "SDL vs Non-SDL (ALL) Graph Generation"
+echo "Extracting All Unique Authors"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running on node: $(hostname)"
@@ -27,8 +27,8 @@ echo "Python environment:"
 python --version
 echo ""
 
-# Run the analysis - ALL OUTPUT GOES TO LOG FILE
-python SDL_comparison_graph.py
+# Run the author extraction
+python extract_authors.py
 
 echo ""
 echo "=========================================="
@@ -37,5 +37,8 @@ echo "=========================================="
 
 # Show generated files
 echo ""
-echo "Generated files:"
-ls -lh results/
+echo "Generated file:"
+ls -lh ../data/unique_authors.csv
+echo ""
+echo "Total authors extracted:"
+tail -n 1 ../data/unique_authors.csv | wc -l
