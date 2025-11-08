@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=graphs_for_engi2
+#SBATCH --job-name=graphs_for_COMPSCI5
 #SBATCH --account=def-kmcel                  
 #SBATCH --time=4:30:00                      
 #SBATCH --mem=128G                           

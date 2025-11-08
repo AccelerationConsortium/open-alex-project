@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=sampleExtract_AuthorsAffiliations
+#SBATCH --job-name=sampleExtract_AuthorsAffiliationseda
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=4:00:00                      
+#SBATCH --time=1:00:00                      
 #SBATCH --mem=128G                           
-#SBATCH --cpus-per-task=32                    
+#SBATCH --cpus-per-task=1                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -28,7 +28,7 @@ python --version
 echo ""
 
 # Run the author extraction
-python extract_authors.py
+python author_dataset.py
 
 echo ""
 echo "=========================================="

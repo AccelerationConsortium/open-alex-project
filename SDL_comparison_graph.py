@@ -4,8 +4,8 @@ batch_size = 1000000
 fields = {
         # 'chemistry': 'data/fields/chemistry'
         # 'materials_science': 'data/fields/material_science',
-        'engineering': 'data/fields/engineering'
-        # 'computer_science': 'data/fields/computer_science'
+        # 'engineering': 'data/fields/engineering'
+        'computer_science': 'data/fields/computer_science'
 }
 
 def extract_sdl_data(years):
@@ -313,11 +313,11 @@ if __name__ == "__main__":
     # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (All Data)")
 
     # OPTION 2: Same journals only
-    years = list(range(2012, 2025))
-    sdl_data, sdl_years = extract_sdl_data(years)
-    sdl_journals = get_journal(years)
-    non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=None, years=years, filter='journals')
-    plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals)")
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # sdl_journals = get_journal(years)
+    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=None, years=years, filter='journals')
+    # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals)")
 
     # OPTION 3: Same topics only
     # years = list(range(2012, 2025))
@@ -333,10 +333,10 @@ if __name__ == "__main__":
     # plot_team_size_comparison(sdl_data, ai_data, sdl_years, " (SDL vs AI)")
 
     # OPTION 5: SDL vs Robotics papers
-    # years = list(range(2012, 2025))
-    # sdl_data, sdl_years = extract_sdl_data(years)
-    # robotics_data, robotics_years = extract_ai_robotics_non_sdl( years=years, keyword_type='Robotics',)
-    # plot_team_size_comparison(sdl_data, robotics_data, sdl_years, " (SDL vs Robotics)")
+    years = list(range(2012, 2025))
+    sdl_data, sdl_years = extract_sdl_data(years)
+    robotics_data, robotics_years = extract_ai_robotics_non_sdl( years=years, keyword_type='Robotics',)
+    plot_team_size_comparison(sdl_data, robotics_data, sdl_years, " (SDL vs Robotics)")
 
     # OPTION 6: Same journals AND topics
     # years = list(range(2012, 2025))
