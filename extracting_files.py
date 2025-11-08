@@ -2,7 +2,7 @@ import requests
 import pandas as pd, json, os, time
 
 email = "hridanshkhaitan@gmail.com" # For API 
-output_directory = "data/"
+output_directory = "data/fields/chemistry"
 batch_size = 100000 # Can change according to total size 
 
 def api_parameters(year):
@@ -174,7 +174,7 @@ def year_by_year_extraction(year):
 def extract_one_row(): 
     """This function will take save one row of data from a specific OpenAlex based data file """
     
-    location = os.path.join(output_directory, "engineering_2025.tsv")
+    location = os.path.join(output_directory, "chemistry_2025.tsv")
     df = pd.read_csv(location, sep='\t', nrows=1)
     print (df.head())
     # Save row 
@@ -183,5 +183,5 @@ def extract_one_row():
     
 # Execute files from here
 if __name__ == "__main__":
-    year_by_year_extraction(2022)
-    # extract_one_row() 
+    # year_by_year_extraction(2022)
+    extract_one_row() 

@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=Extract_Authors1
+#SBATCH --job-name=sampleExtract_AuthorsAffiliations
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=10:00:00                      
-#SBATCH --mem=64G                           
-#SBATCH --cpus-per-task=1                    
+#SBATCH --time=4:00:00                      
+#SBATCH --mem=128G                           
+#SBATCH --cpus-per-task=32                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -36,9 +36,9 @@ echo "Completed at: $(date)"
 echo "=========================================="
 
 # Show generated files
-echo ""
-echo "Generated file:"
-ls -lh ../data/unique_authors.csv
-echo ""
-echo "Total authors extracted:"
-tail -n 1 ../data/unique_authors.csv | wc -l
+# echo ""
+# echo "Generated file:"
+# ls -lh ../data/unique_authors.csv
+# echo ""
+# echo "Total authors extracted:"
+# tail -n 1 ../data/unique_authors.csv | wc -l

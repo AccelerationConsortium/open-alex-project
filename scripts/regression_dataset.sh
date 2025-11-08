@@ -1,23 +1,25 @@
 #!/bin/bash
-#SBATCH --job-name=graphs_for_engi2
+#SBATCH --job-name=Model_Regression_Dataset
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=4:30:00                      
+#SBATCH --time=03:00:00                      
 #SBATCH --mem=128G                           
-#SBATCH --cpus-per-task=1                  
+#SBATCH --cpus-per-task=1                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "SDL vs Non-SDL (ALL) Graph Generation"
+echo "Creating Regression Dataset"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running on node: $(hostname)"
 echo "=========================================="
 
 # Load Python and activate environment
-module load python/3.11
-source ~/openalex_env/bin/activate
+# module load python/3.11
+# source ~/openalex_env/bin/activate
 
+module load python/3.10.13
+source ~/venvs/regression_env/bin/activate
 # Navigate to project directory
 cd /project/def-kmcel/hridansh/openalex_project
 
@@ -27,15 +29,18 @@ echo "Python environment:"
 python --version
 echo ""
 
-# Run the analysis - ALL OUTPUT GOES TO LOG FILE
-python SDL_comparison_graph.py
+# Run the regression dataset creation
+time python regression_analysis.py
 
 echo ""
 echo "=========================================="
 echo "Completed at: $(date)"
 echo "=========================================="
 
-# Show generated files
-echo ""
-echo "Generated files:"
-ls -lh results/
+# # Show generated file
+# echo ""
+# echo "Generated file:"
+# ls -lh regression_dataset.csv
+# echo ""
+# echo "Total papers in dataset:"
+# wc -l regression_dataset.csv

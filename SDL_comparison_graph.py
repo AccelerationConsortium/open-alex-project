@@ -1,11 +1,11 @@
 import pandas as pd, matplotlib.pyplot as plt, numpy as np, json, os
 
-batch_size = 500000
+batch_size = 1000000
 fields = {
-        'chemistry': 'data/fields/chemistry',
-        'materials_science': 'data/fields/material_science',
-        'engineering': 'data/fields/engineering',
-        'computer_science': 'data/fields/computer_science'
+        # 'chemistry': 'data/fields/chemistry'
+        # 'materials_science': 'data/fields/material_science',
+        'engineering': 'data/fields/engineering'
+        # 'computer_science': 'data/fields/computer_science'
 }
 
 def extract_sdl_data(years):
@@ -27,9 +27,8 @@ def extract_sdl_data(years):
                 author_column = sdl_papers['author_count'].tolist()
                 authors.extend(author_column)
         
-        if len(authors) > 0:
-            sdl_data.append(authors)
-            year_labels.append(year)
+        sdl_data.append(authors)
+        year_labels.append(year)
     
     total = 0
     for row in sdl_data:
@@ -204,10 +203,9 @@ def extract_ai_robotics_non_sdl( years,keyword_type):
                 filtered = chunk[(chunk[column] == 1) & (chunk['SDL'] == 0)]
                 authors.extend(filtered['author_count'].tolist())
         
-        if len(authors) > 0:
-            data.append(authors)
-            year_labels.append(year)
-            print(f"  Year {year}: {len(authors)} {keyword_type} papers")
+        data.append(authors)
+        year_labels.append(year)
+        print(f"  Year {year}: {len(authors)} {keyword_type} papers")
     
     total = sum(len(d) for d in data)
     print(f"Total {keyword_type} papers (non-SDL): {total}\n")
@@ -241,10 +239,9 @@ def extract_ai_and_robotics_non_sdl(years):
                 filtered = chunk[(chunk['AI_Paper'] == 1) & (chunk['Robotics_Paper'] == 1) & (chunk['SDL'] == 0)]
                 authors.extend(filtered['author_count'].tolist())
         
-        if len(authors) > 0:
-            data.append(authors)
-            year_labels.append(year)
-            print(f"  Year {year}: {len(authors)} AI+Robotics papers")
+        data.append(authors)
+        year_labels.append(year)
+        print(f"  Year {year}: {len(authors)} AI+Robotics papers")
     
     total = sum(len(d) for d in data)
     print(f"Total AI+Robotics papers (non-SDL): {total}\n")
@@ -316,18 +313,18 @@ if __name__ == "__main__":
     # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (All Data)")
 
     # OPTION 2: Same journals only
-    # years = list(range(2012, 2025))
-    # sdl_data, sdl_years = extract_sdl_data(years)
-    # sdl_journals = get_journal(years)
-    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=None, years=years, filter='journals')
-    # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals)")
-
-    # OPTION 3: Same topics only
     years = list(range(2012, 2025))
     sdl_data, sdl_years = extract_sdl_data(years)
-    sdl_topics = get_topic(years)
-    non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=None, sdl_topics=sdl_topics, years=years, filter='topics')
-    plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Topics)")
+    sdl_journals = get_journal(years)
+    non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=sdl_journals, sdl_topics=None, years=years, filter='journals')
+    plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Journals)")
+
+    # OPTION 3: Same topics only
+    # years = list(range(2012, 2025))
+    # sdl_data, sdl_years = extract_sdl_data(years)
+    # sdl_topics = get_topic(years)
+    # non_sdl_data, non_sdl_years = extract_non_sdl_data(sdl_journals=None, sdl_topics=sdl_topics, years=years, filter='topics')
+    # plot_team_size_comparison(sdl_data, non_sdl_data, sdl_years, " (Same Topics)")
 
     # OPTION 4: SDL vs AI papers
     # years = list(range(2012, 2025))
