@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=Model_Regression_Dataset
+#SBATCH --job-name=citation_regression
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=03:00:00                      
+#SBATCH --time=02:00:00                      
 #SBATCH --mem=128G                           
-#SBATCH --cpus-per-task=1                    
+#SBATCH --cpus-per-task=2               
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -15,11 +15,11 @@ echo "Running on node: $(hostname)"
 echo "=========================================="
 
 # Load Python and activate environment
-# module load python/3.11
-# source ~/openalex_env/bin/activate
+module load python/3.11
+source ~/openalex_env/bin/activate
 
-module load python/3.10.13
-source ~/venvs/regression_env/bin/activate
+# module load python/3.10.13
+# source ~/venvs/regression_env/bin/activate
 # Navigate to project directory
 cd /project/def-kmcel/hridansh/openalex_project
 
@@ -30,7 +30,7 @@ python --version
 echo ""
 
 # Run the regression dataset creation
-time python regression_analysis.py
+time python citation_regression_analysis.py
 
 echo ""
 echo "=========================================="
