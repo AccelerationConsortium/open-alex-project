@@ -1,0 +1,12 @@
+======================================================================
+CS TOPIC CLASSIFICATION SUMMARY
+======================================================================
+
+Total topics: 5,450
+CS-related: 1,487 (27.3%)
+Non-CS: 3,963 (72.7%)
+
+Classification rule: CS if topic contains 1+ CS keywords
+
+CS topics saved to: topics_cs_classification.csv
+Filter by: is_cs == True

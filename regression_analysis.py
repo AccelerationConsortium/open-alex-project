@@ -21,7 +21,7 @@ SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
 SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_topics.txt"
 
 # Output directory
-OUTPUT_DIR = PROJECT_DIR / "data"
+OUTPUT_DIR = PROJECT_DIR / "data/test"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ============================================================================
@@ -30,8 +30,8 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 FILTER_CONFIG = {
     # Which filters to apply
-    'use_journal_filter': False,      # Filter to SDL journals?
-    'use_topic_filter': False,        # Filter to SDL topics?
+    'use_journal_filter': True,      # Filter to SDL journals?
+    'use_topic_filter': True,        # Filter to SDL topics?
     
     # Reproducibility
     'random_seed': 42
@@ -195,131 +195,131 @@ def run_regressions(df):
     with open(OUTPUT_DIR / 'model1.txt', 'w') as f:
         f.write(model1.summary().as_text())
     
-    # # ========================================================================
-    # # MODEL 2: + Author Controls
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 2: + Author Controls
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 2: + Author Controls")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 2: + Author Controls")
+    print("="*70)
     
-    # formula2 = '''
-    #     author_count ~ SDL +
-    #     num_paper_affiliations +
-    #     asinh_first_author_papers +
-    #     asinh_first_author_citations +
-    #     asinh_last_author_papers +
-    #     asinh_last_author_citations
-    # '''
+    formula2 = '''
+        author_count ~ SDL +
+        num_paper_affiliations +
+        asinh_first_author_papers +
+        asinh_first_author_citations +
+        asinh_last_author_papers +
+        asinh_last_author_citations
+    '''
     
-    # print(f"Formula: SDL + author controls (asinh-transformed)")
+    print(f"Formula: SDL + author controls (asinh-transformed)")
     
-    # model2 = smf.ols(formula2, data=df).fit()
-    # models['model2'] = model2
+    model2 = smf.ols(formula2, data=df).fit()
+    models['model2'] = model2
     
-    # print(f"✓ R²={model2.rsquared:.4f}, SDL coef={model2.params['SDL']:.4f} (p={model2.pvalues['SDL']:.4f})")
+    print(f"✓ R²={model2.rsquared:.4f}, SDL coef={model2.params['SDL']:.4f} (p={model2.pvalues['SDL']:.4f})")
     
-    # with open(OUTPUT_DIR / 'model2.txt', 'w') as f:
-    #     f.write(model2.summary().as_text())
+    with open(OUTPUT_DIR / 'model2.txt', 'w') as f:
+        f.write(model2.summary().as_text())
     
-    # # ========================================================================
-    # # MODEL 3: + Year FE
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 3: + Year FE
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 3: + Year Fixed Effects")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 3: + Year Fixed Effects")
+    print("="*70)
     
-    # formula3 = formula2 + ' + C(publication_year)'
-    # print(f"Formula: Model 2 + Year FE ({df['publication_year'].nunique()} years)")
+    formula3 = formula2 + ' + C(publication_year)'
+    print(f"Formula: Model 2 + Year FE ({df['publication_year'].nunique()} years)")
     
-    # model3 = smf.ols(formula3, data=df).fit()
-    # models['model3'] = model3
+    model3 = smf.ols(formula3, data=df).fit()
+    models['model3'] = model3
     
-    # print(f"✓ R²={model3.rsquared:.4f}, SDL coef={model3.params['SDL']:.4f} (p={model3.pvalues['SDL']:.4f})")
+    print(f"✓ R²={model3.rsquared:.4f}, SDL coef={model3.params['SDL']:.4f} (p={model3.pvalues['SDL']:.4f})")
     
-    # with open(OUTPUT_DIR / 'model3.txt', 'w') as f:
-    #     f.write(model3.summary().as_text())
+    with open(OUTPUT_DIR / 'model3.txt', 'w') as f:
+        f.write(model3.summary().as_text())
     
-    # # ========================================================================
-    # # MODEL 4: + Field FE
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 4: + Field FE
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 4: + Year + Field Fixed Effects")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 4: + Year + Field Fixed Effects")
+    print("="*70)
     
-    # formula4 = formula3 + ' + C(field)'
-    # print(f"Formula: Model 3 + Field FE ({df['field'].nunique()} fields)")
+    formula4 = formula3 + ' + C(field)'
+    print(f"Formula: Model 3 + Field FE ({df['field'].nunique()} fields)")
     
-    # model4 = smf.ols(formula4, data=df).fit()
-    # models['model4'] = model4
+    model4 = smf.ols(formula4, data=df).fit()
+    models['model4'] = model4
     
-    # print(f"✓ R²={model4.rsquared:.4f}, SDL coef={model4.params['SDL']:.4f} (p={model4.pvalues['SDL']:.4f})")
+    print(f"✓ R²={model4.rsquared:.4f}, SDL coef={model4.params['SDL']:.4f} (p={model4.pvalues['SDL']:.4f})")
     
-    # with open(OUTPUT_DIR / 'model4.txt', 'w') as f:
-    #     f.write(model4.summary().as_text())
+    with open(OUTPUT_DIR / 'model4.txt', 'w') as f:
+        f.write(model4.summary().as_text())
     
-    # # ========================================================================
-    # # MODEL 5: + Journal FE
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 5: + Journal FE
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 5: + Year + Field + Journal Fixed Effects")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 5: + Year + Field + Journal Fixed Effects")
+    print("="*70)
     
-    # num_journals = df['journal'].nunique()
-    # print(f"Formula: Model 4 + Journal FE ({num_journals:,} journals)")
+    num_journals = df['journal'].nunique()
+    print(f"Formula: Model 4 + Journal FE ({num_journals:,} journals)")
     
-    # if num_journals > 1000:
-    #     print(f"⚠️  WARNING: {num_journals:,} journals - this may take 10-20 minutes...")
+    if num_journals > 1000:
+        print(f"⚠️  WARNING: {num_journals:,} journals - this may take 10-20 minutes...")
     
-    # formula5 = formula4 + ' + C(journal)'
+    formula5 = formula4 + ' + C(journal)'
     
-    # try:
-    #     model5 = smf.ols(formula5, data=df).fit()
-    #     models['model5'] = model5
+    try:
+        model5 = smf.ols(formula5, data=df).fit()
+        models['model5'] = model5
         
-    #     print(f"✓ R²={model5.rsquared:.4f}, SDL coef={model5.params['SDL']:.4f} (p={model5.pvalues['SDL']:.4f})")
+        print(f"✓ R²={model5.rsquared:.4f}, SDL coef={model5.params['SDL']:.4f} (p={model5.pvalues['SDL']:.4f})")
         
-    #     with open(OUTPUT_DIR / 'model5.txt', 'w') as f:
-    #         f.write(model5.summary().as_text())
+        with open(OUTPUT_DIR / 'model5.txt', 'w') as f:
+            f.write(model5.summary().as_text())
     
-    # except Exception as e:
-    #     print(f"✗ Model 5 failed: {e}")
-    #     models['model5'] = None
+    except Exception as e:
+        print(f"✗ Model 5 failed: {e}")
+        models['model5'] = None
     
-    # # ========================================================================
-    # # MODEL 6: + Topic FE
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 6: + Topic FE
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 6: + Year + Field + Journal + Topic Fixed Effects")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 6: + Year + Field + Journal + Topic Fixed Effects")
+    print("="*70)
     
-    # num_topics = df['primary_topic'].nunique()
-    # print(f"Formula: Model 5 + Topic FE ({num_topics:,} topics)")
+    num_topics = df['primary_topic'].nunique()
+    print(f"Formula: Model 5 + Topic FE ({num_topics:,} topics)")
     
-    # formula6 = formula5 + ' + C(primary_topic)' if models.get('model5') else None
+    formula6 = formula5 + ' + C(primary_topic)' if models.get('model5') else None
     
-    # if formula6:
-    #     try:
-    #         model6 = smf.ols(formula6, data=df).fit()
-    #         models['model6'] = model6
+    if formula6:
+        try:
+            model6 = smf.ols(formula6, data=df).fit()
+            models['model6'] = model6
             
-    #         print(f"✓ R²={model6.rsquared:.4f}, SDL coef={model6.params['SDL']:.4f} (p={model6.pvalues['SDL']:.4f})")
+            print(f"✓ R²={model6.rsquared:.4f}, SDL coef={model6.params['SDL']:.4f} (p={model6.pvalues['SDL']:.4f})")
             
-    #         with open(OUTPUT_DIR / 'model6.txt', 'w') as f:
-    #             f.write(model6.summary().as_text())
+            with open(OUTPUT_DIR / 'model6.txt', 'w') as f:
+                f.write(model6.summary().as_text())
         
-    #     except Exception as e:
-    #         print(f"✗ Model 6 failed: {e}")
-    #         models['model6'] = None
-    # else:
-    #     print("⚠️  Skipping Model 6 (Model 5 failed)")
-    #     models['model6'] = None
+        except Exception as e:
+            print(f"✗ Model 6 failed: {e}")
+            models['model6'] = None
+    else:
+        print("⚠️  Skipping Model 6 (Model 5 failed)")
+        models['model6'] = None
     
-    # return models
+    return models
 
 
 # ============================================================================

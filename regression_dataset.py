@@ -450,6 +450,7 @@
 
 # if __name__ == "__main__":
 #     df = build_regression_dataset()import pandas as pd
+
 import json, pandas as pd
 import numpy as np
 from pathlib import Path
@@ -470,6 +471,7 @@ FIELDS = {
 }
 
 AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author" / "author_metrics.csv"
+CS_TOPICS_FILE = PROJECT_DIR / "data" / "cs_topics_only.txt"  # ← NEW: Path to CS keywords file
 OUTPUT_DIR = PROJECT_DIR / "data" / "regression"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -479,6 +481,29 @@ CHUNK_SIZE = 50000
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
+def load_cs_keywords(file_path):
+    """Load CS keywords from text file into a set for fast lookup"""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        keywords = set(line.strip().lower() for line in f if line.strip())
+    return keywords
+
+
+def check_cs_topic_match(primary_topic, all_topics_str, cs_keywords_set):
+    """Check if primary topic or any topic in all_topics matches CS keywords"""
+    # Check primary topic
+    if primary_topic and primary_topic.lower().strip() in cs_keywords_set:
+        return 1
+    
+    # Check all topics
+    if all_topics_str:
+        topics = [t.strip().lower() for t in all_topics_str.split('|')]
+        for topic in topics:
+            if topic in cs_keywords_set:
+                return 1
+    
+    return 0
+
 
 def clean_author_id(author_id):
     """Remove URL prefix from author ID for lookup"""
@@ -533,16 +558,21 @@ def parse_corresponding_authors(raw_data_json):
 
 
 def parse_paper_metadata(raw_data_json):
-    """Extract topic, journal, citations, affiliations count, publication date"""
+    """Extract topics (primary + all), journal, citations, affiliations count, publication date"""
     if pd.isna(raw_data_json) or raw_data_json == '':
-        return None, None, 0, 0, None
+        return None, None, None, 0, 0, None
     
     try:
         data = json.loads(raw_data_json)
         
-        # Primary topic
+        # Topics - get ALL topics
         topics = data.get('topics', [])
         primary_topic = topics[0].get('display_name') if topics else None
+        
+        # Extract all topic names as a list
+        all_topics = [t.get('display_name') for t in topics if t.get('display_name')]
+        # Convert to pipe-separated string for CSV storage
+        all_topics_str = '|'.join(all_topics) if all_topics else None
         
         # Journal
         journal = data.get('primary_location', {}).get('source', {}).get('display_name')
@@ -564,11 +594,10 @@ def parse_paper_metadata(raw_data_json):
         
         num_paper_affiliations = len(all_institutions)
         
-        return primary_topic, journal, cited_by_count, num_paper_affiliations, publication_date
+        return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date
     
     except:
-        return None, None, 0, 0, None
-
+        return None, None, None, 0, 0, None
 
 def get_corresponding_position(first_id, last_id, corr_id, corr_ids_list):
     """Determine position of corresponding author"""
@@ -595,10 +624,9 @@ def get_corresponding_position(first_id, last_id, corr_id, corr_ids_list):
 # ============================================================================
 # PARALLEL PROCESSING FUNCTION (YEAR-LEVEL)
 # ============================================================================
-
 def process_field_year(args):
     """Process a single (field, year) combination - designed to run in parallel"""
-    field_name, field_dir, year, author_metrics_path = args
+    field_name, field_dir, year, author_metrics_path, cs_keywords_path = args
     
     tsv_file = field_dir / f"{field_name}_{year}.tsv"
     
@@ -608,6 +636,9 @@ def process_field_year(args):
     # Load author metrics (each process gets its own copy)
     author_df = pd.read_csv(author_metrics_path)
     author_df = author_df.set_index('author_id')
+    
+    # Load CS keywords (each process gets its own copy)
+    cs_keywords = load_cs_keywords(cs_keywords_path)
     
     papers = []
     total = 0
@@ -640,8 +671,16 @@ def process_field_year(args):
                     primary_corr_id, all_corr_ids = parse_corresponding_authors(row['raw_data'])
                     
                     # Parse paper metadata
-                    primary_topic, journal, cited_by_count, num_affiliations, publication_date = \
+                    primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date = \
                         parse_paper_metadata(row['raw_data'])
+                    
+                    # ← NEW: Determine CS experience for paper
+                    if field_name == 'computer_science':
+                        comp_sci_experience_paper = 1
+                    else:
+                        comp_sci_experience_paper = check_cs_topic_match(
+                            primary_topic, all_topics_str, cs_keywords
+                        )
                     
                     # Get first author metrics
                     if first_author_id in author_df.index:
@@ -709,9 +748,11 @@ def process_field_year(args):
                         # Paper-level controls
                         'num_paper_affiliations': num_affiliations,
                         'primary_topic': primary_topic or 'MISSING',
+                        'all_topics': all_topics_str or '',
                         'journal': journal or 'MISSING',
                         'cited_by_count': cited_by_count,
                         'field': field_name,
+                        'comp_sci_experience_paper': comp_sci_experience_paper,  # ← NEW COLUMN
                         
                         # First author metrics
                         'first_author_id': first_author_id,
@@ -749,7 +790,6 @@ def process_field_year(args):
     
     return field_name, year, papers, total, skipped
 
-
 # ============================================================================
 # MAIN PROCESSING
 # ============================================================================
@@ -767,18 +807,26 @@ def build_regression_dataset():
     print(f"Using up to 20 parallel processes\n")
     
     # ========================================================================
-    # STEP 1: Verify author metrics exists
+    # STEP 1: Verify files exist
     # ========================================================================
     
     print("="*80)
-    print("STEP 1: Verifying author metrics")
+    print("STEP 1: Verifying required files")
     print("="*80)
     
     if not AUTHOR_METRICS_FILE.exists():
         print(f"❌ ERROR: Author metrics file not found: {AUTHOR_METRICS_FILE}")
         sys.exit(1)
+    print(f"✓ Found: {AUTHOR_METRICS_FILE}")
     
-    print(f"✓ Found: {AUTHOR_METRICS_FILE}\n")
+    if not CS_TOPICS_FILE.exists():
+        print(f"❌ ERROR: CS keywords file not found: {CS_TOPICS_FILE}")
+        sys.exit(1)
+    print(f"✓ Found: {CS_TOPICS_FILE}")
+    
+    # Load and display CS keywords count
+    cs_keywords = load_cs_keywords(CS_TOPICS_FILE)
+    print(f"✓ Loaded {len(cs_keywords)} CS keywords\n")
     
     # ========================================================================
     # STEP 2: Build task list (field, year combinations)
@@ -796,7 +844,7 @@ def build_regression_dataset():
         
         print(f"  ✓ {field_name}: {field_dir}")
         for year in YEARS:
-            tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE))
+            tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, CS_TOPICS_FILE))
     
     print(f"\n✓ {len(tasks)} tasks ready (field × year combinations)\n")
     
@@ -880,7 +928,7 @@ def build_regression_dataset():
     print("="*80)
     
     # Save as CSV
-    csv_file = OUTPUT_DIR / "regression_dataset_full.csv"
+    csv_file = OUTPUT_DIR / "regression_dataset_full_local.csv"
     print(f"\nSaving: {csv_file}")
     df.to_csv(csv_file, index=False)
     csv_size = csv_file.stat().st_size / (1024 * 1024)
@@ -904,6 +952,13 @@ def build_regression_dataset():
     print(f"\nSDL papers:")
     print(f"  SDL papers: {df['SDL'].sum():,}")
     print(f"  Non-SDL papers: {(df['SDL'] == 0).sum():,}")
+    
+    print(f"\nCS Experience papers:")  # ← NEW STATISTICS
+    print(f"  Papers with CS experience: {df['comp_sci_experience_paper'].sum():,}")
+    print(f"  Papers without CS experience: {(df['comp_sci_experience_paper'] == 0).sum():,}")
+    
+    print(f"\nCS Experience by field:")  # ← NEW STATISTICS
+    print(df.groupby('field')['comp_sci_experience_paper'].agg(['sum', 'count', 'mean']).to_string())
     
     print(f"\nAuthor count statistics:")
     print(df['author_count'].describe())

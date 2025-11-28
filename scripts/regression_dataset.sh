@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=citation_regression
+#SBATCH --job-name=regression_dataset_creation
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=02:00:00                      
+#SBATCH --time=01:00:00                      
 #SBATCH --mem=128G                           
-#SBATCH --cpus-per-task=2               
+#SBATCH --cpus-per-task=1          
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -30,7 +30,7 @@ python --version
 echo ""
 
 # Run the regression dataset creation
-time python citation_regression_analysis.py
+time python regression_dataset.py
 
 echo ""
 echo "=========================================="
