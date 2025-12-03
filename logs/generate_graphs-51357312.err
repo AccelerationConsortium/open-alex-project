@@ -1,6 +1,0 @@
-/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:441: DtypeWarning: Columns (5,14) have mixed types. Specify dtype option on import or set low_memory=False.
-  for chunk in pd.read_csv(eng_file, sep='\t', usecols=['author_count', 'SDL'], chunksize=CHUNK_SIZE):
-/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:432: DtypeWarning: Columns (5,8) have mixed types. Specify dtype option on import or set low_memory=False.
-  for chunk in pd.read_csv(mat_file, sep='\t', usecols=['author_count', 'SDL'], chunksize=CHUNK_SIZE):
-/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py:441: DtypeWarning: Columns (5,14) have mixed types. Specify dtype option on import or set low_memory=False.
-  for chunk in pd.read_csv(eng_file, sep='\t', usecols=['author_count', 'SDL'], chunksize=CHUNK_SIZE):

@@ -3,8 +3,12 @@
 1. [Tech Stack](#tech-stack)
 2. [Data Retrieval from Open Alex API 2012-2025](#data-retrieval-from-open-alex-api-2012---2025)
 3. [Classifying Papers as SDL](#classifying-papers-as-sdl)
-4. [Classifying AI/Robotics Papers](#tech-stack)
-5. [Graphing Team Size Comparison-SDL v Non SDL](#graphing-team-size-comparison---sdl-v-non-sdl)
+4. [Classifying AI Robotics Papers](#tech-stack)
+5. [Graphing Team Size Comparison: SDL v Non SDL](#graphing-team-size-comparison-sdl-v-non-sdl)
+6. [Creating a Regression Dataset](#creating-a-regression-dataset)
+
+
+
 # Tech Stack
 
 - Python 
@@ -82,7 +86,7 @@ python sdl_matching.py
 
 The `SDL` column in the TSV files is updated to `1` for papers that match the SDL database.
 
-# Classifying Papers as AI/Robotics
+# Classifying Papers as AI Robotics
 
 This section explains how to identify and mark papers related to AI or Robotics. Two lists of AI and Robotics keywords were created and these are compared against abstracts from all papers. If a keyword match is found then that paper is classified as AI/Robotics respectively.
 
@@ -119,7 +123,7 @@ Two new columns are added to the TSV files:
 - `number_of_AI_words` (or `number_of_Robotics_words`) - count of keyword matches
 - `AI_Paper` (or `Robotics_Paper`) - set to `1` if match found
 
-# Graphing Team Size Comparison-SDL v Non SDL
+# Graphing Team Size Comparison: SDL v Non SDL
 
 This section explains how to reproduce graph which show a comparison of team sizes (author counts variable) between SDL papers and various comparison groups through different filtering options.
 
@@ -133,7 +137,8 @@ The script has 6 different graphs based on different filters for the non SDL dat
 3. Option 3: Same Topics: Compares SDL papers against non-SDL papers from the same research topics.
 4. Option 4: SDL vs AI Papers: Compares SDL papers against AI papers (excluding any papers that are both SDL and AI).
 5.  Option 5: SDL vs Robotics Papers: Compares SDL papers against Robotics papers (excluding any papers that are both SDL and Robotics).
-6. Option 6: Same Journals AND Topics: Compares SDL papers against non-SDL papers that match both the same journals AND the same topics.
+6. Option 6: Same Journals and Topics: Compares SDL papers against non-SDL papers that match both the same journals AND the same topics.
+7. Option 7: SDL vs (AI and Robotics) papersL Compares SDL papers against non-SDL papers that are both robotics and AI papers.
 
 ## Running the Script
 
@@ -141,3 +146,6 @@ To run the analysis:
 ```bash
 python team_size_analysis.py
 ```
+
+# Creating a Regression Dataset
+

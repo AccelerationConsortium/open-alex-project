@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=graphs_for_COMPSCI5
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=4:30:00                      
-#SBATCH --mem=128G                           
+#SBATCH --time=0:30:00                      
+#SBATCH --mem=32G                           
 #SBATCH --cpus-per-task=1                  
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
