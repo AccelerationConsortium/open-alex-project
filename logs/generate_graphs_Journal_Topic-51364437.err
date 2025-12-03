@@ -1,4 +1,0 @@
-  File "/lustre06/project/6109420/hridansh/openalex_project/SDL_comparison_graph.py", line 483
-    eng_file = os.path.join(DATA_DIR, "engineering", f"engineering_{year}.tsv")
-                                                                               ^
-IndentationError: unindent does not match any outer indentation level
