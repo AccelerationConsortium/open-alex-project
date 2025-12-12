@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=regression_dataset_creation
+#SBATCH --job-name=lasso_regression_features
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=03:00:00                      
+#SBATCH --time=1:00:00                      
 #SBATCH --mem=256G                           
-#SBATCH --cpus-per-task=10       
+#SBATCH --cpus-per-task=1      
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
 echo "=========================================="
-echo "Creating Regression Dataset"
+echo "Lasso Regression Dataset"
 echo "Started at: $(date)"
 echo "Job ID: $SLURM_JOB_ID"
 echo "Running on node: $(hostname)"
@@ -17,6 +17,7 @@ echo "=========================================="
 # Load Python and activate environment
 module load python/3.11
 source ~/openalex_env/bin/activate
+
 
 # module load python/3.10.13
 # source ~/venvs/regression_env/bin/activate
@@ -30,7 +31,7 @@ python --version
 echo ""
 
 # Run the regression dataset creation
-time python regression_dataset.py
+time python lasso_regression.py
 
 echo ""
 echo "=========================================="

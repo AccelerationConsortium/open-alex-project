@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=sampleExtract_AuthorsAffiliationseda
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=1:00:00                      
-#SBATCH --mem=128G                           
+#SBATCH --time=5:00:00                      
+#SBATCH --mem=256G                           
 #SBATCH --cpus-per-task=1                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
@@ -19,7 +19,7 @@ module load python/3.11
 source ~/openalex_env/bin/activate
 
 # Navigate to project directory
-cd /project/def-kmcel/hridansh/openalex_project
+cd /project/def-kmcel/hridansh/openalex_project/py_code
 
 # Print Python info
 echo ""

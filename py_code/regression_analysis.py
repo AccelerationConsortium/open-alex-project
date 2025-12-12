@@ -16,17 +16,13 @@ import sys
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # Input files
-FULL_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset_full.csv"
+FULL_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset.csv"
 SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
-SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_topics.txt"
+SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_primary_topics.txt"
 
 # Output directory
 OUTPUT_DIR = PROJECT_DIR / "data/test"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-# ============================================================================
-# FILTER SETTINGS - CHANGE THESE
-# ============================================================================
 
 FILTER_CONFIG = {
     # Which filters to apply
@@ -443,69 +439,69 @@ def run_subsample_models(df):
         C(primary_topic)
     '''
     
-    # # ========================================================================
-    # # MODEL 21: AI Papers Only
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 21: AI Papers Only
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 21: AI Papers Only")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 21: AI Papers Only")
+    print("="*70)
     
-    # df_ai = df[df['AI_Paper'] == 1].copy()
+    df_ai = df[df['AI_Paper'] == 1].copy()
     
-    # print(f"\nAI Papers subsample:")
-    # print(f"   Total: {len(df_ai):,}")
-    # print(f"   SDL: {(df_ai['SDL'] == 1).sum()}")
-    # print(f"   Non-SDL: {(df_ai['SDL'] == 0).sum()}")
+    print(f"\nAI Papers subsample:")
+    print(f"   Total: {len(df_ai):,}")
+    print(f"   SDL: {(df_ai['SDL'] == 1).sum()}")
+    print(f"   Non-SDL: {(df_ai['SDL'] == 0).sum()}")
     
-    # if len(df_ai) > 0:
-    #     try:
-    #         model21 = smf.ols(base_formula, data=df_ai).fit()
-    #         models['model21'] = model21
+    if len(df_ai) > 0:
+        try:
+            model21 = smf.ols(base_formula, data=df_ai).fit()
+            models['model21'] = model21
             
-    #         print(f"\n{model21.summary()}")
+            print(f"\n{model21.summary()}")
             
-    #         with open(OUTPUT_DIR / 'model21_ai_only.txt', 'w') as f:
-    #             f.write(model21.summary().as_text())
+            with open(OUTPUT_DIR / 'model21_ai_only.txt', 'w') as f:
+                f.write(model21.summary().as_text())
         
-    #     except Exception as e:
-    #         print(f"✗ Model 21 failed: {e}")
-    #         models['model21'] = None
-    # else:
-    #     print("✗ No AI papers in sample")
-    #     models['model21'] = None
+        except Exception as e:
+            print(f"✗ Model 21 failed: {e}")
+            models['model21'] = None
+    else:
+        print("✗ No AI papers in sample")
+        models['model21'] = None
     
-    # # ========================================================================
-    # # MODEL 22: Robotics Papers Only
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 22: Robotics Papers Only
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 22: Robotics Papers Only")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 22: Robotics Papers Only")
+    print("="*70)
     
-    # df_robotics = df[df['Robotics_Paper'] == 1].copy()
+    df_robotics = df[df['Robotics_Paper'] == 1].copy()
     
-    # print(f"\nRobotics Papers subsample:")
-    # print(f"   Total: {len(df_robotics):,}")
-    # print(f"   SDL: {(df_robotics['SDL'] == 1).sum()}")
-    # print(f"   Non-SDL: {(df_robotics['SDL'] == 0).sum()}")
+    print(f"\nRobotics Papers subsample:")
+    print(f"   Total: {len(df_robotics):,}")
+    print(f"   SDL: {(df_robotics['SDL'] == 1).sum()}")
+    print(f"   Non-SDL: {(df_robotics['SDL'] == 0).sum()}")
     
-    # if len(df_robotics) > 0:
-    #     try:
-    #         model22 = smf.ols(base_formula, data=df_robotics).fit()
-    #         models['model22'] = model22
+    if len(df_robotics) > 0:
+        try:
+            model22 = smf.ols(base_formula, data=df_robotics).fit()
+            models['model22'] = model22
             
-    #         print(f"\n{model22.summary()}")
+            print(f"\n{model22.summary()}")
             
-    #         with open(OUTPUT_DIR / 'model22_robotics_only.txt', 'w') as f:
-    #             f.write(model22.summary().as_text())
+            with open(OUTPUT_DIR / 'model22_robotics_only.txt', 'w') as f:
+                f.write(model22.summary().as_text())
         
-    #     except Exception as e:
-    #         print(f"✗ Model 22 failed: {e}")
-    #         models['model22'] = None
-    # else:
-    #     print("✗ No Robotics papers in sample")
-    #     models['model22'] = None
+        except Exception as e:
+            print(f"✗ Model 22 failed: {e}")
+            models['model22'] = None
+    else:
+        print("✗ No Robotics papers in sample")
+        models['model22'] = None
     
     # ========================================================================
     # MODEL 23: AI + Robotics Combined
@@ -554,113 +550,113 @@ def run_subsample_models(df):
         print("✗ No AI/Robotics papers in sample")
         models['model23'] = None
     
-    # # ========================================================================
-    # # MODEL 24: AI × SDL Interaction
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 24: AI × SDL Interaction
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 24: AI × SDL Interaction")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 24: AI × SDL Interaction")
+    print("="*70)
     
-    # formula24 = '''
-    #     author_count ~ SDL * AI_Paper +
-    #     num_paper_affiliations +
-    #     asinh_first_author_papers +
-    #     asinh_first_author_citations +
-    #     asinh_last_author_papers +
-    #     asinh_last_author_citations +
-    #     C(publication_year) +
-    #     C(field) +
-    #     C(journal) +
-    #     C(primary_topic)
-    # '''
+    formula24 = '''
+        author_count ~ SDL * AI_Paper +
+        num_paper_affiliations +
+        asinh_first_author_papers +
+        asinh_first_author_citations +
+        asinh_last_author_papers +
+        asinh_last_author_citations +
+        C(publication_year) +
+        C(field) +
+        C(journal) +
+        C(primary_topic)
+    '''
     
-    # print(f"\nFormula: SDL × AI_Paper interaction\n")
+    print(f"\nFormula: SDL × AI_Paper interaction\n")
     
-    # try:
-    #     model24 = smf.ols(formula24, data=df).fit()
-    #     models['model24'] = model24
+    try:
+        model24 = smf.ols(formula24, data=df).fit()
+        models['model24'] = model24
         
-    #     print(model24.summary())
+        print(model24.summary())
         
-    #     with open(OUTPUT_DIR / 'model24_ai_interaction.txt', 'w') as f:
-    #         f.write(model24.summary().as_text())
+        with open(OUTPUT_DIR / 'model24_ai_interaction.txt', 'w') as f:
+            f.write(model24.summary().as_text())
     
-    # except Exception as e:
-    #     print(f"✗ Model 24 failed: {e}")
-    #     models['model24'] = None
+    except Exception as e:
+        print(f"✗ Model 24 failed: {e}")
+        models['model24'] = None
     
-    # # ========================================================================
-    # # MODEL 25: Robotics × SDL Interaction
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 25: Robotics × SDL Interaction
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 25: Robotics × SDL Interaction")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 25: Robotics × SDL Interaction")
+    print("="*70)
     
-    # formula25 = '''
-    #     author_count ~ SDL * Robotics_Paper +
-    #     num_paper_affiliations +
-    #     asinh_first_author_papers +
-    #     asinh_first_author_citations +
-    #     asinh_last_author_papers +
-    #     asinh_last_author_citations +
-    #     C(publication_year) +
-    #     C(field) +
-    #     C(journal) +
-    #     C(primary_topic)
-    # '''
+    formula25 = '''
+        author_count ~ SDL * Robotics_Paper +
+        num_paper_affiliations +
+        asinh_first_author_papers +
+        asinh_first_author_citations +
+        asinh_last_author_papers +
+        asinh_last_author_citations +
+        C(publication_year) +
+        C(field) +
+        C(journal) +
+        C(primary_topic)
+    '''
     
-    # print(f"\nFormula: SDL × Robotics_Paper interaction\n")
+    print(f"\nFormula: SDL × Robotics_Paper interaction\n")
     
-    # try:
-    #     model25 = smf.ols(formula25, data=df).fit()
-    #     models['model25'] = model25
+    try:
+        model25 = smf.ols(formula25, data=df).fit()
+        models['model25'] = model25
         
-    #     print(model25.summary())
+        print(model25.summary())
         
-    #     with open(OUTPUT_DIR / 'model25_robotics_interaction.txt', 'w') as f:
-    #         f.write(model25.summary().as_text())
+        with open(OUTPUT_DIR / 'model25_robotics_interaction.txt', 'w') as f:
+            f.write(model25.summary().as_text())
     
-    # except Exception as e:
-    #     print(f"✗ Model 25 failed: {e}")
-    #     models['model25'] = None
+    except Exception as e:
+        print(f"✗ Model 25 failed: {e}")
+        models['model25'] = None
     
-    # # ========================================================================
-    # # MODEL 26: Three-Way Interaction
-    # # ========================================================================
+    # ========================================================================
+    # MODEL 26: Three-Way Interaction
+    # ========================================================================
     
-    # print(f"\n{'='*70}")
-    # print("MODEL 26: SDL × AI × Robotics Three-Way Interaction")
-    # print("="*70)
+    print(f"\n{'='*70}")
+    print("MODEL 26: SDL × AI × Robotics Three-Way Interaction")
+    print("="*70)
     
-    # formula26 = '''
-    #     author_count ~ SDL * AI_Paper * Robotics_Paper +
-    #     num_paper_affiliations +
-    #     asinh_first_author_papers +
-    #     asinh_first_author_citations +
-    #     asinh_last_author_papers +
-    #     asinh_last_author_citations +
-    #     C(publication_year) +
-    #     C(field) +
-    #     C(journal) +
-    #     C(primary_topic)
-    # '''
+    formula26 = '''
+        author_count ~ SDL * AI_Paper * Robotics_Paper +
+        num_paper_affiliations +
+        asinh_first_author_papers +
+        asinh_first_author_citations +
+        asinh_last_author_papers +
+        asinh_last_author_citations +
+        C(publication_year) +
+        C(field) +
+        C(journal) +
+        C(primary_topic)
+    '''
     
-    # print(f"\nFormula: SDL × AI_Paper × Robotics_Paper three-way interaction\n")
+    print(f"\nFormula: SDL × AI_Paper × Robotics_Paper three-way interaction\n")
     
-    # try:
-    #     model26 = smf.ols(formula26, data=df).fit()
-    #     models['model26'] = model26
+    try:
+        model26 = smf.ols(formula26, data=df).fit()
+        models['model26'] = model26
         
-    #     print(model26.summary())
+        print(model26.summary())
         
-    #     with open(OUTPUT_DIR / 'model26_threeway_interaction.txt', 'w') as f:
-    #         f.write(model26.summary().as_text())
+        with open(OUTPUT_DIR / 'model26_threeway_interaction.txt', 'w') as f:
+            f.write(model26.summary().as_text())
     
-    # except Exception as e:
-    #     print(f"✗ Model 26 failed: {e}")
-    #     models['model26'] = None
+    except Exception as e:
+        print(f"✗ Model 26 failed: {e}")
+        models['model26'] = None
     
     return models
 
@@ -848,19 +844,19 @@ def main():
     baseline_models = run_regressions(df)
     all_models.update(baseline_models)
     
-    # # Corresponding author models (8-9)
-    # print(f"\n{'#'*70}")
-    # print("# PART 2: CORRESPONDING AUTHOR MODELS (8-9)")
-    # print(f"{'#'*70}")
-    # corr_models = run_corresponding_author_models(df)
-    # all_models.update(corr_models)
+    # Corresponding author models (8-9)
+    print(f"\n{'#'*70}")
+    print("# PART 2: CORRESPONDING AUTHOR MODELS (8-9)")
+    print(f"{'#'*70}")
+    corr_models = run_corresponding_author_models(df)
+    all_models.update(corr_models)
     
-    # # AI/Robotics subsample models (21-26)
-    # print(f"\n{'#'*70}")
-    # print("# PART 3: AI/ROBOTICS SUBSAMPLE MODELS (21-26)")
-    # print(f"{'#'*70}")
-    # subsample_models = run_subsample_models(df)
-    # all_models.update(subsample_models)
+    # AI/Robotics subsample models (21-26)
+    print(f"\n{'#'*70}")
+    print("# PART 3: AI/ROBOTICS SUBSAMPLE MODELS (21-26)")
+    print(f"{'#'*70}")
+    subsample_models = run_subsample_models(df)
+    all_models.update(subsample_models)
     
     # ========================================================================
     # Create summary tables

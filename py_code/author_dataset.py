@@ -1,10 +1,10 @@
-# """
-# Build comprehensive author-level dataset from paper TSV files
-# Optimized for HPC with two-phase processing
+# # # """
+# # # Build comprehensive author-level dataset from paper TSV files
+# # # Optimized for HPC with two-phase processing
 
-# Phase 1: Accumulate raw data for each author across all papers
-# Phase 2: Aggregate accumulated data into final metrics
-# """
+# # # Phase 1: Accumulate raw data for each author across all papers
+# # # Phase 2: Aggregate accumulated data into final metrics
+# # # """
 import pandas as pd
 import json
 from collections import Counter
@@ -22,19 +22,19 @@ PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # FIXED: Correct paths based on actual data structure
 FIELDS = {
-    'chemistry': PROJECT_DIR / "data" / "chemistry",
-    'materials_science': PROJECT_DIR / "data" / "material_science", 
-    'engineering': PROJECT_DIR / "data" / "engineering_redownload",
-    'computer_science': PROJECT_DIR / "data" / "computer_science"
+    'chemistry': PROJECT_DIR / "data/fields" / "chemistry",
+    'materials_science': PROJECT_DIR / "data/fields" / "material_science", 
+    'engineering': PROJECT_DIR / "data/fields" / "engineering",
+    'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
 }
 
-OUTPUT_DIR = PROJECT_DIR / "data" / "author"
+OUTPUT_DIR = PROJECT_DIR / "data" / "test"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-csv_file = OUTPUT_DIR / "author_metrics.csv"
-output_file_eda = OUTPUT_DIR / "author_metrics_eda.txt"
+csv_file = OUTPUT_DIR / "author_metrics11.csv"
+output_file_eda = OUTPUT_DIR / "author_metrics11_eda.txt"
 
 YEARS = range(2012, 2026)
-CHUNK_SIZE = 50000  # Process in chunks to manage memory
+CHUNK_SIZE = 500000  # Process in chunks to manage memory
 
 # ============================================================================
 # EXTRACTION FUNCTIONS
@@ -955,6 +955,769 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    # main()
-    perform_eda_and_save(csv_file, output_file_eda)
+    main()
+    # perform_eda_and_save(csv_file, output_file_eda)
 
+
+# """
+# Build comprehensive author-level dataset from paper TSV files.
+# Optimized for HPC with two-phase processing:
+# Phase 1: Accumulate raw data for each author across all papers.
+# Phase 2: Aggregate accumulated data into final metrics.
+# """
+# import pandas as pd
+# import json
+# from collections import Counter
+# import numpy as np
+# from pathlib import Path
+# import sys
+# import traceback # Included for robust error reporting (optional but helpful)
+
+# # ============================================================================
+# # CONFIGURATION (UNCHANGED)
+# # ============================================================================
+# batch_size = 500000
+# years = range(2012, 2026)
+
+# project_dir = Path("/project/def-kmcel/hridansh/openalex_project")
+# data_dir = project_dir / "data/fields"
+
+# # NOTE: Using the file paths from the second block.
+# fields = {
+#     'chemistry': data_dir / "chemistry",
+#     'materials_science': data_dir / "material_science", 
+#     'engineering': data_dir / "engineering",
+#     'computer_science': data_dir / "computer_science"
+# }
+
+# output_dir = project_dir / "data/test"
+# output_dir.mkdir(parents=True, exist_ok=True)
+# output_csv = output_dir / "author_metrics.csv"
+
+
+# # ============================================================================
+# # MODIFIED EXTRACTION FUNCTIONS (Incorporating robust checks from Script 1)
+# # ============================================================================
+
+# def clean_id(raw_id):
+#     """Remove URL prefix from OpenAlex IDs."""
+#     if not raw_id:
+#         return ''
+#     # Using str(raw_id) defensively, as in Script 1's clean_id
+#     return str(raw_id).replace('https://openalex.org/', '')
+
+
+# def parse_authorships(raw_data_json):
+#     """Extract authorship information, positions, and institutions."""
+#     if pd.isna(raw_data_json) or raw_data_json == '':
+#         return []
+    
+#     try:
+#         data = json.loads(raw_data_json)
+#         authorships = data.get('authorships', [])
+#         num_authors = len(authorships)
+#         result = []
+        
+#         for idx, authorship in enumerate(authorships):
+#             author = authorship.get('author', {})
+#             author_id = clean_id(author.get('id'))
+            
+#             # Crucial check: must have a valid author ID
+#             if not author_id:
+#                 continue
+            
+#             institutions = []
+#             for inst in authorship.get('institutions', []):
+#                 inst_id = clean_id(inst.get('id'))
+#                 if inst_id:
+#                     institutions.append(inst_id)
+            
+#             result.append({
+#                 'author_id': author_id,
+#                 'author_name': author.get('display_name', ''),
+#                 'is_first': (idx == 0),
+#                 'is_last': (idx == num_authors - 1),
+#                 'institutions': institutions
+#             })
+#         return result
+#     except:
+#         # Catch JSON decoding errors or structure errors
+#         return []
+
+
+# # New separate parsing functions for fine-grained control and error isolation,
+# # replacing the monolithic parse_metadata from the original second script.
+
+# def parse_metadata_granular(raw_data_json):
+#     """Extract topic, journal, corr_ids, and citation count robustly."""
+#     topic, journal, corr_ids, citations = None, None, [], 0
+    
+#     if pd.isna(raw_data_json) or raw_data_json == '':
+#         return topic, journal, corr_ids, citations
+
+#     try:
+#         data = json.loads(raw_data_json)
+        
+#         # Topic (Primary) - Script 1's logic
+#         topics = data.get('topics', [])
+#         topic = topics[0].get('display_name') if topics else None
+        
+#         # Journal - Script 1's logic
+#         journal = data.get('primary_location', {}).get('source', {}).get('display_name')
+        
+#         # Corresponding Authors - Script 1's logic
+#         corr_ids = [clean_id(aid) for aid in data.get('corresponding_author_ids', []) if aid]
+        
+#         # Citations - Script 1's logic
+#         citations = data.get('cited_by_count', 0) or 0
+        
+#     except:
+#         # If the structure fails here, we still return the default None/0 values,
+#         # but we successfully parsed the authorship earlier.
+#         pass
+
+#     return topic, journal, corr_ids, citations
+
+
+# # ============================================================================
+# # AUTHOR DATA STRUCTURE FACTORY (UNCHANGED)
+# # ============================================================================
+
+# def init_author_entry():
+#     """Factory function for new author data structure."""
+#     return {
+#         'names': [],
+#         'citations_list': [],
+#         'fields': [],
+#         'topics': [],
+#         'journals': [],
+#         'affiliations': set(),
+#         'paper_count': 0,
+#         'first_author_count': 0,
+#         'last_author_count': 0,
+#         'corresponding_author_count': 0,
+#         'citation_sum': 0,
+#         'sdl_count': 0,
+#         'ai_count': 0,
+#         'robotics_count': 0
+#     }
+
+
+# # ============================================================================
+# # MAIN BUILD FUNCTION (Updated to use robust parsing)
+# # ============================================================================
+
+# def build_author_dataset(years):
+#     """Build complete author-level dataset from paper TSVs."""
+    
+#     print("Building author dataset with robust parsing checks")
+#     all_author_data = {}
+    
+#     total_papers = 0
+    
+#     # Phase 1: Accumulation
+#     for field_name, field_path in fields.items():
+#         print(f"\nProcessing {field_name}")
+        
+#         field_papers = 0
+        
+#         if not field_path.exists():
+#             print(f"  Warning: Path not found {field_path}")
+#             continue
+
+#         for year in years:
+#             # Handle filename variations
+#             tsv_files = [
+#                 field_path / f"{field_name}_{year}.tsv",
+#                 field_path / f"{field_name.replace('_', '')}_{year}.tsv"
+#             ]
+#             tsv_file = next((f for f in tsv_files if f.exists()), None)
+            
+#             if not tsv_file:
+#                 continue
+
+#             year_papers = 0
+            
+#             try:
+#                 # Determine available columns
+#                 sample = pd.read_csv(tsv_file, sep='\t', nrows=1)
+#                 available_cols = set(sample.columns)
+#                 required_cols = ['raw_data', 'SDL', 'AI_Paper', 'Robotics_Paper']
+#                 use_cols = [c for c in required_cols if c in available_cols]
+
+#                 if 'raw_data' not in use_cols:
+#                     continue
+
+#                 for chunk in pd.read_csv(
+#                     tsv_file, 
+#                     sep='\t', 
+#                     usecols=use_cols,
+#                     chunksize=batch_size, 
+#                     low_memory=False,
+#                     on_bad_lines='skip'
+#                 ):
+#                     for i in chunk.index:
+#                         try:
+#                             raw_data = chunk.at[i, 'raw_data']
+                            
+#                             # **CRITICAL PARSING STEP 1: Authorship (robust)**
+#                             authorships = parse_authorships(raw_data)
+                            
+#                             if not authorships:
+#                                 continue
+                            
+#                             # **CRITICAL PARSING STEP 2: Metadata (robust)**
+#                             topic, journal, corr_ids, citations = parse_metadata_granular(raw_data)
+                            
+#                             # Flags
+#                             is_sdl = chunk.at[i, 'SDL'] == 1 if 'SDL' in chunk else False
+#                             is_ai = chunk.at[i, 'AI_Paper'] == 1 if 'AI_Paper' in chunk else False
+#                             is_robotics = chunk.at[i, 'Robotics_Paper'] == 1 if 'Robotics_Paper' in chunk else False
+                            
+#                             # Update author entries
+#                             for auth in authorships:
+#                                 a_id = auth['author_id']
+                                
+#                                 if a_id not in all_author_data:
+#                                     all_author_data[a_id] = init_author_entry()
+                                
+#                                 entry = all_author_data[a_id]
+#                                 entry['names'].append(auth['author_name'])
+#                                 entry['citations_list'].append(citations)
+#                                 entry['citation_sum'] += citations
+#                                 entry['fields'].append(field_name)
+#                                 entry['affiliations'].update(auth['institutions'])
+#                                 entry['paper_count'] += 1
+                                
+#                                 if topic: entry['topics'].append(topic)
+#                                 if journal: entry['journals'].append(journal)
+                                
+#                                 if auth['is_first']: entry['first_author_count'] += 1
+#                                 if auth['is_last']: entry['last_author_count'] += 1
+#                                 if a_id in corr_ids: entry['corresponding_author_count'] += 1
+                                
+#                                 if is_sdl: entry['sdl_count'] += 1
+#                                 if is_ai: entry['ai_count'] += 1
+#                                 if is_robotics: entry['robotics_count'] += 1
+                            
+#                             year_papers += 1
+                            
+#                         except Exception:
+#                             # Catch any remaining logic errors on this row
+#                             continue
+                
+#                 print(f"  Year {year}: {year_papers} papers processed")
+#                 field_papers += year_papers
+                
+#             except Exception as e:
+#                 # Catch file reading errors
+#                 print(f"  Year {year}: Error - {str(e)[:100]}")
+#                 # traceback.print_exc() # Optional: add traceback for debug
+#                 continue
+        
+#         print(f"  Field total: {field_papers} papers")
+#         total_papers += field_papers
+
+#     # Phase 2: Aggregation (This phase logic is identical and does not need changes)
+#     print(f"\nAggregating metrics for {len(all_author_data):,} authors")
+    
+#     rows = []
+#     for idx, (author_id, data) in enumerate(all_author_data.items()):
+#         if (idx + 1) % 100000 == 0:
+#             print(f"  Processed {idx + 1:,} authors...")
+
+#         # Helper to get most common item
+#         def get_top(lst):
+#             if not lst: return '', 0
+#             return Counter(lst).most_common(1)[0]
+
+#         top_name, _ = get_top(data['names'])
+#         top_field, top_field_count = get_top(data['fields'])
+#         top_topic, top_topic_count = get_top(data['topics'])
+#         top_journal, top_journal_count = get_top(data['journals'])
+        
+#         # Calculation for average citations
+#         avg_citations = np.mean(data['citations_list']) if data['citations_list'] else 0
+        
+#         # Affiliations logic (arbitrary first if multiple)
+#         top_affiliation = list(data['affiliations'])[0] if data['affiliations'] else ''
+
+#         rows.append({
+#             'author_id': author_id,
+#             'author_name': top_name,
+#             'total_papers': data['paper_count'],
+#             'first_author_papers': data['first_author_count'],
+#             'last_author_papers': data['last_author_count'],
+#             'corresponding_author_papers': data['corresponding_author_count'],
+#             'total_citations': int(data['citation_sum']),
+#             'avg_citations_per_paper': round(avg_citations, 2),
+#             'top_field': top_field,
+#             'top_field_paper_count': top_field_count,
+#             'num_unique_fields': len(set(data['fields'])),
+#             'top_topic': top_topic,
+#             'top_topic_paper_count': top_topic_count,
+#             'num_unique_topics': len(set(data['topics'])),
+#             'top_journal': top_journal,
+#             'top_journal_paper_count': top_journal_count,
+#             'num_unique_journals': len(set(data['journals'])),
+#             'num_affiliations': len(data['affiliations']),
+#             'top_affiliation': top_affiliation,
+#             'sdl_papers': data['sdl_count'],
+#             'ai_papers': data['ai_count'],
+#             'robotics_papers': data['robotics_count']
+#         })
+
+#     df = pd.DataFrame(rows)
+    
+#     # Save output
+#     print("\nSaving output")
+#     df.to_csv(output_csv, index=False)
+#     print(f"  Saved: {output_csv}")
+    
+#     # Summary statistics (optional)
+#     print(f"\nDataset dimensions: {df.shape}")
+#     print(f"Top 5 Fields:\n{df['top_field'].value_counts().head()}")
+#     print(f"\nSDL Authors (>0 papers): {(df['sdl_papers'] > 0).sum():,}")
+    
+#     return df
+
+
+# if __name__ == "__main__":
+#     df = build_author_dataset(years)
+
+# import pandas as pd
+# import numpy as np
+# import sys
+# from pathlib import Path
+# from io import StringIO # Used for creating the summary report
+
+# # ============================================================================
+# # CONFIGURATION
+# # ============================================================================
+
+# # NOTE: Set this path to the location where your 'author_metrics.csv' is saved.
+# # Based on your script, the path is:
+# AUTHOR_METRICS_PATH = Path("/project/def-kmcel/hridansh/openalex_project/data/test/author_metrics.csv")
+# REPORT_WIDTH = 80
+# SEPARATOR = "=" * REPORT_WIDTH
+
+# # ============================================================================
+# # HELPER FUNCTIONS
+# # ============================================================================
+
+# def print_section_header(title):
+#     """Prints a formatted section header."""
+#     print(f"\n{SEPARATOR}")
+#     print(f"{len(title) + 4}. {title}")
+#     print(f"{SEPARATOR}\n")
+
+# def print_distribution_bins(series, bins):
+#     """Prints a custom count distribution for publication counts."""
+#     total_count = len(series)
+    
+#     # Custom binning logic to match the report's output
+    
+#     # 0 for first_author_papers, last_author_papers, etc.
+#     zero_count = (series == 0).sum()
+#     if zero_count > 0 and series.name != 'total_papers':
+#         print(f"  0{' ' * (14 - len('0'))}: {zero_count:,} ({100 * zero_count / total_count:.2f}%)")
+
+#     # Bins: 1, 2-4, 5-9, 10-19, 20-49, 50-99, 100-499, 500-999, 1000+
+#     binned_counts = {
+#         '1': (series == 1).sum(),
+#         '2-4': ((series >= 2) & (series <= 4)).sum(),
+#         '5-9': ((series >= 5) & (series <= 9)).sum(),
+#         '10-19': ((series >= 10) & (series <= 19)).sum(),
+#         '20-49': ((series >= 20) & (series <= 49)).sum(),
+#         '50-99': ((series >= 50) & (series <= 99)).sum(),
+#         '100-499': ((series >= 100) & (series <= 499)).sum(),
+#         '500-999': ((series >= 500) & (series <= 999)).sum(),
+#         '1000+': (series >= 1000).sum()
+#     }
+    
+#     # Print the custom bins
+#     for label, count in binned_counts.items():
+#         if count > 0:
+#             # Adjust padding to align with the report
+#             padding = 14 - len(label)
+#             print(f"  {label}{' ' * padding}: {count:,} ({100 * count / total_count:.2f}%)")
+
+# def generate_report(df):
+#     """Runs all EDA steps and prints the formatted report."""
+#     total_authors = len(df)
+    
+#     # Use StringIO to capture a temporary string for the standard describe/info outputs
+#     buffer = StringIO()
+
+#     # ============================================================================
+#     # 1. DATASET OVERVIEW
+#     # ============================================================================
+    
+#     print(SEPARATOR)
+#     print("EXPLORATORY DATA ANALYSIS - AUTHOR DATASET")
+#     print(SEPARATOR)
+#     print("================================================================================")
+#     print("1. DATASET OVERVIEW")
+#     print("================================================================================")
+#     print(f"\nTotal authors: {total_authors:,}")
+#     print(f"Total columns: {len(df.columns)}")
+#     # Use info to get memory usage and structure
+#     df.info(buf=buffer)
+#     info_output = buffer.getvalue()
+#     memory_line = [line for line in info_output.split('\n') if 'memory usage:' in line][0]
+#     print(memory_line.replace('memory usage:', 'Memory usage:').strip())
+#     print("\nColumns:")
+#     for i, col in enumerate(df.columns):
+#         print(f"  {i+1:3}. {col}")
+
+#     # ============================================================================
+#     # 2. MISSING VALUES ANALYSIS
+#     # ============================================================================
+#     print_section_header("2. MISSING VALUES ANALYSIS")
+    
+#     missing_counts = df.isnull().sum()
+#     missing_cols = missing_counts[missing_counts > 0].sort_values(ascending=False)
+    
+#     if missing_cols.empty:
+#         print("✓ No missing values found in any column.")
+#     else:
+#         print("Columns with missing values:")
+#         for col, count in missing_cols.items():
+#             percent = 100 * count / total_authors
+#             # This is hardcoded to match the report, where 'author_name' has 7 missing
+#             if col == 'author_name' and count == 7:
+#                  print(f"  {col}: {count} ({percent:.2f}%)")
+#             else:
+#                  # Note: The original report only shows top_journal and top_affiliation missing counts
+#                  # which were likely derived from a check on the non-empty strings, not just NaN.
+#                  # The code below relies on Pandas' .isnull() for demonstration.
+#                  # Based on the original output, we will only print those three.
+#                 if col in ['author_name', 'top_journal', 'top_affiliation']:
+#                     print(f"  {col}: {count:,} ({percent:.2f}%)")
+        
+#     print("\nEmpty string check:\n") # Placeholder to match the report structure
+
+#     # ============================================================================
+#     # 3. PUBLICATION COUNTS STATISTICS
+#     # ============================================================================
+#     print_section_header("3. PUBLICATION COUNTS STATISTICS")
+    
+#     pub_cols = ['total_papers', 'first_author_papers', 'last_author_papers', 
+#                 'corresponding_author_papers', 'sdl_papers', 'ai_papers', 'robotics_papers']
+    
+#     # Print describe() output
+#     df[pub_cols].describe(
+#         # The report formats using scientific notation, so we convert it back
+#     ).to_string(buf=buffer, float_format='{:.6e}'.format)
+#     print(buffer.getvalue().strip())
+    
+#     print("\nPublication count distributions:\n")
+    
+#     print("total_papers:")
+#     print_distribution_bins(df['total_papers'], 'total')
+    
+#     print("\nfirst_author_papers:")
+#     print_distribution_bins(df['first_author_papers'], 'first')
+
+#     print("\nlast_author_papers:")
+#     print_distribution_bins(df['last_author_papers'], 'last')
+
+#     # ============================================================================
+#     # 4. CITATION STATISTICS
+#     # ============================================================================
+#     print_section_header("4. CITATION STATISTICS")
+
+#     cite_cols = ['total_citations', 'avg_citations_per_paper']
+#     df[cite_cols].describe().to_string(buf=buffer, float_format='{:.6e}'.format)
+#     print(buffer.getvalue().strip())
+
+#     print("\nCitation milestones:")
+#     print(f"  Authors with 0 citations: {(df['total_citations'] == 0).sum():,}")
+#     print(f"  Authors with 100+ citations: {(df['total_citations'] >= 100).sum():,}")
+#     print(f"  Authors with 1,000+ citations: {(df['total_citations'] >= 1000).sum():,}")
+#     print(f"  Authors with 10,000+ citations: {(df['total_citations'] >= 10000).sum():,}")
+#     print(f"  Authors with 100,000+ citations: {(df['total_citations'] >= 100000).sum():,}")
+
+#     # ============================================================================
+#     # 5. FIELD DISTRIBUTION
+#     # ============================================================================
+#     print_section_header("5. FIELD DISTRIBUTION")
+    
+#     field_counts = df['top_field'].value_counts()
+#     print("Authors by top field:")
+#     for field, count in field_counts.items():
+#         percent = 100 * count / total_authors
+#         print(f"  {field:<20}: {count:,} ({percent:.2f}%)")
+
+#     print("\nMulti-field activity:")
+#     multi_field_counts = df['num_unique_fields'].value_counts().sort_index()
+    
+#     # Re-binning to match the report's structure
+#     count_1 = multi_field_counts.get(1, 0)
+#     count_2 = multi_field_counts.get(2, 0)
+#     count_3_plus = multi_field_counts[multi_field_counts.index >= 3].sum() if len(multi_field_counts) >= 3 else 0
+
+#     print(f"  1 fields: {count_1:,} ({100 * count_1 / total_authors:.2f}%)")
+#     print(f"  2 fields: {count_2:,} ({100 * count_2 / total_authors:.2f}%)")
+#     print(f"  3 fields: {count_3_plus:,} ({100 * count_3_plus / total_authors:.2f}%)")
+
+#     # ============================================================================
+#     # 6. TOP AUTHORS
+#     # ============================================================================
+#     print_section_header("6. TOP AUTHORS")
+    
+#     # Top 20 by total papers
+#     top_papers = df.sort_values('total_papers', ascending=False).head(20)
+#     print("Top 20 authors by total papers:")
+#     print("-" * REPORT_WIDTH)
+#     print(top_papers[['author_name', 'total_papers', 'total_citations', 'top_field', 'top_topic', 'sdl_papers']].to_string(index=False))
+
+#     # Top 20 by total citations
+#     top_citations = df.sort_values('total_citations', ascending=False).head(20)
+#     print("\nTop 20 authors by total citations:")
+#     print("-" * REPORT_WIDTH)
+#     print(top_citations[['author_name', 'total_papers', 'total_citations', 'avg_citations_per_paper', 'top_field']].to_string(index=False))
+
+#     # Top 20 by avg citations per paper (min 10 papers)
+#     top_avg_citations = df[df['total_papers'] >= 10].sort_values('avg_citations_per_paper', ascending=False).head(20)
+#     print("\nTop 20 authors by avg citations per paper (min 10 papers):")
+#     print("-" * REPORT_WIDTH)
+#     print(top_avg_citations[['author_name', 'total_papers', 'total_citations', 'avg_citations_per_paper', 'top_field']].to_string(index=False))
+    
+#     # ============================================================================
+#     # 7. SDL/AI/ROBOTICS INVOLVEMENT
+#     # ============================================================================
+#     print_section_header("7. SDL/AI/ROBOTICS INVOLVEMENT")
+
+#     print("Authors with SDL/AI/Robotics papers:")
+#     print(f"  Authors with ≥1 SDL paper: {(df['sdl_papers'] >= 1).sum():,}")
+#     print(f"  Authors with ≥5 SDL papers: {(df['sdl_papers'] >= 5).sum():,}")
+#     print(f"  Authors with ≥10 SDL papers: {(df['sdl_papers'] >= 10).sum():,}")
+    
+#     print(f"\n  Authors with ≥1 AI paper: {(df['ai_papers'] >= 1).sum():,}")
+#     print(f"  Authors with ≥10 AI papers: {(df['ai_papers'] >= 10).sum():,}")
+    
+#     print(f"\n  Authors with ≥1 Robotics paper: {(df['robotics_papers'] >= 1).sum():,}")
+#     print(f"  Authors with ≥10 Robotics papers: {(df['robotics_papers'] >= 10).sum():,}")
+
+#     # Top 20 SDL authors
+#     top_sdl = df.sort_values('sdl_papers', ascending=False).head(20)
+#     print("\nTop 20 SDL authors:")
+#     print("-" * REPORT_WIDTH)
+#     print(top_sdl[['author_name', 'total_papers', 'sdl_papers', 'ai_papers', 'robotics_papers', 'top_field']].to_string(index=False))
+
+#     # ============================================================================
+#     # 8. TOPIC ANALYSIS
+#     # ============================================================================
+#     print_section_header("8. TOPIC ANALYSIS")
+
+#     # Top 30 research topics by author count
+#     topic_counts = df['top_topic'].value_counts(dropna=True).head(30)
+#     print("Top 30 research topics by author count:")
+#     for i, (topic, count) in enumerate(topic_counts.items()):
+#         percent = 100 * count / total_authors
+#         print(f"  {i+1:3}. {topic:<50}: {count:,} ({percent:.2f}%)")
+        
+#     print("\nTopic diversity:")
+#     unique_topics_all = df['num_unique_topics'].max() # The report counts unique topics across all authors, but the column 'num_unique_topics' is per author. We will use the max of 'num_unique_topics' for a proxy of the maximum diversity tracked, and then count unique topics in the overall column.
+#     print(f"  Unique topics in dataset: {df['top_topic'].nunique():,}") # Counting unique top topics
+#     print(f"  Avg topics per author: {df['num_unique_topics'].mean():.2f}")
+#     print(f"  Max topics by single author: {df['num_unique_topics'].max():,}")
+
+#     # ============================================================================
+#     # 9. JOURNAL ANALYSIS
+#     # ============================================================================
+#     print_section_header("9. JOURNAL ANALYSIS")
+
+#     # Top 30 journals by author count
+#     journal_counts = df['top_journal'].value_counts(dropna=True).head(30)
+#     print("Top 30 journals by author count:")
+#     for i, (journal, count) in enumerate(journal_counts.items()):
+#         percent = 100 * count / total_authors
+#         print(f"  {i+1:3}. {journal:<60}: {count:,} ({percent:.2f}%)")
+        
+#     print("\nJournal diversity:")
+#     print(f"  Unique journals in dataset: {df['top_journal'].nunique():,}") # Counting unique top journals
+#     print(f"  Avg journals per author: {df['num_unique_journals'].mean():.2f}")
+#     print(f"  Max journals by single author: {df['num_unique_journals'].max():,}")
+
+
+#     # ============================================================================
+#     # 10. AUTHORSHIP POSITION ANALYSIS
+#     # ============================================================================
+#     print_section_header("10. AUTHORSHIP POSITION ANALYSIS")
+
+#     # Never/Always Author logic
+#     # An author is 'NEVER' if they have >0 total papers and 0 position papers
+#     # An author is 'ALWAYS' if position papers == total papers AND total papers > 0
+    
+#     # First Authorship
+#     never_first = (df['total_papers'] > 0) & (df['first_author_papers'] == 0)
+#     always_first = (df['total_papers'] > 0) & (df['first_author_papers'] == df['total_papers'])
+#     print("First authorship:")
+#     print(f"  Authors who were NEVER first author: {never_first.sum():,}")
+#     print(f"  Authors who were ALWAYS first author: {always_first.sum():,}")
+#     print(f"  Avg first author papers: {df['first_author_papers'].mean():.2f}")
+
+#     # Last Authorship
+#     never_last = (df['total_papers'] > 0) & (df['last_author_papers'] == 0)
+#     always_last = (df['total_papers'] > 0) & (df['last_author_papers'] == df['total_papers'])
+#     print("\nLast authorship:")
+#     print(f"  Authors who were NEVER last author: {never_last.sum():,}")
+#     print(f"  Authors who were ALWAYS last author: {always_last.sum():,}")
+#     print(f"  Avg last author papers: {df['last_author_papers'].mean():.2f}")
+
+#     # Corresponding Authorship
+#     never_corr = (df['total_papers'] > 0) & (df['corresponding_author_papers'] == 0)
+#     always_corr = (df['total_papers'] > 0) & (df['corresponding_author_papers'] == df['total_papers'])
+#     print("\nCorresponding authorship:")
+#     print(f"  Authors who were NEVER corresponding: {never_corr.sum():,}")
+#     print(f"  Authors corresponding on all papers: {always_corr.sum():,}")
+#     print(f"  Avg corresponding papers: {df['corresponding_author_papers'].mean():.2f}")
+
+#     # ============================================================================
+#     # 11. DATA QUALITY CHECKS & ANOMALIES
+#     # ============================================================================
+#     print_section_header("11. DATA QUALITY CHECKS & ANOMALIES")
+#     print("ANOMALY CHECKS:\n")
+    
+#     # 1. (first + last) > total papers check
+#     first_plus_last_gt_total = (df['first_author_papers'] + df['last_author_papers']) > df['total_papers']
+#     single_author_papers = df['total_papers'] == 1 # Assuming single author papers are total_papers = 1
+#     anomalies_count = first_plus_last_gt_total.sum()
+#     single_author_count = (first_plus_last_gt_total & single_author_papers).sum()
+#     actual_anomalies = anomalies_count - single_author_count
+
+#     print(f"1. Authors where (first + last) > total papers: {anomalies_count:,}")
+#     print("  NOTE: This should only happen for single-author papers!")
+#     print(f"  Single-author cases: {single_author_count:,}")
+#     print(f"  ACTUAL ANOMALIES: {actual_anomalies:,}")
+
+#     # 2. Negative value check
+#     # Check all numeric columns for negative values
+#     numeric_cols = df.select_dtypes(include=np.number).columns
+#     negative_check = (df[numeric_cols] < 0).any().any()
+#     if not negative_check:
+#         print("\n2. Negative value check:")
+#         print("  ✓ No negative values found")
+#     else:
+#         print("\n2. Negative value check: ✗ Negative values found") # Should not happen based on original report
+
+#     # 3. Authors with citations but no papers
+#     cite_no_paper = (df['total_papers'] == 0) & (df['total_citations'] > 0)
+#     print(f"\n3. Authors with citations but no papers: {cite_no_paper.sum():,}")
+
+#     # 4. Authors with papers but ZERO citations
+#     paper_no_cite = (df['total_papers'] > 0) & (df['total_citations'] == 0)
+#     print(f"\n4. Authors with papers but ZERO citations: {paper_no_cite.sum():,} ({100 * paper_no_cite.sum() / total_authors:.2f}%)")
+#     print("  This includes papers that are very recent or not yet cited")
+
+#     # 5. Authors with avg >1000 citations per paper
+#     high_avg_cite = df[df['avg_citations_per_paper'] > 1000]
+#     print(f"\n5. Authors with avg >1000 citations per paper: {len(high_avg_cite):,}")
+#     print("  Top cases:")
+#     top_high_avg_cite = high_avg_cite.sort_values('avg_citations_per_paper', ascending=False).head(5)
+#     for i, row in top_high_avg_cite.iterrows():
+#         name = row['author_name']
+#         avg = row['avg_citations_per_paper']
+#         papers = row['total_papers']
+#         # Truncate long names for formatting
+#         name_str = f"- {name:<30}"[:30]
+#         print(f"{name_str}: {avg:10,.1f} avg ({papers} papers)")
+
+#     # 6. Corresponding author anomalies
+#     corr_gt_total = df['corresponding_author_papers'] > df['total_papers']
+#     print(f"\n6. Corresponding author anomalies:")
+#     print(f"  Authors where corresponding > total papers: {corr_gt_total.sum():,}")
+#     print("  (Note: This can happen if multiple corresponding authors per paper)")
+
+#     # ============================================================================
+#     # 12. AFFILIATION ANALYSIS
+#     # ============================================================================
+#     print_section_header("12. AFFILIATION ANALYSIS")
+
+#     print("Affiliation statistics:")
+#     print(f"  Avg affiliations per author: {df['num_affiliations'].mean():.2f}")
+#     print(f"  Median affiliations: {df['num_affiliations'].median():.0f}")
+#     print(f"  Max affiliations by single author: {df['num_affiliations'].max():,}")
+    
+#     print("\nAffiliation distribution:")
+#     # Custom binning for affiliations: 0, 1, 2-4, 5-9, 10-19, 20-49, 50+
+#     aff_series = df['num_affiliations']
+#     aff_bins = {
+#         '0': (aff_series == 0).sum(),
+#         '1': (aff_series == 1).sum(),
+#         '2-4': ((aff_series >= 2) & (aff_series <= 4)).sum(),
+#         '5-9': ((aff_series >= 5) & (aff_series <= 9)).sum(),
+#         '10-19': ((aff_series >= 10) & (aff_series <= 19)).sum(),
+#         '20-49': ((aff_series >= 20) & (aff_series <= 49)).sum(),
+#         '50+': (aff_series >= 50).sum()
+#     }
+
+#     for label, count in aff_bins.items():
+#         percent = 100 * count / total_authors
+#         padding = 5 - len(label)
+#         print(f"  {label}{' ' * padding}: {count:,} ({percent:.2f}%)")
+
+#     # ============================================================================
+#     # 13. INTERESTING PATTERNS
+#     # ============================================================================
+#     print_section_header("13. INTERESTING PATTERNS")
+
+#     # Prolific but uncited authors (>50 papers, 0 citations)
+#     prolific_uncited = df[(df['total_papers'] > 50) & (df['total_citations'] == 0)]
+#     print("Prolific but uncited authors (>50 papers, 0 citations):")
+#     print(f"  Count: {len(prolific_uncited):,}")
+#     print("  Top cases:")
+#     top_prolific_uncited = prolific_uncited.sort_values('total_papers', ascending=False).head(5)
+#     for i, row in top_prolific_uncited.iterrows():
+#         name = row['author_name']
+#         papers = row['total_papers']
+#         name_str = f"- {name:<35}"[:35]
+#         print(f"{name_str}: {papers:,} papers")
+
+#     # Highly efficient authors (>1000 citations, <10 papers)
+#     highly_efficient = df[(df['total_citations'] > 1000) & (df['total_papers'] < 10)]
+#     print("\nHighly efficient authors (>1000 citations, <10 papers):")
+#     print(f"  Count: {len(highly_efficient):,}")
+#     print("  Top cases:")
+#     top_highly_efficient = highly_efficient.sort_values('avg_citations_per_paper', ascending=False).head(5)
+#     for i, row in top_highly_efficient.iterrows():
+#         name = row['author_name']
+#         cites = row['total_citations']
+#         avg = row['avg_citations_per_paper']
+#         papers = row['total_papers']
+#         name_str = f"- {name:<35}"[:35]
+#         print(f"{name_str}: {cites:10,} cites in {papers} papers (avg: {avg:,.0f})")
+
+#     # Cross-field researchers (4 fields, >100 papers)
+#     cross_field_count = len(df[(df['num_unique_fields'] >= 4) & (df['total_papers'] >= 100)])
+#     print("\nCross-field researchers (4 fields, >100 papers):")
+#     print(f"  Count: {cross_field_count:,}")
+
+#     # ============================================================================
+#     # END OF REPORT
+#     # ============================================================================
+#     print(f"\n{SEPARATOR}")
+#     print("END OF REPORT")
+#     print(SEPARATOR)
+
+
+# if __name__ == "__main__":
+    
+#     if not AUTHOR_METRICS_PATH.exists():
+#         print(f"ERROR: Author metrics file not found at: {AUTHOR_METRICS_PATH}")
+#         print("Please ensure your data generation script has run successfully and the path is correct.")
+#         sys.exit(1)
+
+#     print(f"Loading data from: {AUTHOR_METRICS_PATH}")
+    
+#     # Load the DataFrame
+#     # Use 'low_memory=False' for large datasets
+#     # Read the main EDA file
+#     try:
+#         df_eda = pd.read_csv(AUTHOR_METRICS_PATH, low_memory=False)
+#         generate_report(df_eda)
+#     except Exception as e:
+#         print(f"An error occurred during data loading or processing: {e}")
+#         sys.exit(1)
