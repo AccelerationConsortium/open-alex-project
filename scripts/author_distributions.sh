@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=1author_distributions11
+#SBATCH --job-name=last_author_distributions
 #SBATCH --account=def-kmcel          # CHANGE THIS
-#SBATCH --time=01:00:00                      # 30 minutes (should be enough for 3 years)
-#SBATCH --mem=64G                            # 32GB RAM
+#SBATCH --time=03:00:00                      # 30 minutes (should be enough for 3 years)
+#SBATCH --mem=128G                            # 32GB RAM
 #SBATCH --cpus-per-task=1                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
@@ -18,7 +18,7 @@ module load python/3.11
 source ~/openalex_env/bin/activate
 
 # Navigate to project directory
-cd /project/def-kmcel/hridansh/openalex_project  
+cd /project/def-kmcel/hridansh/openalex_project/py_code  
 
 # Run the SDL matching
 python author_distributions.py

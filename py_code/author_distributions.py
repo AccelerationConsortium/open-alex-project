@@ -3,6 +3,9 @@ Code to get information about author field/topic distributions.
 For all authors in regression dataset (specifically where papers are present in SDL Journals & Topics.),
 this will get from Author table the info about all topics and fields the author has published in.
 It will also filter to not consider authors from any papers with missing author_count, publication_year, or field.
+
+CS EXPERIENCE LOGIC: Authors get CS experience if they have authored 1+ papers with CS keywords
+(CS field papers OR non-CS papers with 2+ different CS keywords in topics/title/abstract)
 """
 
 import pandas as pd
@@ -13,16 +16,17 @@ from collections import defaultdict, Counter
 # ============================================
 # CONFIGURATION
 # ============================================
+PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
-# Input file
-REGRESSION_DATA = "data/regression/regression_dataset.csv"
+# Input file - UPDATE THIS PATH
+REGRESSION_DATA =  PROJECT_DIR / "data/regression/regression_dataset_subset.csv"
 
 # SDL venue lists (same as your extraction script)
-SDL_JOURNALS_FILE = "data/sdl/sdl_journals.txt"
-SDL_TOPICS_FILE = "data/sdl/sdl_primary_topics.txt"
+SDL_JOURNALS_FILE = PROJECT_DIR /  "data/sdl/sdl_journals.txt"
+SDL_TOPICS_FILE =  PROJECT_DIR / "data/sdl/sdl_primary_topics.txt"
 
 # Output file
-OUTPUT_FILE = "data/author/all_authors_top_metrics.csv"
+OUTPUT_FILE =  PROJECT_DIR / "data/author/test/last_authors_top_metrics.csv"
 
 # Chunk size for reading
 CHUNK_SIZE = 500000
@@ -64,10 +68,13 @@ def build_author_profiles(sdl_journals, sdl_topics):
     """
     Build author profiles from papers in SDL journals AND topics.
     For each author (first, last, and corresponding), track counts of fields, topics, and journals.
+    
+    CS Experience: Author has CS experience if they authored 1+ papers where comp_sci_experience_paper = 1
     """
     print("\n" + "="*60)
     print("BUILDING AUTHOR PROFILES (ALL AUTHORS)")
     print("="*60)
+    print("CS Experience Logic: 1+ papers with CS keywords (CS field OR 2+ keywords in topics/title)")
     
     # Dictionary to store author profiles
     # Structure: {author_id: {'fields': Counter(), 'topics': Counter(), 'journals': Counter(), 'has_cs_experience': bool}}
@@ -110,15 +117,9 @@ def build_author_profiles(sdl_journals, sdl_topics):
             # Get all author IDs for this paper
             author_ids = []
             
-            if pd.notna(row['first_author_id']):
-                author_ids.append(row['first_author_id'])
-            
             if pd.notna(row['last_author_id']):
                 author_ids.append(row['last_author_id'])
-            
-            if pd.notna(row['corresponding_author_id']) and row['corresponding_author_id'] != '':
-                author_ids.append(row['corresponding_author_id'])
-            
+    
             # Skip if no authors
             if not author_ids:
                 continue
@@ -137,7 +138,8 @@ def build_author_profiles(sdl_journals, sdl_topics):
                 if pd.notna(row['journal']):
                     author_profiles[author_id]['journals'][row['journal']] += 1
                 
-                # Update CS experience
+                # Update CS experience (NEW LOGIC)
+                # Author has CS experience if they authored ANY paper with comp_sci_experience_paper = 1
                 if row['comp_sci_experience_paper'] == 1:
                     author_profiles[author_id]['has_cs_experience'] = True
         
@@ -213,7 +215,7 @@ def save_author_profiles(author_profiles):
     print(f"  Min: {df['total_papers'].min()}")
     print(f"  Max: {df['total_papers'].max()}")
     
-    print(f"\nCS Experience:")
+    print(f"\nCS Experience (NEW KEYWORD LOGIC):")
     cs_count = df['has_cs_experience'].sum()
     print(f"  Authors with CS experience: {cs_count:,} ({cs_count/len(df)*100:.2f}%)")
     print(f"  Authors without CS experience: {len(df)-cs_count:,} ({(len(df)-cs_count)/len(df)*100:.2f}%)")
@@ -263,3 +265,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

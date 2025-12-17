@@ -1,0 +1,25 @@
+                              OLS Regression Results                             
+=================================================================================
+Dep. Variable:     asinh_paper_citations   R-squared:                       0.042
+Model:                               OLS   Adj. R-squared:                  0.042
+Method:                    Least Squares   F-statistic:                 2.169e+04
+Date:                   Mon, 10 Nov 2025   Prob (F-statistic):               0.00
+Time:                           17:15:38   Log-Likelihood:            -1.0204e+06
+No. Observations:                 490434   AIC:                         2.041e+06
+Df Residuals:                     490432   BIC:                         2.041e+06
+Df Model:                              1                                         
+Covariance Type:               nonrobust                                         
+================================================================================
+                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------
+Intercept        2.0141      0.005    405.992      0.000       2.004       2.024
+author_count     0.1047      0.001    147.277      0.000       0.103       0.106
+==============================================================================
+Omnibus:                    42466.919   Durbin-Watson:                   0.074
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):            13922.117
+Skew:                           0.103   Prob(JB):                         0.00
+Kurtosis:                       2.201   Cond. No.                         12.7
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

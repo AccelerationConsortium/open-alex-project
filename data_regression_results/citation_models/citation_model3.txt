@@ -1,0 +1,31 @@
+                              OLS Regression Results                             
+=================================================================================
+Dep. Variable:     asinh_paper_citations   R-squared:                       0.264
+Model:                               OLS   Adj. R-squared:                  0.264
+Method:                    Least Squares   F-statistic:                 2.507e+04
+Date:                   Mon, 10 Nov 2025   Prob (F-statistic):               0.00
+Time:                           17:15:38   Log-Likelihood:            -9.5594e+05
+No. Observations:                 490434   AIC:                         1.912e+06
+Df Residuals:                     490426   BIC:                         1.912e+06
+Df Model:                              7                                         
+Covariance Type:               nonrobust                                         
+================================================================================================
+                                   coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------------------
+Intercept                        1.0947      0.008    145.162      0.000       1.080       1.109
+author_count                     0.0135      0.001     18.662      0.000       0.012       0.015
+SDL                              1.7790      0.081     21.992      0.000       1.621       1.938
+num_paper_affiliations           0.2585      0.001    179.448      0.000       0.256       0.261
+asinh_first_author_papers       -0.5336      0.004   -150.076      0.000      -0.541      -0.527
+asinh_first_author_citations     0.4136      0.002    197.021      0.000       0.409       0.418
+asinh_last_author_papers        -0.3053      0.004    -76.827      0.000      -0.313      -0.298
+asinh_last_author_citations      0.2625      0.003    104.158      0.000       0.258       0.267
+==============================================================================
+Omnibus:                        5.935   Durbin-Watson:                   0.443
+Prob(Omnibus):                  0.051   Jarque-Bera (JB):                5.898
+Skew:                          -0.005   Prob(JB):                       0.0524
+Kurtosis:                       2.986   Cond. No.                         413.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

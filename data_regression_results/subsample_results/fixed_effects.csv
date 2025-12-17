@@ -1,0 +1,7 @@
+Model,Year_FE,Field_FE,Journal_FE,Topic_FE
+1,No,No,No,No
+2,No,No,No,No
+3,Yes,No,No,No
+4,Yes,Yes,No,No
+5,Yes,Yes,Failed,No
+6,Yes,Yes,Failed,Failed

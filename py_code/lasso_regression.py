@@ -20,7 +20,7 @@ PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 REGRESSION_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset_subset.csv"
 
 # Output directory
-OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression/sample" 
+OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression/sample/test" 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -39,8 +39,7 @@ def build_feature_matrix():
     # STEP 1: Load regression dataset
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 1: Loading regression dataset")
+    print(f"\nSTEP 1: Loading regression dataset")
     print("=" * 80)
     
     if not REGRESSION_DATA.exists():
@@ -51,11 +50,10 @@ def build_feature_matrix():
     print(f"  ✓ Loaded {len(df):,} papers")
     
     # ========================================================================
-    # STEP 2: Combine text fields
+    # STEP 2: Combine text fields & create labels
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 2: Combining text fields")
+    print(f"\nSTEP 2: Preparing text and labels")
     print("=" * 80)
     
     # Clean topics (replace pipe with space)
@@ -68,30 +66,19 @@ def build_feature_matrix():
         df['topics_clean']
     )
     
-    print(f"  ✓ Combined title + abstract + topics")
-    print(f"\n  Sample text (first 300 chars):")
-    print(f"  {df['text'].iloc[0][:300]}...")
-    
-    # ========================================================================
-    # STEP 3: Create labels
-    # ========================================================================
-    
-    print(f"\n{'=' * 80}")
-    print("STEP 3: Creating labels")
-    print("=" * 80)
-    
+    # Create labels
     df['is_CS'] = (df['field'] == 'computer_science').astype(int)
     
+    print(f"  ✓ Combined title + abstract + topics")
     print(f"\n  Class distribution:")
     print(f"    CS papers (y=1):     {df['is_CS'].sum():,} ({100*df['is_CS'].mean():.1f}%)")
     print(f"    Non-CS papers (y=0): {(1-df['is_CS']).sum():,} ({100*(1-df['is_CS'].mean()):.1f}%)")
     
     # ========================================================================
-    # STEP 4: Vectorize with NLTK stopwords
+    # STEP 3: Vectorize with NLTK stopwords
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 4: Vectorizing text")
+    print(f"\nSTEP 3: Vectorizing text")
     print("=" * 80)
     
     # Get NLTK stopwords
@@ -103,14 +90,8 @@ def build_feature_matrix():
         nltk.download('stopwords')
         stop_words = list(stopwords.words('english'))
     
-    print(f"\n  Vectorizer settings:")
-    print(f"    N-gram range: (1, 2) - unigrams + bigrams")
-    print(f"    Max features: 20,000")
-    print(f"    Min document frequency: 5")
-    print(f"    Lowercase: True")
-    print(f"    Stop words: NLTK English ({len(stop_words)} words)")
-    
-    print(f"\n  Fitting vectorizer... (this may take 5-10 minutes)")
+    print(f"\n  Settings: unigrams + bigrams, max 20k features, min_df=5")
+    print(f"  Fitting vectorizer...")
     
     vectorizer = CountVectorizer(
         ngram_range=(1, 2),
@@ -123,62 +104,37 @@ def build_feature_matrix():
     X = vectorizer.fit_transform(df['text'])
     y = df['is_CS'].values
     
-    print(f"\n  ✓ Feature matrix shape: {X.shape}")
-    print(f"    - {X.shape[0]:,} papers")
-    print(f"    - {X.shape[1]:,} features (words/bigrams)")
+    print(f"\n  ✓ Feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
     
     # ========================================================================
-    # STEP 5: Inspect features
+    # STEP 4: Save outputs
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 5: Inspecting features")
-    print("=" * 80)
-    
-    feature_names = vectorizer.get_feature_names_out()
-    
-    print(f"\n  Sample features (first 30):")
-    print(f"  {list(feature_names[:30])}")
-    
-    print(f"\n  Sample features (last 30):")
-    print(f"  {list(feature_names[-30:])}")
-    
-    # ========================================================================
-    # STEP 6: Save outputs
-    # ========================================================================
-    
-    print(f"\n{'=' * 80}")
-    print("STEP 6: Saving outputs")
+    print(f"\nSTEP 4: Saving outputs")
     print("=" * 80)
     
     # Save sparse matrix
     sparse_file = OUTPUT_DIR / "X_features.npz"
     sparse.save_npz(sparse_file, X)
-    print(f"  ✓ Saved: {sparse_file}")
+    print(f"  ✓ Feature matrix: {sparse_file}")
     
     # Save labels
     labels_file = OUTPUT_DIR / "y_labels.csv"
     pd.Series(y, name='is_CS').to_csv(labels_file, index=False)
-    print(f"  ✓ Saved: {labels_file}")
+    print(f"  ✓ Labels: {labels_file}")
     
     # Save vectorizer
     vectorizer_file = OUTPUT_DIR / "vectorizer.joblib"
     joblib.dump(vectorizer, vectorizer_file)
-    print(f"  ✓ Saved: {vectorizer_file}")
+    print(f"  ✓ Vectorizer: {vectorizer_file}")
     
     # Save article IDs for reference
     ids_file = OUTPUT_DIR / "article_ids.csv"
     df[['article_id', 'field']].to_csv(ids_file, index=False)
-    print(f"  ✓ Saved: {ids_file}")
+    print(f"  ✓ Article IDs: {ids_file}")
     
     print(f"\n{'=' * 80}")
-    print("✅ FEATURE MATRIX COMPLETE")
-    print("=" * 80)
-    print(f"\nOutputs saved to: {OUTPUT_DIR}/")
-    print(f"  - X_features.npz (sparse matrix)")
-    print(f"  - y_labels.csv")
-    print(f"  - vectorizer.joblib")
-    print(f"  - article_ids.csv\n")
+    print("✅ FEATURE MATRIX COMPLETE\n")
     
     return X, y, vectorizer
 
@@ -198,8 +154,7 @@ def fit_lasso_logistic():
     # STEP 1: Load feature matrix and labels
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 1: Loading feature matrix and labels")
+    print(f"\nSTEP 1: Loading data")
     print("=" * 80)
     
     X_file = OUTPUT_DIR / "X_features.npz"
@@ -211,22 +166,47 @@ def fit_lasso_logistic():
         print("  Run build_feature_matrix() first.")
         sys.exit(1)
     
+    # X = sparse.load_npz(X_file)
+    # y = pd.read_csv(y_file)['is_CS'].values
+    # vectorizer = joblib.load(vectorizer_file)
+    
+    # print(f"  ✓ Loaded feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
+    
+    # # ========================================================================
+    # # STEP 2: Train/test split
+    # # ========================================================================
+    
+    # print(f"\nSTEP 2: Train/test split")
+    # print("=" * 80)
+    
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     X, y,
+    #     test_size=0.25,
+    #     random_state=42,
+    #     train_size=100000,
+    #     stratify=y
+    # )
+
     X = sparse.load_npz(X_file)
     y = pd.read_csv(y_file)['is_CS'].values
     vectorizer = joblib.load(vectorizer_file)
-    
-    print(f"  ✓ Loaded X: {X.shape}")
-    print(f"  ✓ Loaded y: {y.shape}")
-    print(f"  ✓ Loaded vectorizer: {len(vectorizer.get_feature_names_out())} features")
-    
+
+    print(f"  ✓ Loaded feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
+
+    # Optional: Sample data for faster training
+    SAMPLE_SIZE = 100000  # Set to None to use full dataset
+    if SAMPLE_SIZE and len(y) > SAMPLE_SIZE:
+        print(f"  ⚠ Sampling {SAMPLE_SIZE:,} papers from {len(y):,} for faster training")
+        X, _, y, _ = train_test_split(X, y, train_size=SAMPLE_SIZE, stratify=y, random_state=42)
+        print(f"  ✓ Sampled to: {X.shape[0]:,} papers")
+
     # ========================================================================
     # STEP 2: Train/test split
     # ========================================================================
-    
-    print(f"\n{'=' * 80}")
-    print("STEP 2: Train/test split")
+
+    print(f"\nSTEP 2: Train/test split")
     print("=" * 80)
-    
+
     X_train, X_test, y_train, y_test = train_test_split(
         X, y,
         test_size=0.25,
@@ -234,27 +214,18 @@ def fit_lasso_logistic():
         stratify=y
     )
     
-    print(f"  Training set: {X_train.shape[0]:,} papers")
-    print(f"  Test set: {X_test.shape[0]:,} papers")
-    print(f"\n  Training class distribution:")
-    print(f"    CS (y=1): {y_train.sum():,} ({100*y_train.mean():.1f}%)")
-    print(f"    Non-CS (y=0): {(1-y_train).sum():,} ({100*(1-y_train.mean()):.1f}%)")
+    print(f"  Train: {X_train.shape[0]:,} papers ({100*y_train.mean():.1f}% CS)")
+    print(f"  Test:  {X_test.shape[0]:,} papers ({100*y_test.mean():.1f}% CS)")
     
     # ========================================================================
     # STEP 3: Fit Lasso-Logistic with cross-validation
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 3: Fitting Lasso-Logistic regression")
+    print(f"\nSTEP 3: Fitting Lasso-Logistic regression")
     print("=" * 80)
     
-    print(f"\n  Model settings:")
-    print(f"    Penalty: L1 (Lasso)")
-    print(f"    CV folds: 5")
-    print(f"    Solver: saga (supports L1)")
-    print(f"    Max iterations: 1000")
-    
-    print(f"\n  Fitting model with 5-fold CV... (this may take 30-60 minutes)")
+    print(f"  Settings: L1 penalty, 5-fold CV, saga solver")
+    print(f"  Fitting model (this may take 30-60 minutes)...")
     
     model = LogisticRegressionCV(
         penalty='l1',
@@ -269,15 +240,13 @@ def fit_lasso_logistic():
     
     model.fit(X_train, y_train)
     
-    print(f"\n  ✓ Model fitted")
-    print(f"  Best C (regularization): {model.C_[0]:.6f}")
+    print(f"\n  ✓ Model fitted. Best C = {model.C_[0]:.6f}")
     
     # ========================================================================
     # STEP 4: Evaluate model
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 4: Evaluating model")
+    print(f"\nSTEP 4: Evaluating model")
     print("=" * 80)
     
     train_score = model.score(X_train, y_train)
@@ -285,7 +254,7 @@ def fit_lasso_logistic():
     
     print(f"\n  Accuracy:")
     print(f"    Training: {100*train_score:.2f}%")
-    print(f"    Test: {100*test_score:.2f}%")
+    print(f"    Test:     {100*test_score:.2f}%")
     
     # Predictions for more metrics
     y_pred = model.predict(X_test)
@@ -295,86 +264,66 @@ def fit_lasso_logistic():
     print(f"\n  Classification Report (Test Set):")
     print(classification_report(y_test, y_pred, target_names=['Non-CS', 'CS']))
     
-    print(f"\n  Confusion Matrix:")
-    cm = confusion_matrix(y_test, y_pred)
-    print(f"    [[TN={cm[0,0]:,}  FP={cm[0,1]:,}]")
-    print(f"     [FN={cm[1,0]:,}  TP={cm[1,1]:,}]]")
-    
     # ========================================================================
     # STEP 5: Extract discriminative words
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 5: Extracting discriminative words")
+    print(f"\nSTEP 5: Extracting discriminative words")
     print("=" * 80)
     
     feature_names = vectorizer.get_feature_names_out()
     coefficients = model.coef_[0]
     
-    # Create DataFrame
+    # Create DataFrame with all word importance info
     word_importance = pd.DataFrame({
         'word': feature_names,
-        'coefficient': coefficients
+        'coefficient': coefficients,
+        'abs_coefficient': np.abs(coefficients)
     })
+    
+    # Sort by coefficient (descending)
+    word_importance = word_importance.sort_values('coefficient', ascending=False)
+    
+    # Add category label
+    word_importance['category'] = 'neutral'
+    word_importance.loc[word_importance['coefficient'] > 0, 'category'] = 'CS-predictive'
+    word_importance.loc[word_importance['coefficient'] < 0, 'category'] = 'non-CS-predictive'
     
     # Count non-zero coefficients
     non_zero = (coefficients != 0).sum()
+    cs_words = (coefficients > 0).sum()
+    non_cs_words = (coefficients < 0).sum()
+    
     print(f"\n  Total features: {len(coefficients):,}")
     print(f"  Non-zero coefficients: {non_zero:,} ({100*non_zero/len(coefficients):.1f}%)")
-    print(f"  Eliminated by Lasso: {len(coefficients) - non_zero:,}")
-    
-    # Sort by coefficient
-    word_importance_sorted = word_importance.sort_values('coefficient', ascending=False)
-    
-    # Top CS-predictive words (positive coefficients)
-    cs_words = word_importance_sorted[word_importance_sorted['coefficient'] > 0]
-    print(f"\n  CS-predictive words (positive coef): {len(cs_words):,}")
-    
-    # Top Non-CS-predictive words (negative coefficients)
-    non_cs_words = word_importance_sorted[word_importance_sorted['coefficient'] < 0]
-    print(f"  Non-CS-predictive words (negative coef): {len(non_cs_words):,}")
+    print(f"    CS-predictive (positive): {cs_words:,}")
+    print(f"    Non-CS-predictive (negative): {non_cs_words:,}")
     
     print(f"\n  Top 30 CS-discriminative words:")
-    print(cs_words.head(30).to_string(index=False))
-    
-    print(f"\n  Top 30 Non-CS-discriminative words:")
-    print(non_cs_words.tail(30).to_string(index=False))
+    print(word_importance[word_importance['coefficient'] > 0].head(30)[['word', 'coefficient']].to_string(index=False))
     
     # ========================================================================
     # STEP 6: Save outputs
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 6: Saving outputs")
+    print(f"\nSTEP 6: Saving outputs")
     print("=" * 80)
     
     # Save model
     model_file = OUTPUT_DIR / "lasso_model.joblib"
     joblib.dump(model, model_file)
-    print(f"  ✓ Saved: {model_file}")
+    print(f"  ✓ Model: {model_file}")
     
-    # Save all word importances
-    importance_file = OUTPUT_DIR / "word_importance_all.csv"
-    word_importance_sorted.to_csv(importance_file, index=False)
-    print(f"  ✓ Saved: {importance_file}")
+    # Save comprehensive word importance file (all words, all metrics)
+    importance_file = OUTPUT_DIR / "word_importance.csv"
+    word_importance.to_csv(importance_file, index=False)
+    print(f"  ✓ Word importance (all): {importance_file}")
     
-    # Save CS keywords only (positive coefficients)
-    cs_keywords_file = OUTPUT_DIR / "cs_keywords_discriminative.csv"
-    cs_words.to_csv(cs_keywords_file, index=False)
-    print(f"  ✓ Saved: {cs_keywords_file}")
-    
-    # Save as simple text file (just the words)
-    cs_keywords_txt = OUTPUT_DIR / "cs_keywords_discriminative.txt"
-    with open(cs_keywords_txt, 'w') as f:
-        for word in cs_words['word'].tolist():
-            f.write(f"{word}\n")
-    print(f"  ✓ Saved: {cs_keywords_txt}")
-    
-    # Save model summary
+    # Save model summary with key metrics
     summary_file = OUTPUT_DIR / "model_summary.txt"
     with open(summary_file, 'w') as f:
         f.write("LASSO-LOGISTIC MODEL SUMMARY\n")
-        f.write("=" * 50 + "\n\n")
+        f.write("=" * 80 + "\n\n")
         f.write(f"Training samples: {X_train.shape[0]:,}\n")
         f.write(f"Test samples: {X_test.shape[0]:,}\n")
         f.write(f"Features: {X_train.shape[1]:,}\n")
@@ -382,21 +331,20 @@ def fit_lasso_logistic():
         f.write(f"Training accuracy: {100*train_score:.2f}%\n")
         f.write(f"Test accuracy: {100*test_score:.2f}%\n\n")
         f.write(f"Non-zero coefficients: {non_zero:,}\n")
-        f.write(f"CS-predictive words: {len(cs_words):,}\n")
-        f.write(f"Non-CS-predictive words: {len(non_cs_words):,}\n")
-    print(f"  ✓ Saved: {summary_file}")
+        f.write(f"  CS-predictive words: {cs_words:,}\n")
+        f.write(f"  Non-CS-predictive words: {non_cs_words:,}\n")
+        f.write(f"Eliminated by Lasso: {len(coefficients) - non_zero:,}\n\n")
+        f.write("TOP 50 CS-DISCRIMINATIVE WORDS:\n")
+        f.write("-" * 80 + "\n")
+        top_50 = word_importance[word_importance['coefficient'] > 0].head(50)
+        for _, row in top_50.iterrows():
+            f.write(f"{row['word']:<30} {row['coefficient']:>10.4f}\n")
+    print(f"  ✓ Model summary: {summary_file}")
     
     print(f"\n{'=' * 80}")
-    print("✅ LASSO-LOGISTIC REGRESSION COMPLETE")
-    print("=" * 80)
-    print(f"\nOutputs saved to: {OUTPUT_DIR}/")
-    print(f"  - lasso_model.joblib")
-    print(f"  - word_importance_all.csv")
-    print(f"  - cs_keywords_discriminative.csv")
-    print(f"  - cs_keywords_discriminative.txt")
-    print(f"  - model_summary.txt\n")
+    print("✅ LASSO-LOGISTIC REGRESSION COMPLETE\n")
     
-    return model, word_importance_sorted
+    return model, word_importance
 
 
 # ============================================================================
@@ -404,21 +352,20 @@ def fit_lasso_logistic():
 # ============================================================================
 
 def analyze_keywords():
-    """Analyze extracted keywords and apply additional filters"""
+    """Analyze extracted keywords and apply coefficient threshold filters"""
     
     print("=" * 80)
-    print("ANALYZING AND FILTERING CS KEYWORDS")
+    print("ANALYZING CS KEYWORDS")
     print("=" * 80)
     
     # ========================================================================
     # STEP 1: Load word importance
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 1: Loading word importance data")
+    print(f"\nSTEP 1: Loading word importance data")
     print("=" * 80)
     
-    importance_file = OUTPUT_DIR / "word_importance_all.csv"
+    importance_file = OUTPUT_DIR / "word_importance.csv"
     
     if not importance_file.exists():
         print(f"  ✗ ERROR: Word importance file not found.")
@@ -432,13 +379,12 @@ def analyze_keywords():
     # STEP 2: Filter by coefficient threshold
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 2: Filtering by coefficient threshold")
+    print(f"\nSTEP 2: Filtering by coefficient threshold")
     print("=" * 80)
     
     # Only positive coefficients (CS-predictive)
     cs_words = df[df['coefficient'] > 0].copy()
-    print(f"  Words with positive coefficient: {len(cs_words):,}")
+    print(f"  Total CS-predictive words: {len(cs_words):,}")
     
     # Different thresholds
     thresholds = [0.0, 0.1, 0.5, 1.0, 2.0]
@@ -446,102 +392,69 @@ def analyze_keywords():
     print(f"\n  Words remaining at different thresholds:")
     for thresh in thresholds:
         count = (cs_words['coefficient'] > thresh).sum()
-        print(f"    > {thresh}: {count:,} words")
+        print(f"    coef > {thresh:>3}: {count:>5,} words")
     
     # ========================================================================
-    # STEP 3: Manual review - flag generic words
+    # STEP 3: Create filtered keyword lists
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 3: Flagging potentially generic words")
+    print(f"\nSTEP 3: Creating filtered keyword lists")
     print("=" * 80)
     
-    # List of potentially generic words to review
-    generic_candidates = [
-        'data', 'model', 'method', 'system', 'analysis',
-        'results', 'study', 'research', 'approach', 'based',
-        'using', 'used', 'new', 'proposed', 'paper',
-        'problem', 'solution', 'performance', 'time', 'process',
-        'high', 'low', 'large', 'small', 'different',
-        'optimization', 'selection', 'decision', 'modern', 'novel',
-        'experimental', 'numerical', 'theoretical', 'practical', 'efficient',
-        'improved', 'better', 'optimal', 'effective', 'simple'
-    ]
+    # Apply different coefficient thresholds
+    filters = {
+        'all': 0.0,
+        'weak': 0.1,
+        'moderate': 0.5,
+        'strong': 1.0
+    }
     
-    # Check which generic words appear in top CS words
-    top_cs = cs_words.head(500)
+    results = {}
     
-    flagged = []
-    for word in generic_candidates:
-        if word in top_cs['word'].values:
-            coef = top_cs[top_cs['word'] == word]['coefficient'].values[0]
-            flagged.append({'word': word, 'coefficient': coef})
+    for name, threshold in filters.items():
+        filtered = cs_words[cs_words['coefficient'] > threshold]
+        results[name] = filtered
+        print(f"  {name:>10} filter (coef > {threshold}): {len(filtered):>5,} words")
     
-    if flagged:
-        flagged_df = pd.DataFrame(flagged).sort_values('coefficient', ascending=False)
-        print(f"\n  ⚠ Generic words found in top 500 CS keywords:")
-        print(flagged_df.to_string(index=False))
-    else:
-        print(f"\n  ✓ No obviously generic words in top 500")
+    # Save comprehensive results file with threshold annotations
+    output_file = OUTPUT_DIR / "cs_keywords_filtered.csv"
     
-    # ========================================================================
-    # STEP 4: Create filtered keyword lists
-    # ========================================================================
+    # Add threshold columns to original cs_words
+    cs_words['threshold_all'] = cs_words['coefficient'] > 0.0
+    cs_words['threshold_weak'] = cs_words['coefficient'] > 0.1
+    cs_words['threshold_moderate'] = cs_words['coefficient'] > 0.5
+    cs_words['threshold_strong'] = cs_words['coefficient'] > 1.0
     
-    print(f"\n{'=' * 80}")
-    print("STEP 4: Creating filtered keyword lists")
-    print("=" * 80)
+    cs_words.to_csv(output_file, index=False)
+    print(f"\n  ✓ Saved: {output_file}")
     
-    # Conservative list: coefficient > 0.5, exclude generic
-    generic_set = set(generic_candidates)
-    
-    cs_conservative = cs_words[
-        (cs_words['coefficient'] > 0.5) &
-        (~cs_words['word'].isin(generic_set))
-    ]
-    
-    print(f"\n  Conservative list (coef > 0.5, no generic): {len(cs_conservative):,} words")
-    
-    # Moderate list: coefficient > 0.1, exclude generic
-    cs_moderate = cs_words[
-        (cs_words['coefficient'] > 0.1) &
-        (~cs_words['word'].isin(generic_set))
-    ]
-    
-    print(f"  Moderate list (coef > 0.1, no generic): {len(cs_moderate):,} words")
-    
-    # Save filtered lists
-    conservative_file = OUTPUT_DIR / "cs_keywords_conservative.txt"
-    with open(conservative_file, 'w') as f:
-        for word in cs_conservative['word'].tolist():
+    # Also save simple text file with recommended keywords (moderate threshold)
+    txt_file = OUTPUT_DIR / "cs_keywords_recommended.txt"
+    with open(txt_file, 'w') as f:
+        f.write(f"# CS-discriminative keywords (coefficient > 0.5)\n")
+        f.write(f"# Total: {len(results['moderate']):,} words\n\n")
+        for word in results['moderate']['word'].tolist():
             f.write(f"{word}\n")
-    print(f"\n  ✓ Saved: {conservative_file}")
-    
-    moderate_file = OUTPUT_DIR / "cs_keywords_moderate.txt"
-    with open(moderate_file, 'w') as f:
-        for word in cs_moderate['word'].tolist():
-            f.write(f"{word}\n")
-    print(f"  ✓ Saved: {moderate_file}")
+    print(f"  ✓ Saved: {txt_file}")
     
     # ========================================================================
-    # STEP 5: Show top discriminative words
+    # STEP 4: Show top discriminative words
     # ========================================================================
     
-    print(f"\n{'=' * 80}")
-    print("STEP 5: Top discriminative CS words (filtered)")
+    print(f"\nSTEP 4: Top CS-discriminative words")
     print("=" * 80)
     
-    print(f"\n  Top 50 CS-discriminative words (conservative list):")
-    print(cs_conservative.head(50).to_string(index=False))
+    print(f"\n  Top 50 words (moderate filter, coef > 0.5):")
+    print(results['moderate'].head(50)[['word', 'coefficient']].to_string(index=False))
     
     print(f"\n{'=' * 80}")
     print("✅ KEYWORD ANALYSIS COMPLETE")
     print("=" * 80)
     print(f"\nOutputs:")
-    print(f"  - cs_keywords_conservative.txt ({len(cs_conservative):,} words)")
-    print(f"  - cs_keywords_moderate.txt ({len(cs_moderate):,} words)\n")
+    print(f"  - cs_keywords_filtered.csv (all CS words with threshold indicators)")
+    print(f"  - cs_keywords_recommended.txt ({len(results['moderate']):,} words, coef > 0.5)\n")
     
-    return cs_conservative, cs_moderate
+    return cs_words, results
 
 
 # ============================================================================
@@ -550,15 +463,11 @@ def analyze_keywords():
 
 if __name__ == "__main__":
     
-    # ========================================================================
-    # Uncomment the function you want to run
-    # ========================================================================
-    
     # STEP 1: Build feature matrix (vectorize)
     # build_feature_matrix()
     
     # STEP 2: Fit Lasso-Logistic regression
-    # fit_lasso_logistic()
+    fit_lasso_logistic()
     
     # STEP 3: Analyze and filter keywords
     analyze_keywords()

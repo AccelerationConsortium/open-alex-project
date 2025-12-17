@@ -1,0 +1,30 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           author_count   R-squared:                       0.261
+Model:                            OLS   Adj. R-squared:                  0.261
+Method:                 Least Squares   F-statistic:                 2.883e+04
+Date:                Sun, 09 Nov 2025   Prob (F-statistic):               0.00
+Time:                        20:19:36   Log-Likelihood:            -1.2881e+06
+No. Observations:              490434   AIC:                         2.576e+06
+Df Residuals:                  490427   BIC:                         2.576e+06
+Df Model:                           6                                         
+Covariance Type:            nonrobust                                         
+================================================================================================
+                                   coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------------------
+Intercept                        4.2225      0.014    311.258      0.000       4.196       4.249
+SDL                              0.9406      0.159      5.907      0.000       0.628       1.253
+num_paper_affiliations           0.9679      0.002    390.950      0.000       0.963       0.973
+asinh_first_author_papers       -0.1818      0.007    -25.984      0.000      -0.195      -0.168
+asinh_first_author_citations    -0.0032      0.004     -0.771      0.441      -0.011       0.005
+asinh_last_author_papers        -0.3502      0.008    -44.853      0.000      -0.366      -0.335
+asinh_last_author_citations      0.2601      0.005     52.570      0.000       0.250       0.270
+==============================================================================
+Omnibus:                   462972.666   Durbin-Watson:                   1.769
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):         96524668.659
+Skew:                           4.019   Prob(JB):                         0.00
+Kurtosis:                      71.256   Cond. No.                         363.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

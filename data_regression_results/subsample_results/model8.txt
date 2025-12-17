@@ -1,0 +1,283 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           author_count   R-squared:                       0.391
+Model:                            OLS   Adj. R-squared:                  0.391
+Method:                 Least Squares   F-statistic:                     1238.
+Date:                Mon, 10 Nov 2025   Prob (F-statistic):               0.00
+Time:                        06:49:11   Log-Likelihood:            -1.2406e+06
+No. Observations:              490434   AIC:                         2.482e+06
+Df Residuals:                  490179   BIC:                         2.485e+06
+Df Model:                         254                                         
+Covariance Type:            nonrobust                                         
+=================================================================================================================================================================
+                                                                                                    coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                                                     -2.617e+07   2.96e+09     -0.009      0.993   -5.82e+09    5.77e+09
+C(publication_year)[T.2013]                                                                       0.1288      0.036      3.609      0.000       0.059       0.199
+C(publication_year)[T.2014]                                                                       0.0802      0.034      2.339      0.019       0.013       0.147
+C(publication_year)[T.2015]                                                                       0.1804      0.034      5.348      0.000       0.114       0.246
+C(publication_year)[T.2016]                                                                       0.5217      0.033     15.605      0.000       0.456       0.587
+C(publication_year)[T.2017]                                                                       0.5816      0.033     17.704      0.000       0.517       0.646
+C(publication_year)[T.2018]                                                                       0.7922      0.032     24.619      0.000       0.729       0.855
+C(publication_year)[T.2019]                                                                       0.9122      0.032     28.892      0.000       0.850       0.974
+C(publication_year)[T.2020]                                                                       0.9741      0.031     31.138      0.000       0.913       1.035
+C(publication_year)[T.2021]                                                                       1.1661      0.031     37.606      0.000       1.105       1.227
+C(publication_year)[T.2022]                                                                       2.3038      0.031     73.882      0.000       2.243       2.365
+C(publication_year)[T.2023]                                                                       1.5199      0.031     48.985      0.000       1.459       1.581
+C(publication_year)[T.2024]                                                                       1.7466      0.030     57.322      0.000       1.687       1.806
+C(publication_year)[T.2025]                                                                       1.8177      0.031     58.007      0.000       1.756       1.879
+C(field)[T.computer_science]                                                                  -2.608e+09   1.59e+10     -0.164      0.870   -3.37e+10    2.85e+10
+C(field)[T.engineering]                                                                        3.143e+09   7.86e+09      0.400      0.689   -1.23e+10    1.85e+10
+C(field)[T.materials_science]                                                                  2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(journal)[T.2021 IEEE Symposium Series on Computational Intelligence (SSCI)]                    -0.7696      0.162     -4.753      0.000      -1.087      -0.452
+C(journal)[T.2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)]    -0.4441      0.103     -4.293      0.000      -0.647      -0.241
+C(journal)[T.2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)]    -1.4129      0.181     -7.797      0.000      -1.768      -1.058
+C(journal)[T.2022 International Conference on Robotics and Automation (ICRA)]                    -0.8640      0.134     -6.432      0.000      -1.127      -0.601
+C(journal)[T.ACS Applied Materials & Interfaces]                                                  1.1471      0.099     11.605      0.000       0.953       1.341
+C(journal)[T.ACS Catalysis]                                                                       0.6042      0.109      5.540      0.000       0.390       0.818
+C(journal)[T.ACS Central Science]                                                                 0.4293      0.170      2.530      0.011       0.097       0.762
+C(journal)[T.ACS Combinatorial Science]                                                           0.3814      0.259      1.470      0.142      -0.127       0.890
+C(journal)[T.ACS Energy Letters]                                                                  0.9007      0.111      8.114      0.000       0.683       1.118
+C(journal)[T.ACS Engineering Au]                                                                 -1.2878      0.473     -2.720      0.007      -2.216      -0.360
+C(journal)[T.ACS Measurement Science Au]                                                         -0.5802      0.390     -1.489      0.136      -1.344       0.183
+C(journal)[T.ACS Nano]                                                                            1.6669      0.103     16.255      0.000       1.466       1.868
+C(journal)[T.ACS Omega]                                                                          -0.2537      0.107     -2.372      0.018      -0.463      -0.044
+C(journal)[T.APL Materials]                                                                      -0.2846      0.141     -2.020      0.043      -0.561      -0.009
+C(journal)[T.Accounts of Chemical Research]                                                      -1.5832      0.135    -11.738      0.000      -1.848      -1.319
+C(journal)[T.Acta Materialia]                                                                     0.6567      0.141      4.667      0.000       0.381       0.933
+C(journal)[T.Advanced Drug Delivery Reviews]                                                     -1.2395      0.183     -6.768      0.000      -1.598      -0.881
+C(journal)[T.Advanced Energy Materials]                                                           1.4712      0.104     14.144      0.000       1.267       1.675
+C(journal)[T.Advanced Engineering Informatics]                                                    0.2814      0.169      1.662      0.097      -0.051       0.613
+C(journal)[T.Advanced Functional Materials]                                                       1.6689      0.100     16.612      0.000       1.472       1.866
+C(journal)[T.Advanced Intelligent Systems]                                                        0.7676      0.138      5.555      0.000       0.497       1.038
+C(journal)[T.Advanced Materials]                                                                  1.9900      0.101     19.741      0.000       1.792       2.188
+C(journal)[T.Advanced Materials Interfaces]                                                       0.9219      0.115      8.008      0.000       0.696       1.148
+C(journal)[T.Advanced Synthesis & Catalysis]                                                      0.9248      0.124      7.472      0.000       0.682       1.167
+C(journal)[T.Analytica Chimica Acta]                                                              0.4407      0.115      3.838      0.000       0.216       0.666
+C(journal)[T.Analytical Sciences]                                                                -0.3364      0.147     -2.290      0.022      -0.624      -0.048
+C(journal)[T.Angewandte Chemie]                                                                   1.6315      0.101     16.137      0.000       1.433       1.830
+C(journal)[T.Angewandte Chemie International Edition]                                             1.5739      0.101     15.573      0.000       1.376       1.772
+C(journal)[T.Annual Review of Analytical Chemistry]                                              -1.8138      0.322     -5.629      0.000      -2.445      -1.182
+C(journal)[T.Applied Physics Express]                                                             0.5578      0.152      3.668      0.000       0.260       0.856
+C(journal)[T.Applied Physics Reviews]                                                            -0.3372      0.185     -1.819      0.069      -0.700       0.026
+C(journal)[T.Applied Sciences]                                                                   -0.4693      0.104     -4.502      0.000      -0.674      -0.265
+C(journal)[T.Applied Spectroscopy]                                                                0.2453      0.239      1.024      0.306      -0.224       0.715
+C(journal)[T.Archives of Computational Methods in Engineering]                                   -0.7744      0.290     -2.673      0.008      -1.342      -0.207
+C(journal)[T.Artificial Intelligence Review]                                                     -0.2630      0.229     -1.149      0.251      -0.712       0.186
+C(journal)[T.Autonomous Robots]                                                                  -0.3764      0.164     -2.290      0.022      -0.699      -0.054
+C(journal)[T.Batteries & Supercaps]                                                              -0.1467      0.128     -1.144      0.253      -0.398       0.105
+C(journal)[T.Beilstein Journal of Organic Chemistry]                                             -0.2929      0.162     -1.809      0.070      -0.610       0.024
+C(journal)[T.Briefings in Bioinformatics]                                                         0.1287      0.171      0.752      0.452      -0.207       0.464
+C(journal)[T.CHIMIA International Journal for Chemistry]                                         -1.3470      0.184     -7.305      0.000      -1.708      -0.986
+C(journal)[T.Carolina Digital Repository (University of North Carolina at Chapel Hill)]           4.5478      0.148     30.767      0.000       4.258       4.838
+C(journal)[T.Cell]                                                                                4.2612      0.449      9.485      0.000       3.381       5.142
+C(journal)[T.Cell Reports Physical Science]                                                       2.0447      0.146     14.049      0.000       1.759       2.330
+C(journal)[T.Chem Catalysis]                                                                     -0.5729      0.223     -2.565      0.010      -1.011      -0.135
+C(journal)[T.ChemSusChem]                                                                         0.6160      0.116      5.307      0.000       0.388       0.843
+C(journal)[T.Chemical Communications]                                                             0.1813      0.101      1.789      0.074      -0.017       0.380
+C(journal)[T.Chemical Engineering Journal]                                                        1.6626      0.100     16.543      0.000       1.466       1.860
+C(journal)[T.Chemical Engineering Science]                                                        0.4000      0.116      3.438      0.001       0.172       0.628
+C(journal)[T.Chemical Reviews]                                                                   -0.9428      0.141     -6.678      0.000      -1.219      -0.666
+C(journal)[T.Chemical Science]                                                                    0.4310      0.109      3.953      0.000       0.217       0.645
+C(journal)[T.Chemical Society Reviews]                                                           -1.3854      0.130    -10.673      0.000      -1.640      -1.131
+C(journal)[T.Chemistry - A European Journal]                                                      0.8050      0.104      7.771      0.000       0.602       1.008
+C(journal)[T.Chemistry - Methods]                                                                -0.7946      0.291     -2.733      0.006      -1.365      -0.225
+C(journal)[T.Chemistry of Materials]                                                              0.6007      0.104      5.755      0.000       0.396       0.805
+C(journal)[T.Communications Chemistry]                                                            0.2048      0.188      1.087      0.277      -0.164       0.574
+C(journal)[T.Communications Materials]                                                            0.1508      0.210      0.717      0.473      -0.261       0.563
+C(journal)[T.Computational Materials Science]                                                    -0.7636      0.123     -6.184      0.000      -1.006      -0.522
+C(journal)[T.Computer Physics Communications]                                                    -0.5177      0.226     -2.289      0.022      -0.961      -0.074
+C(journal)[T.Computer-Aided Civil and Infrastructure Engineering]                                -0.5270      0.193     -2.725      0.006      -0.906      -0.148
+C(journal)[T.Current Opinion in Biotechnology]                                                   -1.5715      0.271     -5.793      0.000      -2.103      -1.040
+C(journal)[T.Current Opinion in Chemical Engineering]                                            -1.4047      0.211     -6.663      0.000      -1.818      -0.991
+C(journal)[T.Device]                                                                              1.1541      0.241      4.783      0.000       0.681       1.627
+C(journal)[T.Digital Discovery]                                                                  -0.1516      0.179     -0.848      0.396      -0.502       0.199
+C(journal)[T.Distill]                                                                            -0.5589      0.704     -0.794      0.427      -1.938       0.820
+C(journal)[T.Electrochemical Energy Reviews]                                                     -0.1195      0.297     -0.402      0.688      -0.702       0.463
+C(journal)[T.Elsevier eBooks]                                                                    -1.8023      0.099    -18.150      0.000      -1.997      -1.608
+C(journal)[T.Engineering Optimization]                                                            0.1134      0.225      0.505      0.614      -0.327       0.554
+C(journal)[T.Expert Opinion on Drug Discovery]                                                   -1.8023      0.199     -9.070      0.000      -2.192      -1.413
+C(journal)[T.Frontiers in Chemistry]                                                             -0.0118      0.124     -0.095      0.924      -0.255       0.232
+C(journal)[T.Frontiers in Pharmacology]                                                          -0.1319      0.157     -0.840      0.401      -0.440       0.176
+C(journal)[T.Green Chemistry]                                                                     0.7393      0.123      6.024      0.000       0.499       0.980
+C(journal)[T.HardwareX]                                                                          -0.8675      0.263     -3.302      0.001      -1.382      -0.353
+C(journal)[T.IEEE Access]                                                                        -0.9964      0.102     -9.760      0.000      -1.197      -0.796
+C(journal)[T.IEEE Robotics and Automation Letters]                                               -0.7122      0.104     -6.837      0.000      -0.916      -0.508
+C(journal)[T.IEEE Transactions on Automation Science and Engineering]                            -0.7659      0.140     -5.461      0.000      -1.041      -0.491
+C(journal)[T.IEEE Transactions on Evolutionary Computation]                                      -0.8140      0.171     -4.768      0.000      -1.149      -0.479
+C(journal)[T.Industrial & Engineering Chemistry Research]                                         0.2964      0.106      2.796      0.005       0.089       0.504
+C(journal)[T.Israel Journal of Chemistry]                                                        -1.3905      0.188     -7.414      0.000      -1.758      -1.023
+C(journal)[T.JACS Au]                                                                             0.2796      0.185      1.512      0.131      -0.083       0.642
+C(journal)[T.JOM]                                                                                -0.5156      0.158     -3.257      0.001      -0.826      -0.205
+C(journal)[T.Joule]                                                                               1.5076      0.139     10.842      0.000       1.235       1.780
+C(journal)[T.Journal of Applied Crystallography]                                                 -0.9655      0.161     -5.996      0.000      -1.281      -0.650
+C(journal)[T.Journal of Applied Physics]                                                         -0.9108      0.108     -8.399      0.000      -1.123      -0.698
+C(journal)[T.Journal of Chemical & Engineering Data]                                              0.9551      0.144      6.631      0.000       0.673       1.237
+C(journal)[T.Journal of Chemical Information and Modeling]                                       -0.1973      0.115     -1.719      0.086      -0.422       0.028
+C(journal)[T.Journal of Chemical Theory and Computation]                                         -1.0504      0.129     -8.156      0.000      -1.303      -0.798
+C(journal)[T.Journal of Cheminformatics]                                                         -0.5880      0.141     -4.164      0.000      -0.865      -0.311
+C(journal)[T.Journal of Cleaner Production]                                                       0.2687      0.121      2.226      0.026       0.032       0.505
+C(journal)[T.Journal of Computational Chemistry]                                                 -1.1591      0.153     -7.586      0.000      -1.459      -0.860
+C(journal)[T.Journal of Computing and Information Science in Engineering]                        -0.9265      0.299     -3.096      0.002      -1.513      -0.340
+C(journal)[T.Journal of Flow Chemistry]                                                           0.0933      0.180      0.520      0.603      -0.259       0.445
+C(journal)[T.Journal of Global Optimization]                                                     -0.8895      0.248     -3.584      0.000      -1.376      -0.403
+C(journal)[T.Journal of Materiomics]                                                              1.1440      0.227      5.050      0.000       0.700       1.588
+C(journal)[T.Journal of Medicinal Chemistry]                                                      2.8527      0.149     19.105      0.000       2.560       3.145
+C(journal)[T.Journal of Power Sources]                                                            0.6935      0.101      6.838      0.000       0.495       0.892
+C(journal)[T.Journal of The Electrochemical Society]                                             -0.1589      0.104     -1.534      0.125      -0.362       0.044
+C(journal)[T.Journal of The Royal Society Interface]                                             -0.4704      0.328     -1.435      0.151      -1.113       0.172
+C(journal)[T.Journal of the American Chemical Society]                                            1.2819      0.102     12.588      0.000       1.082       1.481
+C(journal)[T.MRS Bulletin]                                                                       -1.7852      0.152    -11.735      0.000      -2.083      -1.487
+C(journal)[T.Machine Learning Science and Technology]                                            -0.4974      0.197     -2.527      0.012      -0.883      -0.112
+C(journal)[T.Magnetic Resonance in Chemistry]                                                    -0.4375      0.362     -1.209      0.227      -1.147       0.272
+C(journal)[T.Materials Horizons]                                                                  0.3549      0.132      2.685      0.007       0.096       0.614
+C(journal)[T.Matter]                                                                              0.3210      0.140      2.291      0.022       0.046       0.596
+C(journal)[T.Microchemical Journal]                                                               0.5837      0.116      5.044      0.000       0.357       0.810
+C(journal)[T.Molecular Systems Design & Engineering]                                             -0.5646      0.211     -2.677      0.007      -0.978      -0.151
+C(journal)[T.Nanoscale]                                                                           0.3409      0.102      3.334      0.001       0.140       0.541
+C(journal)[T.National Science Review]                                                            -0.1241      0.166     -0.749      0.454      -0.449       0.201
+C(journal)[T.Nature]                                                                              1.3689      0.124     11.064      0.000       1.126       1.611
+C(journal)[T.Nature Catalysis]                                                                    1.2175      0.210      5.796      0.000       0.806       1.629
+C(journal)[T.Nature Chemical Engineering]                                                         0.7820      0.425      1.841      0.066      -0.050       1.614
+C(journal)[T.Nature Chemistry]                                                                    0.8346      0.158      5.273      0.000       0.524       1.145
+C(journal)[T.Nature Communications]                                                               2.4631      0.103     23.873      0.000       2.261       2.665
+C(journal)[T.Nature Energy]                                                                       1.9645      0.156     12.564      0.000       1.658       2.271
+C(journal)[T.Nature Machine Intelligence]                                                         0.4968      0.213      2.336      0.019       0.080       0.914
+C(journal)[T.Nature Materials]                                                                    1.1914      0.136      8.753      0.000       0.925       1.458
+C(journal)[T.Nature Reviews Chemistry]                                                           -1.8248      0.240     -7.612      0.000      -2.295      -1.355
+C(journal)[T.Nature Reviews Drug Discovery]                                                      -0.7861      0.254     -3.101      0.002      -1.283      -0.289
+C(journal)[T.Nature Reviews Materials]                                                           -1.8327      0.188     -9.754      0.000      -2.201      -1.464
+C(journal)[T.Nature Synthesis]                                                                   -0.1591      0.231     -0.688      0.491      -0.612       0.294
+C(journal)[T.Nucleic Acids Research]                                                              2.6443      0.217     12.206      0.000       2.220       3.069
+C(journal)[T.Organic Process Research & Development]                                              2.0945      0.128     16.367      0.000       1.844       2.345
+C(journal)[T.PLoS Biology]                                                                       -0.1943      0.465     -0.418      0.676      -1.106       0.718
+C(journal)[T.PLoS ONE]                                                                            0.0838      0.116      0.722      0.470      -0.144       0.311
+C(journal)[T.PRX Energy]                                                                         -0.6308      0.384     -1.644      0.100      -1.383       0.121
+C(journal)[T.Particle & Particle Systems Characterization]                                        0.4699      0.174      2.705      0.007       0.129       0.810
+C(journal)[T.Patterns]                                                                           -0.5786      0.273     -2.117      0.034      -1.114      -0.043
+C(journal)[T.Physical Review Materials]                                                          -1.3984      0.129    -10.853      0.000      -1.651      -1.146
+C(journal)[T.Polymer Chemistry]                                                                   0.2300      0.131      1.755      0.079      -0.027       0.487
+C(journal)[T.Proceedings of the National Academy of Sciences]                                     0.6899      0.129      5.346      0.000       0.437       0.943
+C(journal)[T.Proceedings of the Python in Science Conferences]                                   -1.4664      0.791     -1.855      0.064      -3.016       0.083
+C(journal)[T.Processes]                                                                          -0.3151      0.127     -2.486      0.013      -0.564      -0.067
+C(journal)[T.RSC Advances]                                                                       -0.0618      0.100     -0.620      0.535      -0.257       0.133
+C(journal)[T.Reaction Chemistry & Engineering]                                                    0.1013      0.149      0.680      0.497      -0.191       0.393
+C(journal)[T.Robotics and Autonomous Systems]                                                    -0.1599      0.132     -1.215      0.225      -0.418       0.098
+C(journal)[T.SLAS TECHNOLOGY]                                                                     0.4845      0.206      2.356      0.018       0.081       0.888
+C(journal)[T.Science]                                                                             0.4183      0.120      3.485      0.000       0.183       0.653
+C(journal)[T.Science Advances]                                                                    2.4033      0.124     19.437      0.000       2.161       2.646
+C(journal)[T.Science and Technology of Advanced Materials Methods]                               -0.8526      0.337     -2.532      0.011      -1.513      -0.193
+C(journal)[T.Scientific Data]                                                                     0.8493      0.194      4.380      0.000       0.469       1.229
+C(journal)[T.Scientific Reports]                                                                  0.0128      0.101      0.127      0.899      -0.185       0.210
+C(journal)[T.Scripta Materialia]                                                                  0.3052      0.148      2.057      0.040       0.014       0.596
+C(journal)[T.Sustainability]                                                                     -0.4157      0.124     -3.344      0.001      -0.659      -0.172
+C(journal)[T.Talanta]                                                                             0.4752      0.112      4.244      0.000       0.256       0.695
+C(journal)[T.Tetrahedron]                                                                         0.9010      0.124      7.270      0.000       0.658       1.144
+C(journal)[T.The Canadian Journal of Chemical Engineering]                                       -0.1533      0.166     -0.922      0.357      -0.479       0.173
+C(journal)[T.The Journal of Chemical Physics]                                                    -1.3821      0.111    -12.468      0.000      -1.599      -1.165
+C(journal)[T.The Journal of Open Source Software]                                                -0.8505      0.216     -3.937      0.000      -1.274      -0.427
+C(journal)[T.The Journal of Organic Chemistry]                                                    0.7287      0.111      6.578      0.000       0.512       0.946
+C(journal)[T.The Journal of Physical Chemistry Letters]                                          -0.2873      0.105     -2.742      0.006      -0.493      -0.082
+C(journal)[T.Trends in Chemistry]                                                                -1.8203      0.229     -7.956      0.000      -2.269      -1.372
+C(journal)[T.Trends in Pharmacological Sciences]                                                 -1.9577      0.356     -5.506      0.000      -2.655      -1.261
+C(journal)[T.Wiley Interdisciplinary Reviews Computational Molecular Science]                    -1.1352      0.256     -4.429      0.000      -1.638      -0.633
+C(journal)[T.arXiv (Cornell University)]                                                          0.5479      0.095      5.740      0.000       0.361       0.735
+C(journal)[T.bioRxiv (Cold Spring Harbor Laboratory)]                                             1.2215      0.107     11.407      0.000       1.012       1.431
+C(journal)[T.eLife]                                                                              -0.1775      0.315     -0.564      0.573      -0.794       0.439
+C(journal)[T.iScience]                                                                            0.2650      0.149      1.773      0.076      -0.028       0.558
+C(journal)[T.npj Computational Materials]                                                        -0.0212      0.142     -0.149      0.881      -0.300       0.258
+C(journal)[T.npj Systems Biology and Applications]                                               -0.1816      0.573     -0.317      0.751      -1.304       0.941
+C(primary_topic)[T.3D Printing in Biomedical Research]                                        -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.AI-based Problem Solving and Planning]                                      2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Additive Manufacturing and 3D Printing Technologies]                       -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Battery Materials and Technologies]                               -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Battery Technologies Research]                                    -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Control Systems Optimization]                                     -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Graph Neural Networks]                                             2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Advanced Memory and Neural Computing]                                      -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Multi-Objective Optimization Algorithms]                           2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Advanced Sensor and Energy Harvesting Materials]                           -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advanced Vision and Imaging]                                                2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Advanced battery technologies research]                                    -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Advancements in Battery Materials]                                         -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Adversarial Robustness in Machine Learning]                                 2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Analytical Chemistry and Chromatography]                                    2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Analytical chemistry methods development]                                   2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Anomaly Detection Techniques and Applications]                              2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Asymmetric Hydrogenation and Catalysis]                                     2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.BIM and Construction Integration]                                          -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Biomedical and Engineering Education]                                      -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Carbon Nanotubes in Composites]                                               -1.1817      0.054    -22.044      0.000      -1.287      -1.077
+C(primary_topic)[T.Catalytic Cross-Coupling Reactions]                                         2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Catalytic Processes in Materials Science]                                     -0.9558      0.038    -25.071      0.000      -1.030      -0.881
+C(primary_topic)[T.Click Chemistry and Applications]                                           2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Computability, Logic, AI Algorithms]                                        2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Computational Drug Discovery Methods]                                       2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Concrete and Cement Materials Research]                                    -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Crystallization and Solubility Studies]                                       -1.7022      0.081    -21.099      0.000      -1.860      -1.544
+C(primary_topic)[T.Crystallography and molecular interactions]                                 2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Dynamics and Control of Mechanical Systems]                                -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Electrochemical Analysis and Applications]                                  2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Electronic and Structural Properties of Oxides]                               -0.3098      0.052     -5.980      0.000      -0.411      -0.208
+C(primary_topic)[T.Electrowetting and Microfluidic Technologies]                              -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Experimental Learning in Engineering]                                      -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Expert finding and Q&A systems]                                             2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Explainable Artificial Intelligence (XAI)]                                  2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Gaussian Processes and Bayesian Inference]                                  2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Gold and Silver Nanoparticles Synthesis and Applications]                     -1.2326      0.042    -29.058      0.000      -1.316      -1.149
+C(primary_topic)[T.High Entropy Alloys Studies]                                               -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Infrastructure Maintenance and Monitoring]                                 -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Innovative Microfluidic and Catalytic Techniques Innovation]               -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Machine Learning and Algorithms]                                            2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Machine Learning and Data Classification]                                   2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Machine Learning in Materials Science]                                        -1.7558      0.038    -45.685      0.000      -1.831      -1.680
+C(primary_topic)[T.Mass Spectrometry Techniques and Applications]                              2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Mathematics, Computing, and Information Processing]                         2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Metal-Organic Frameworks: Synthesis and Applications]                       2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Microfluidic and Bio-sensing Technologies]                                 -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Microfluidic and Capillary Electrophoresis Applications]                   -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Mineral Processing and Grinding]                                           -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Modular Robots and Swarm Intelligence]                                     -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Nanomaterials and Printing Technologies]                                   -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Nanomaterials for catalytic reactions]                                      2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Nanoparticle-Based Drug Delivery]                                             -0.7537      0.047    -15.998      0.000      -0.846      -0.661
+C(primary_topic)[T.Nanotechnology research and applications]                                  -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Nanowire Synthesis and Applications]                                       -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Optimization and Search Problems]                                           2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Organic Electronics and Photovoltaics]                                     -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Organic Light-Emitting Diodes Research]                                    -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Perovskite Materials and Applications]                                     -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Polyoxometalates: Synthesis and Applications]                                 -1.0618      0.062    -17.090      0.000      -1.184      -0.940
+C(primary_topic)[T.Process Optimization and Integration]                                      -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Quantum Dots Synthesis And Properties]                                        -0.7874      0.043    -18.479      0.000      -0.871      -0.704
+C(primary_topic)[T.Reinforcement Learning in Robotics]                                         2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Research Data Management Practices]                                         2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Robot Manipulation and Learning]                                           -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Robotic Path Planning Algorithms]                                           2.634e+09    1.6e+10      0.165      0.869   -2.86e+10    3.39e+10
+C(primary_topic)[T.Robotics and Sensor-Based Localization]                                    -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Semiconductor Lasers and Optical Devices]                                  -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Soft Robotics and Applications]                                            -3.117e+09   7.36e+09     -0.423      0.672   -1.76e+10    1.13e+10
+C(primary_topic)[T.Sulfur-Based Synthesis Techniques]                                          2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Supramolecular Chemistry and Complexes]                                     2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.Synthesis and Catalytic Reactions]                                          2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+C(primary_topic)[T.X-ray Diffraction in Crystallography]                                         -1.5803      0.100    -15.869      0.000      -1.775      -1.385
+C(primary_topic)[T.Zeolite Catalysis and Synthesis]                                            2.617e+07   2.96e+09      0.009      0.993   -5.77e+09    5.82e+09
+SDL                                                                                               1.5041      0.145     10.344      0.000       1.219       1.789
+num_paper_affiliations                                                                            0.8581      0.003    326.204      0.000       0.853       0.863
+asinh_first_author_papers                                                                        -0.0789      0.007    -11.686      0.000      -0.092      -0.066
+asinh_first_author_citations                                                                      0.0596      0.004     14.787      0.000       0.052       0.068
+asinh_last_author_papers                                                                         -0.0892      0.008    -11.222      0.000      -0.105      -0.074
+asinh_last_author_citations                                                                       0.0657      0.005     13.067      0.000       0.056       0.076
+asinh_corresponding_papers                                                                       -0.1346      0.011    -12.133      0.000      -0.156      -0.113
+asinh_corresponding_citations                                                                    -0.0380      0.007     -5.548      0.000      -0.051      -0.025
+==============================================================================
+Omnibus:                   516199.800   Durbin-Watson:                   1.916
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):        188991287.212
+Skew:                           4.695   Prob(JB):                         0.00
+Kurtosis:                      98.710   Cond. No.                     1.89e+14
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The smallest eigenvalue is 1.86e-21. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.

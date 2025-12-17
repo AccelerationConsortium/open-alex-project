@@ -382,6 +382,7 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 # if __name__ == "__main__":
 #     df = build_regression_dataset(years)
 
+#THIS IS THE DATASET WITH 490K PAPERS
 import json, pandas as pd
 import numpy as np
 from pathlib import Path
@@ -401,39 +402,82 @@ FIELDS = {
     'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
 }
 
-AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author" / "author_metrics.csv"
-CS_TOPICS_FILE = PROJECT_DIR / "data" / "cs_topics_only.txt"  # ← NEW: Path to CS keywords file
-OUTPUT_DIR = PROJECT_DIR / "data" / "regression/testing"
+AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author/test" / "author_metrics.csv"
+CS_KEYWORDS_FILE = PROJECT_DIR / "data/lasso_regression" / "cs_keywords_shortlisted.txt"  # Computer science keywords file
+
+# --- SDL FILTER CONFIGURATION ---
+SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
+SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_primary_topics.txt"
+
+FILTER_CONFIG = {
+    'use_journal_filter': True,
+    'use_topic_filter': True,
+}
+# -----------------------------------------------------------
+
+OUTPUT_DIR = PROJECT_DIR / "data" / "regression"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 YEARS = range(2012, 2026)
-CHUNK_SIZE = 500000
+CHUNK_SIZE = 50000
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 
 def load_cs_keywords(file_path):
-    """Load CS keywords from text file into a set for fast lookup"""
+    """Load CS keywords from text file into a set for fast lookup, skip commented lines"""
     with open(file_path, 'r', encoding='utf-8') as f:
-        keywords = set(line.strip().lower() for line in f if line.strip())
+        keywords = set(line.strip().lower() for line in f 
+                      if line.strip() and not line.strip().startswith('#'))
     return keywords
 
 
-def check_cs_topic_match(primary_topic, all_topics_str, cs_keywords_set):
-    """Check if primary topic or any topic in all_topics matches CS keywords"""
+def check_cs_keyword_match(primary_topic, all_topics_str, title, abstract, cs_keywords_set):
+    """
+    Check if at least 2 different CS keywords match in topics, title, or abstract.
+    Returns 1 if >= 2 different keywords found, 0 otherwise.
+    """
+    matched_keywords = set()
+    
     # Check primary topic
-    if primary_topic and primary_topic.lower().strip() in cs_keywords_set:
-        return 1
+    if primary_topic:
+        primary_lower = primary_topic.lower()
+        for keyword in cs_keywords_set:
+            if keyword in primary_lower:
+                matched_keywords.add(keyword)
+                if len(matched_keywords) >= 2:
+                    return 1
     
     # Check all topics
     if all_topics_str:
-        topics = [t.strip().lower() for t in all_topics_str.split('|')]
-        for topic in topics:
-            if topic in cs_keywords_set:
-                return 1
+        all_topics_lower = all_topics_str.lower()
+        for keyword in cs_keywords_set:
+            if keyword in all_topics_lower:
+                matched_keywords.add(keyword)
+                if len(matched_keywords) >= 2:
+                    return 1
     
-    return 0
+    # Check title
+    if title and isinstance(title, str):
+        title_lower = title.lower()
+        for keyword in cs_keywords_set:
+            if keyword in title_lower:
+                matched_keywords.add(keyword)
+                if len(matched_keywords) >= 2:
+                    return 1
+    
+    # Check abstract
+    if abstract and isinstance(abstract, str):
+        abstract_lower = abstract.lower()
+        for keyword in cs_keywords_set:
+            if keyword in abstract_lower:
+                matched_keywords.add(keyword)
+                if len(matched_keywords) >= 2:
+                    return 1
+    
+    # Return 1 if at least 2 different keywords matched, 0 otherwise
+    return 1 if len(matched_keywords) >= 2 else 0
 
 
 def clean_author_id(author_id):
@@ -489,9 +533,9 @@ def parse_corresponding_authors(raw_data_json):
 
 
 def parse_paper_metadata(raw_data_json):
-    """Extract topics (primary + all), journal, citations, affiliations count, publication date"""
+    """Extract topics (primary + all), journal, citations, affiliations count, publication date, abstract"""
     if pd.isna(raw_data_json) or raw_data_json == '':
-        return None, None, None, 0, 0, None
+        return None, None, None, 0, 0, None, None
     
     try:
         data = json.loads(raw_data_json)
@@ -514,6 +558,21 @@ def parse_paper_metadata(raw_data_json):
         # Publication date
         publication_date = data.get('publication_date')
         
+        # Abstract - convert from inverted index to paragraph form
+        abstract_text = None
+        abstract_inverted = data.get('abstract_inverted_index')
+        if abstract_inverted:
+            # Inverted index format: {"word": [position1, position2, ...]}
+            # Need to reconstruct the original text
+            word_positions = []
+            for word, positions in abstract_inverted.items():
+                for pos in positions:
+                    word_positions.append((pos, word))
+            
+            # Sort by position and join words
+            word_positions.sort(key=lambda x: x[0])
+            abstract_text = ' '.join([word for pos, word in word_positions])
+        
         # Count unique affiliations
         authorships = data.get('authorships', [])
         all_institutions = set()
@@ -525,10 +584,11 @@ def parse_paper_metadata(raw_data_json):
         
         num_paper_affiliations = len(all_institutions)
         
-        return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date
+        return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date, abstract_text
     
     except:
-        return None, None, None, 0, 0, None
+        return None, None, None, 0, 0, None, None
+
 
 def get_corresponding_position(first_id, last_id, corr_id, corr_ids_list):
     """Determine position of corresponding author"""
@@ -601,16 +661,20 @@ def process_field_year(args):
                     # Parse corresponding authors
                     primary_corr_id, all_corr_ids = parse_corresponding_authors(row['raw_data'])
                     
-                    # Parse paper metadata
-                    primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date = \
+                    # Parse paper metadata (INCLUDES ABSTRACT)
+                    primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date, abstract = \
                         parse_paper_metadata(row['raw_data'])
                     
-                    # ← NEW: Determine CS experience for paper
+                    # Get title from row
+                    title = row.get('title', '')
+                    
+                    # Determine CS experience for paper using KEYWORD MATCHING
                     if field_name == 'computer_science':
                         comp_sci_experience_paper = 1
                     else:
-                        comp_sci_experience_paper = check_cs_topic_match(
-                            primary_topic, all_topics_str, cs_keywords
+                        # Check if at least 2 different keywords match in topics/title/abstract
+                        comp_sci_experience_paper = check_cs_keyword_match(
+                            primary_topic, all_topics_str, title, abstract, cs_keywords
                         )
                     
                     # Get first author metrics
@@ -664,7 +728,8 @@ def process_field_year(args):
                         # Identifiers
                         'article_id': row['article_id'],
                         'doi': row.get('doi', ''),
-                        'title': row.get('title', ''),
+                        'title': title,
+                        'abstract': abstract or '',
                         'publication_year': row['publication_year'],
                         'publication_date': publication_date or '',
                         
@@ -683,7 +748,7 @@ def process_field_year(args):
                         'journal': journal or 'MISSING',
                         'cited_by_count': cited_by_count,
                         'field': field_name,
-                        'comp_sci_experience_paper': comp_sci_experience_paper,  # ← NEW COLUMN
+                        'comp_sci_experience_paper': comp_sci_experience_paper,
                         
                         # First author metrics
                         'first_author_id': first_author_id,
@@ -725,15 +790,40 @@ def process_field_year(args):
 # MAIN PROCESSING
 # ============================================================================
 
+def load_sdl_venues():
+    """Load SDL journals and topics for filtering"""
+    sdl_journals = set()
+    sdl_topics = set()
+    
+    print("\n--- Loading SDL Venue Lists ---")
+    
+    if FILTER_CONFIG['use_journal_filter'] and SDL_JOURNALS_FILE.exists():
+        with open(SDL_JOURNALS_FILE, 'r') as f:
+            sdl_journals = {line.strip() for line in f if line.strip()}
+        print(f"✓ Loaded {len(sdl_journals)} SDL journals.")
+    elif FILTER_CONFIG['use_journal_filter']:
+        print(f"❌ ERROR: SDL journals file not found: {SDL_JOURNALS_FILE}")
+    
+    if FILTER_CONFIG['use_topic_filter'] and SDL_TOPICS_FILE.exists():
+        with open(SDL_TOPICS_FILE, 'r') as f:
+            sdl_topics = {line.strip() for line in f if line.strip()}
+        print(f"✓ Loaded {len(sdl_topics)} SDL topics.")
+    elif FILTER_CONFIG['use_topic_filter']:
+        print(f"❌ ERROR: SDL topics file not found: {SDL_TOPICS_FILE}")
+
+    return sdl_journals, sdl_topics
+
+
 def build_regression_dataset():
     """Build complete regression dataset using parallel processing (year-level)"""
     
     print("="*80)
-    print("BUILDING REGRESSION DATASET (PARALLEL - YEAR LEVEL)")
+    print("BUILDING FILTERED REGRESSION DATASET WITH CS KEYWORD MATCHING (490K)")
     print("="*80)
     print(f"\nOutput directory: {OUTPUT_DIR}")
     print(f"Years: {min(YEARS)}-{max(YEARS)-1}")
     print(f"Fields: {len(FIELDS)}")
+    print(f"Filtering: SDL journals AND topics (matched venue design)")
     print(f"CPU cores available: {cpu_count()}")
     print(f"Using up to 20 parallel processes\n")
     
@@ -750,14 +840,17 @@ def build_regression_dataset():
         sys.exit(1)
     print(f"✓ Found: {AUTHOR_METRICS_FILE}")
     
-    if not CS_TOPICS_FILE.exists():
-        print(f"❌ ERROR: CS keywords file not found: {CS_TOPICS_FILE}")
+    if not CS_KEYWORDS_FILE.exists():
+        print(f"❌ ERROR: CS keywords file not found: {CS_KEYWORDS_FILE}")
         sys.exit(1)
-    print(f"✓ Found: {CS_TOPICS_FILE}")
+    print(f"✓ Found: {CS_KEYWORDS_FILE}")
     
     # Load and display CS keywords count
-    cs_keywords = load_cs_keywords(CS_TOPICS_FILE)
+    cs_keywords = load_cs_keywords(CS_KEYWORDS_FILE)
     print(f"✓ Loaded {len(cs_keywords)} CS keywords\n")
+    
+    # Load SDL venue lists for filtering
+    sdl_journals, sdl_topics = load_sdl_venues()
     
     # ========================================================================
     # STEP 2: Build task list (field, year combinations)
@@ -775,7 +868,7 @@ def build_regression_dataset():
         
         print(f"  ✓ {field_name}: {field_dir}")
         for year in YEARS:
-            tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, CS_TOPICS_FILE))
+            tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, CS_KEYWORDS_FILE))
     
     print(f"\n✓ {len(tasks)} tasks ready (field × year combinations)\n")
     
@@ -833,7 +926,6 @@ def build_regression_dataset():
     
     df = pd.DataFrame(all_papers)
     print(f"  DataFrame shape: {df.shape}")
-    print(f"  Memory usage: {df.memory_usage(deep=True).sum() / 1e9:.2f} GB\n")
     
     # Apply asinh transformations
     print("  Applying transformations...")
@@ -851,73 +943,85 @@ def build_regression_dataset():
     print("  ✓ Transformations complete\n")
     
     # ========================================================================
-    # STEP 6: Save outputs
+    # STEP 6: Apply Regression Filters and Save Filtered Dataset
     # ========================================================================
     
-    print("="*80)
-    print("STEP 6: Saving outputs")
+    print(f"\n{'='*80}")
+    print("STEP 6: Applying Regression Filters and Saving Filtered Dataset")
     print("="*80)
     
+    df_filtered = df.copy()
+    initial_count = len(df_filtered)
+    
+    # --- Filter 1 & 2: SDL Venue Filters ---
+    print(f"  Applying venue filters (Journals={FILTER_CONFIG['use_journal_filter']}, Topics={FILTER_CONFIG['use_topic_filter']})...")
+    
+    mask = pd.Series(True, index=df_filtered.index)
+    
+    if FILTER_CONFIG['use_journal_filter'] and len(sdl_journals) > 0:
+        mask &= df_filtered['journal'].isin(sdl_journals)
+    
+    if FILTER_CONFIG['use_topic_filter'] and len(sdl_topics) > 0:
+        mask &= df_filtered['primary_topic'].isin(sdl_topics)
+    
+    df_filtered = df_filtered[mask].copy()
+    
+    print(f"  Rows after venue filtering: {len(df_filtered):,}")
+    
+    # --- Filter 3: Remove Missing Key Regression Variables ---
+    key_vars = ['author_count', 'publication_year', 'field', 'asinh_first_author_papers', 'asinh_last_author_papers']
+    
+    pre_dropna_count = len(df_filtered)
+    df_filtered = df_filtered.dropna(subset=key_vars)
+    removed_missing = pre_dropna_count - len(df_filtered)
+    
+    print(f"  Removed {removed_missing:,} rows with missing key regression variables.")
+    print(f"  Final filtered rows: {len(df_filtered):,}")
+    
+    # Check abstracts in filtered dataset
+    filtered_with_abstract = df_filtered['abstract'].notna().sum()
+    print(f"  Filtered papers with abstracts: {filtered_with_abstract:,} ({filtered_with_abstract/len(df_filtered)*100:.1f}%)")
+    
     # Save as CSV
-    csv_file = OUTPUT_DIR / "regression_dataset_full_local.csv"
-    print(f"\nSaving: {csv_file}")
-    df.to_csv(csv_file, index=False)
-    csv_size = csv_file.stat().st_size / (1024 * 1024)
-    print(f"  Size: {csv_size:.1f} MB")
+    csv_file_filtered = OUTPUT_DIR / "regression_dataset_filtered_with_abstract.csv"
+    print(f"\nSaving FILTERED dataset: {csv_file_filtered}")
+    df_filtered.to_csv(csv_file_filtered, index=False)
+    csv_size_filtered = csv_file_filtered.stat().st_size / (1024 * 1024)
+    print(f"  Size: {csv_size_filtered:.1f} MB")
     
     # ========================================================================
     # STEP 7: Summary statistics
     # ========================================================================
     
     print(f"\n{'='*80}")
-    print("SUMMARY STATISTICS")
+    print("SUMMARY STATISTICS - FILTERED DATASET (490K)")
     print("="*80)
     
-    print(f"\nDataset dimensions:")
-    print(f"  Rows: {len(df):,}")
-    print(f"  Columns: {len(df.columns)}")
+    print(f"\nTotal papers: {len(df_filtered):,}")
+    print(f"  SDL papers: {df_filtered['SDL'].sum():,}")
+    print(f"  Non-SDL papers: {(df_filtered['SDL'] == 0).sum():,}")
+    print(f"  CS Experience papers (KEYWORD MATCHING): {df_filtered['comp_sci_experience_paper'].sum():,}")
+    print(f"  Papers with abstracts: {filtered_with_abstract:,} ({filtered_with_abstract/len(df_filtered)*100:.1f}%)")
     
     print(f"\nPapers by field:")
-    print(df['field'].value_counts().to_string())
+    print(df_filtered['field'].value_counts().to_string())
     
-    print(f"\nSDL papers:")
-    print(f"  SDL papers: {df['SDL'].sum():,}")
-    print(f"  Non-SDL papers: {(df['SDL'] == 0).sum():,}")
-    
-    print(f"\nCS Experience papers:")  # ← NEW STATISTICS
-    print(f"  Papers with CS experience: {df['comp_sci_experience_paper'].sum():,}")
-    print(f"  Papers without CS experience: {(df['comp_sci_experience_paper'] == 0).sum():,}")
-    
-    print(f"\nCS Experience by field:")  # ← NEW STATISTICS
-    print(df.groupby('field')['comp_sci_experience_paper'].agg(['sum', 'count', 'mean']).to_string())
-    
-    print(f"\nAuthor count statistics:")
-    print(df['author_count'].describe())
-    
-    print(f"\nCorresponding position distribution:")
-    print(df['corresponding_position'].value_counts().to_string())
-    
-    print(f"\nMissing values:")
-    missing = df.isnull().sum()
-    missing = missing[missing > 0]
-    if len(missing) > 0:
-        print(missing.to_string())
-    else:
-        print("  None")
+    print(f"\nCS Experience by field:")
+    print(df_filtered.groupby('field')['comp_sci_experience_paper'].agg(['sum', 'count', 'mean']).to_string())
     
     print(f"\n{'='*80}")
     print("✅ COMPLETE!")
     print("="*80)
     print(f"\nOutput file:")
-    print(f"  {csv_file}\n")
+    print(f"  {csv_file_filtered}")
+    print(f"  Size: {csv_size_filtered:.1f} MB\n")
     
-    return df
+    return df_filtered
 
 
 # ============================================================================
 # MAIN EXECUTION
 # ============================================================================
 
-
 if __name__ == "__main__":
-    df = build_regression_dataset()
+    df_final = build_regression_dataset()

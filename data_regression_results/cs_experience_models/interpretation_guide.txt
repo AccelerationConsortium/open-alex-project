@@ -1,0 +1,29 @@
+
+CS EXPERIENCE MODELS - INTERPRETATION GUIDE
+==========================================
+
+MODEL 1 (Paper-level CS):
+- Tests whether papers with CS-experienced authors have different team sizes
+- Main effect: paper_has_cs_experience coefficient
+- Interpretation: Papers with CS experience have X more/fewer authors on average
+
+MODEL 2 (Author-level CS):
+- Tests whether first/last author CS experience affects team size
+- Main effects: first_author_cs_experience and last_author_cs_experience
+- Interpretation: When first/last author has CS background, team is X larger/smaller
+
+MODEL 3 (SDL × CS interaction):
+- Tests whether SDL effect differs for CS-experienced teams
+- Key coefficient: SDL:paper_has_cs_experience interaction
+- Interpretation: SDL effect on team size is X larger/smaller when team has CS experience
+
+MODEL 4 (Last author CS × SDL):
+- Tests whether PI (last author) CS background moderates SDL effect
+- Key coefficient: SDL:last_author_cs_experience interaction
+- Interpretation: SDL effect differs when PI has CS background
+
+MODEL 5 (Citations with CS):
+- Tests whether CS experience affects citation impact
+- Dependent variable: asinh(citations) instead of team size
+- Key coefficient: SDL:paper_has_cs_experience interaction
+- Interpretation: SDL papers with CS experience get X% more/fewer citations

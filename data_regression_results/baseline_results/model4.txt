@@ -1,0 +1,46 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           author_count   R-squared:                       0.307
+Model:                            OLS   Adj. R-squared:                  0.307
+Method:                 Least Squares   F-statistic:                     9855.
+Date:                Sun, 09 Nov 2025   Prob (F-statistic):               0.00
+Time:                        20:19:39   Log-Likelihood:            -1.2724e+06
+No. Observations:              490434   AIC:                         2.545e+06
+Df Residuals:                  490411   BIC:                         2.545e+06
+Df Model:                          22                                         
+Covariance Type:            nonrobust                                         
+=================================================================================================
+                                    coef    std err          t      P>|t|      [0.025      0.975]
+-------------------------------------------------------------------------------------------------
+Intercept                         1.7543      0.034     51.761      0.000       1.688       1.821
+C(publication_year)[T.2013]       0.1062      0.038      2.801      0.005       0.032       0.180
+C(publication_year)[T.2014]       0.1375      0.036      3.785      0.000       0.066       0.209
+C(publication_year)[T.2015]       0.1608      0.036      4.528      0.000       0.091       0.230
+C(publication_year)[T.2016]       0.3320      0.035      9.535      0.000       0.264       0.400
+C(publication_year)[T.2017]       0.4348      0.034     12.657      0.000       0.367       0.502
+C(publication_year)[T.2018]       0.5025      0.033     15.063      0.000       0.437       0.568
+C(publication_year)[T.2019]       0.6004      0.033     18.463      0.000       0.537       0.664
+C(publication_year)[T.2020]       0.6829      0.032     21.351      0.000       0.620       0.746
+C(publication_year)[T.2021]       0.9264      0.032     29.129      0.000       0.864       0.989
+C(publication_year)[T.2022]       2.3746      0.032     74.474      0.000       2.312       2.437
+C(publication_year)[T.2023]       1.3727      0.032     43.292      0.000       1.311       1.435
+C(publication_year)[T.2024]       1.7914      0.031     57.033      0.000       1.730       1.853
+C(publication_year)[T.2025]       2.1560      0.033     66.299      0.000       2.092       2.220
+C(field)[T.computer_science]     -0.1497      0.016     -9.442      0.000      -0.181      -0.119
+C(field)[T.engineering]           1.0044      0.014     69.455      0.000       0.976       1.033
+C(field)[T.materials_science]     0.4864      0.016     29.549      0.000       0.454       0.519
+SDL                               0.7116      0.154      4.612      0.000       0.409       1.014
+num_paper_affiliations            0.9216      0.003    367.955      0.000       0.917       0.927
+asinh_first_author_papers        -0.1442      0.007    -20.838      0.000      -0.158      -0.131
+asinh_first_author_citations      0.1023      0.004     24.686      0.000       0.094       0.110
+asinh_last_author_papers         -0.2003      0.008    -26.041      0.000      -0.215      -0.185
+asinh_last_author_citations       0.2188      0.005     45.131      0.000       0.209       0.228
+==============================================================================
+Omnibus:                   483866.995   Durbin-Watson:                   1.858
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):        126980627.058
+Skew:                           4.272   Prob(JB):                         0.00
+Kurtosis:                      81.364   Cond. No.                         364.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.

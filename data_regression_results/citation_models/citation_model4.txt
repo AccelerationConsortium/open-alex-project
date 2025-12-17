@@ -1,0 +1,106 @@
+                              OLS Regression Results                             
+=================================================================================
+Dep. Variable:     asinh_paper_citations   R-squared:                       0.360
+Model:                               OLS   Adj. R-squared:                  0.360
+Method:                    Least Squares   F-statistic:                     3367.
+Date:                   Mon, 10 Nov 2025   Prob (F-statistic):               0.00
+Time:                           17:15:45   Log-Likelihood:            -9.2145e+05
+No. Observations:                 490434   AIC:                         1.843e+06
+Df Residuals:                     490351   BIC:                         1.844e+06
+Df Model:                             82                                         
+Covariance Type:               nonrobust                                         
+===================================================================================================================================================
+                                                                                      coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Intercept                                                                           1.2286      0.016     76.627      0.000       1.197       1.260
+C(primary_topic)[T.3D Printing in Biomedical Research]                              0.2125      0.025      8.479      0.000       0.163       0.262
+C(primary_topic)[T.AI-based Problem Solving and Planning]                          -0.9984      0.044    -22.686      0.000      -1.085      -0.912
+C(primary_topic)[T.Additive Manufacturing and 3D Printing Technologies]            -0.0487      0.029     -1.665      0.096      -0.106       0.009
+C(primary_topic)[T.Advanced Battery Materials and Technologies]                     0.9633      0.017     56.419      0.000       0.930       0.997
+C(primary_topic)[T.Advanced Battery Technologies Research]                          0.8726      0.022     39.216      0.000       0.829       0.916
+C(primary_topic)[T.Advanced Control Systems Optimization]                          -0.8097      0.024    -33.714      0.000      -0.857      -0.763
+C(primary_topic)[T.Advanced Graph Neural Networks]                                 -0.9783      0.022    -44.131      0.000      -1.022      -0.935
+C(primary_topic)[T.Advanced Memory and Neural Computing]                           -0.1188      0.019     -6.141      0.000      -0.157      -0.081
+C(primary_topic)[T.Advanced Multi-Objective Optimization Algorithms]               -0.4795      0.031    -15.639      0.000      -0.540      -0.419
+C(primary_topic)[T.Advanced Sensor and Energy Harvesting Materials]                 0.8111      0.018     45.319      0.000       0.776       0.846
+C(primary_topic)[T.Advanced Vision and Imaging]                                    -1.2608      0.021    -59.636      0.000      -1.302      -1.219
+C(primary_topic)[T.Advanced battery technologies research]                          0.7756      0.020     39.491      0.000       0.737       0.814
+C(primary_topic)[T.Advancements in Battery Materials]                               0.8963      0.016     56.155      0.000       0.865       0.928
+C(primary_topic)[T.Adversarial Robustness in Machine Learning]                     -0.8875      0.019    -47.389      0.000      -0.924      -0.851
+C(primary_topic)[T.Analytical Chemistry and Chromatography]                        -0.1971      0.029     -6.748      0.000      -0.254      -0.140
+C(primary_topic)[T.Analytical chemistry methods development]                        0.4749      0.025     19.008      0.000       0.426       0.524
+C(primary_topic)[T.Anomaly Detection Techniques and Applications]                  -0.9569      0.022    -43.943      0.000      -1.000      -0.914
+C(primary_topic)[T.Asymmetric Hydrogenation and Catalysis]                          0.4954      0.022     22.242      0.000       0.452       0.539
+C(primary_topic)[T.BIM and Construction Integration]                                0.4065      0.041      9.800      0.000       0.325       0.488
+C(primary_topic)[T.Biomedical and Engineering Education]                           -0.6708      0.048    -13.931      0.000      -0.765      -0.576
+C(primary_topic)[T.Carbon Nanotubes in Composites]                                  0.0249      0.028      0.895      0.371      -0.030       0.079
+C(primary_topic)[T.Catalytic Cross-Coupling Reactions]                              0.6779      0.028     24.466      0.000       0.624       0.732
+C(primary_topic)[T.Catalytic Processes in Materials Science]                        0.2184      0.019     11.536      0.000       0.181       0.255
+C(primary_topic)[T.Click Chemistry and Applications]                                0.2685      0.025     10.668      0.000       0.219       0.318
+C(primary_topic)[T.Computability, Logic, AI Algorithms]                            -1.0717      0.026    -40.962      0.000      -1.123      -1.020
+C(primary_topic)[T.Computational Drug Discovery Methods]                           -0.2331      0.019    -12.418      0.000      -0.270      -0.196
+C(primary_topic)[T.Concrete and Cement Materials Research]                          0.9088      0.032     28.374      0.000       0.846       0.972
+C(primary_topic)[T.Crystallization and Solubility Studies]                          0.0141      0.036      0.395      0.693      -0.056       0.084
+C(primary_topic)[T.Crystallography and molecular interactions]                      0.6877      0.033     21.068      0.000       0.624       0.752
+C(primary_topic)[T.Dynamics and Control of Mechanical Systems]                     -0.7479      0.052    -14.453      0.000      -0.849      -0.646
+C(primary_topic)[T.Electrochemical Analysis and Applications]                       0.0045      0.024      0.187      0.852      -0.043       0.052
+C(primary_topic)[T.Electronic and Structural Properties of Oxides]                 -0.3138      0.027    -11.715      0.000      -0.366      -0.261
+C(primary_topic)[T.Electrowetting and Microfluidic Technologies]                    0.0687      0.056      1.233      0.218      -0.041       0.178
+C(primary_topic)[T.Experimental Learning in Engineering]                           -0.6817      0.060    -11.381      0.000      -0.799      -0.564
+C(primary_topic)[T.Expert finding and Q&A systems]                                 -1.2013      0.071    -16.982      0.000      -1.340      -1.063
+C(primary_topic)[T.Explainable Artificial Intelligence (XAI)]                      -0.8595      0.025    -35.006      0.000      -0.908      -0.811
+C(primary_topic)[T.Gaussian Processes and Bayesian Inference]                      -0.8852      0.025    -35.316      0.000      -0.934      -0.836
+C(primary_topic)[T.Gold and Silver Nanoparticles Synthesis and Applications]        0.3395      0.022     15.545      0.000       0.297       0.382
+C(primary_topic)[T.High Entropy Alloys Studies]                                     0.6851      0.031     22.104      0.000       0.624       0.746
+C(primary_topic)[T.Infrastructure Maintenance and Monitoring]                       0.2150      0.035      6.214      0.000       0.147       0.283
+C(primary_topic)[T.Innovative Microfluidic and Catalytic Techniques Innovation]     0.3291      0.023     14.232      0.000       0.284       0.374
+C(primary_topic)[T.Machine Learning and Algorithms]                                -1.0699      0.024    -43.742      0.000      -1.118      -1.022
+C(primary_topic)[T.Machine Learning and Data Classification]                       -0.9686      0.024    -39.956      0.000      -1.016      -0.921
+C(primary_topic)[T.Machine Learning in Materials Science]                          -0.4654      0.019    -24.308      0.000      -0.503      -0.428
+C(primary_topic)[T.Mass Spectrometry Techniques and Applications]                  -0.1642      0.027     -6.168      0.000      -0.216      -0.112
+C(primary_topic)[T.Mathematics, Computing, and Information Processing]             -1.1446      0.069    -16.487      0.000      -1.281      -1.009
+C(primary_topic)[T.Metal-Organic Frameworks: Synthesis and Applications]            0.6479      0.018     36.090      0.000       0.613       0.683
+C(primary_topic)[T.Microfluidic and Bio-sensing Technologies]                       0.2436      0.033      7.446      0.000       0.179       0.308
+C(primary_topic)[T.Microfluidic and Capillary Electrophoresis Applications]         0.2424      0.037      6.596      0.000       0.170       0.314
+C(primary_topic)[T.Mineral Processing and Grinding]                                -0.1834      0.052     -3.529      0.000      -0.285      -0.082
+C(primary_topic)[T.Modular Robots and Swarm Intelligence]                          -0.7508      0.029    -25.525      0.000      -0.808      -0.693
+C(primary_topic)[T.Nanomaterials and Printing Technologies]                         0.6991      0.041     17.245      0.000       0.620       0.779
+C(primary_topic)[T.Nanomaterials for catalytic reactions]                           0.3294      0.026     12.562      0.000       0.278       0.381
+C(primary_topic)[T.Nanoparticle-Based Drug Delivery]                                0.1916      0.024      7.985      0.000       0.145       0.239
+C(primary_topic)[T.Nanotechnology research and applications]                       -0.8763      0.079    -11.115      0.000      -1.031      -0.722
+C(primary_topic)[T.Nanowire Synthesis and Applications]                             0.2509      0.033      7.614      0.000       0.186       0.315
+C(primary_topic)[T.Optimization and Search Problems]                               -1.2149      0.030    -40.633      0.000      -1.274      -1.156
+C(primary_topic)[T.Organic Electronics and Photovoltaics]                           1.0351      0.020     52.562      0.000       0.996       1.074
+C(primary_topic)[T.Organic Light-Emitting Diodes Research]                          1.0753      0.026     41.375      0.000       1.024       1.126
+C(primary_topic)[T.Perovskite Materials and Applications]                           0.8667      0.016     53.427      0.000       0.835       0.899
+C(primary_topic)[T.Polyoxometalates: Synthesis and Applications]                    0.3170      0.032      9.973      0.000       0.255       0.379
+C(primary_topic)[T.Process Optimization and Integration]                            0.3920      0.031     12.535      0.000       0.331       0.453
+C(primary_topic)[T.Quantum Dots Synthesis And Properties]                           0.3349      0.022     15.249      0.000       0.292       0.378
+C(primary_topic)[T.Reinforcement Learning in Robotics]                             -0.7511      0.020    -38.236      0.000      -0.790      -0.713
+C(primary_topic)[T.Research Data Management Practices]                             -0.5458      0.056     -9.768      0.000      -0.655      -0.436
+C(primary_topic)[T.Robot Manipulation and Learning]                                -0.1779      0.023     -7.905      0.000      -0.222      -0.134
+C(primary_topic)[T.Robotic Path Planning Algorithms]                               -0.6080      0.022    -28.113      0.000      -0.650      -0.566
+C(primary_topic)[T.Robotics and Sensor-Based Localization]                         -0.2488      0.021    -12.053      0.000      -0.289      -0.208
+C(primary_topic)[T.Semiconductor Lasers and Optical Devices]                       -0.9251      0.049    -19.052      0.000      -1.020      -0.830
+C(primary_topic)[T.Soft Robotics and Applications]                                  0.3757      0.030     12.375      0.000       0.316       0.435
+C(primary_topic)[T.Sulfur-Based Synthesis Techniques]                               0.5061      0.026     19.403      0.000       0.455       0.557
+C(primary_topic)[T.Supramolecular Chemistry and Complexes]                          0.5970      0.026     23.301      0.000       0.547       0.647
+C(primary_topic)[T.Synthesis and Catalytic Reactions]                               0.5231      0.029     17.976      0.000       0.466       0.580
+C(primary_topic)[T.X-ray Diffraction in Crystallography]                           -0.3908      0.045     -8.738      0.000      -0.478      -0.303
+C(primary_topic)[T.Zeolite Catalysis and Synthesis]                                 0.2399      0.029      8.358      0.000       0.184       0.296
+author_count                                                                       -0.0140      0.001    -19.961      0.000      -0.015      -0.013
+SDL                                                                                 2.1127      0.076     27.934      0.000       1.964       2.261
+num_paper_affiliations                                                              0.1716      0.001    122.415      0.000       0.169       0.174
+asinh_first_author_papers                                                          -0.3967      0.003   -116.527      0.000      -0.403      -0.390
+asinh_first_author_citations                                                        0.3581      0.002    179.115      0.000       0.354       0.362
+asinh_last_author_papers                                                           -0.2048      0.004    -53.000      0.000      -0.212      -0.197
+asinh_last_author_citations                                                         0.1930      0.002     79.247      0.000       0.188       0.198
+==============================================================================
+Omnibus:                     1205.103   Durbin-Watson:                   0.447
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             1204.542
+Skew:                          -0.116   Prob(JB):                    2.74e-262
+Kurtosis:                       2.928   Cond. No.                         654.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
