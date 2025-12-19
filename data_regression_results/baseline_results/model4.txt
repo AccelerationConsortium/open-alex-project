@@ -1,45 +1,45 @@
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:           author_count   R-squared:                       0.307
-Model:                            OLS   Adj. R-squared:                  0.307
-Method:                 Least Squares   F-statistic:                     9855.
-Date:                Sun, 09 Nov 2025   Prob (F-statistic):               0.00
-Time:                        20:19:39   Log-Likelihood:            -1.2724e+06
-No. Observations:              490434   AIC:                         2.545e+06
-Df Residuals:                  490411   BIC:                         2.545e+06
+Dep. Variable:           author_count   R-squared:                       0.315
+Model:                            OLS   Adj. R-squared:                  0.315
+Method:                 Least Squares   F-statistic:                 1.027e+04
+Date:                Wed, 17 Dec 2025   Prob (F-statistic):               0.00
+Time:                        15:37:09   Log-Likelihood:            -1.2693e+06
+No. Observations:              490434   AIC:                         2.539e+06
+Df Residuals:                  490411   BIC:                         2.539e+06
 Df Model:                          22                                         
 Covariance Type:            nonrobust                                         
 =================================================================================================
                                     coef    std err          t      P>|t|      [0.025      0.975]
 -------------------------------------------------------------------------------------------------
-Intercept                         1.7543      0.034     51.761      0.000       1.688       1.821
-C(publication_year)[T.2013]       0.1062      0.038      2.801      0.005       0.032       0.180
-C(publication_year)[T.2014]       0.1375      0.036      3.785      0.000       0.066       0.209
-C(publication_year)[T.2015]       0.1608      0.036      4.528      0.000       0.091       0.230
-C(publication_year)[T.2016]       0.3320      0.035      9.535      0.000       0.264       0.400
-C(publication_year)[T.2017]       0.4348      0.034     12.657      0.000       0.367       0.502
-C(publication_year)[T.2018]       0.5025      0.033     15.063      0.000       0.437       0.568
-C(publication_year)[T.2019]       0.6004      0.033     18.463      0.000       0.537       0.664
-C(publication_year)[T.2020]       0.6829      0.032     21.351      0.000       0.620       0.746
-C(publication_year)[T.2021]       0.9264      0.032     29.129      0.000       0.864       0.989
-C(publication_year)[T.2022]       2.3746      0.032     74.474      0.000       2.312       2.437
-C(publication_year)[T.2023]       1.3727      0.032     43.292      0.000       1.311       1.435
-C(publication_year)[T.2024]       1.7914      0.031     57.033      0.000       1.730       1.853
-C(publication_year)[T.2025]       2.1560      0.033     66.299      0.000       2.092       2.220
-C(field)[T.computer_science]     -0.1497      0.016     -9.442      0.000      -0.181      -0.119
-C(field)[T.engineering]           1.0044      0.014     69.455      0.000       0.976       1.033
-C(field)[T.materials_science]     0.4864      0.016     29.549      0.000       0.454       0.519
-SDL                               0.7116      0.154      4.612      0.000       0.409       1.014
-num_paper_affiliations            0.9216      0.003    367.955      0.000       0.917       0.927
-asinh_first_author_papers        -0.1442      0.007    -20.838      0.000      -0.158      -0.131
-asinh_first_author_citations      0.1023      0.004     24.686      0.000       0.094       0.110
-asinh_last_author_papers         -0.2003      0.008    -26.041      0.000      -0.215      -0.185
-asinh_last_author_citations       0.2188      0.005     45.131      0.000       0.209       0.228
+Intercept                         1.0624      0.034     30.917      0.000       0.995       1.130
+C(publication_year)[T.2013]       0.1045      0.038      2.775      0.006       0.031       0.178
+C(publication_year)[T.2014]       0.1407      0.036      3.898      0.000       0.070       0.211
+C(publication_year)[T.2015]       0.1603      0.035      4.542      0.000       0.091       0.229
+C(publication_year)[T.2016]       0.3318      0.035      9.591      0.000       0.264       0.400
+C(publication_year)[T.2017]       0.4345      0.034     12.730      0.000       0.368       0.501
+C(publication_year)[T.2018]       0.5110      0.033     15.418      0.000       0.446       0.576
+C(publication_year)[T.2019]       0.6192      0.032     19.158      0.000       0.556       0.682
+C(publication_year)[T.2020]       0.7204      0.032     22.662      0.000       0.658       0.783
+C(publication_year)[T.2021]       0.9812      0.032     31.038      0.000       0.919       1.043
+C(publication_year)[T.2022]       2.4676      0.032     78.298      0.000       2.406       2.529
+C(publication_year)[T.2023]       1.4774      0.032     46.837      0.000       1.416       1.539
+C(publication_year)[T.2024]       1.9409      0.031     62.019      0.000       1.880       2.002
+C(publication_year)[T.2025]       2.3295      0.032     71.791      0.000       2.266       2.393
+C(field)[T.computer_science]     -0.0302      0.016     -1.885      0.059      -0.062       0.001
+C(field)[T.engineering]           0.8625      0.014     63.694      0.000       0.836       0.889
+C(field)[T.materials_science]     0.7465      0.017     45.238      0.000       0.714       0.779
+SDL                               0.6015      0.153      3.924      0.000       0.301       0.902
+num_paper_affiliations            0.8943      0.003    356.283      0.000       0.889       0.899
+asinh_first_author_papers        -0.1759      0.007    -24.492      0.000      -0.190      -0.162
+asinh_first_author_citations      0.1695      0.005     37.564      0.000       0.161       0.178
+asinh_last_author_papers         -0.2702      0.008    -32.261      0.000      -0.287      -0.254
+asinh_last_author_citations       0.3007      0.005     55.859      0.000       0.290       0.311
 ==============================================================================
-Omnibus:                   483866.995   Durbin-Watson:                   1.858
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):        126980627.058
-Skew:                           4.272   Prob(JB):                         0.00
-Kurtosis:                      81.364   Cond. No.                         364.
+Omnibus:                   489380.850   Durbin-Watson:                   1.874
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):        136168004.146
+Skew:                           4.341   Prob(JB):                         0.00
+Kurtosis:                      84.167   Cond. No.                         395.
 ==============================================================================
 
 Notes:

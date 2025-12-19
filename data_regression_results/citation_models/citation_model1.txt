@@ -3,8 +3,8 @@
 Dep. Variable:     asinh_paper_citations   R-squared:                       0.042
 Model:                               OLS   Adj. R-squared:                  0.042
 Method:                    Least Squares   F-statistic:                 2.169e+04
-Date:                   Mon, 10 Nov 2025   Prob (F-statistic):               0.00
-Time:                           17:15:38   Log-Likelihood:            -1.0204e+06
+Date:                   Wed, 17 Dec 2025   Prob (F-statistic):               0.00
+Time:                           16:59:14   Log-Likelihood:            -1.0204e+06
 No. Observations:                 490434   AIC:                         2.041e+06
 Df Residuals:                     490432   BIC:                         2.041e+06
 Df Model:                              1                                         

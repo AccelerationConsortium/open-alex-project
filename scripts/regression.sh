@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=cs_experience_regression
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=1:00:00                      
+#SBATCH --time=2:00:00                      
 #SBATCH --mem=128G                           
 #SBATCH --cpus-per-task=1      
 #SBATCH --output=../logs/%x-%j.out

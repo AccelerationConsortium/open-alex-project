@@ -22,7 +22,7 @@ fields = {
     'computer_science': data_dir / "computer_science"
 }
 
-output_dir = project_dir / "data"
+output_dir = project_dir / "data/yearly_data/test"
 output_dir.mkdir(parents=True, exist_ok=True)
 output_csv = output_dir / "author_metrics_yearly.csv"
 

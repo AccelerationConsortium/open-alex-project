@@ -1,10 +1,10 @@
-4                              OLS Regression Results                             
+                              OLS Regression Results                             
 =================================================================================
 Dep. Variable:     asinh_paper_citations   R-squared:                       0.044
 Model:                               OLS   Adj. R-squared:                  0.044
 Method:                    Least Squares   F-statistic:                 1.119e+04
-Date:                   Mon, 10 Nov 2025   Prob (F-statistic):               0.00
-Time:                           17:15:38   Log-Likelihood:            -1.0200e+06
+Date:                   Wed, 17 Dec 2025   Prob (F-statistic):               0.00
+Time:                           16:59:15   Log-Likelihood:            -1.0200e+06
 No. Observations:                 490434   AIC:                         2.040e+06
 Df Residuals:                     490431   BIC:                         2.040e+06
 Df Model:                              2                                         

@@ -17,12 +17,12 @@ import sys
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # Input files
-FULL_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset_subset.csv"
+FULL_DATA = PROJECT_DIR / "data" / "regression/test" / "regression_dataset_filtered.csv"
 SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
 SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_primary_topics.txt"
 
 # Output directory
-OUTPUT_DIR = PROJECT_DIR / "data_regression_results/cs_experience_models"
+OUTPUT_DIR = PROJECT_DIR / "data_regression_results/test/cs_experience_models"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 FILTER_CONFIG = {

@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=samplelasso_regression_features
+#SBATCH --job-name=lasso_rebuild
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=4:00:00                      
-#SBATCH --mem=32G                           
+#SBATCH --time=5:00:00                      
+#SBATCH --mem=64G                           
 #SBATCH --cpus-per-task=16      
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err

@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=regression_dataset_modified_26
+#SBATCH --job-name=490kregression_dataset
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=01:00:00                      
-#SBATCH --mem=64G                           
-#SBATCH --cpus-per-task=1     
+#SBATCH --time=03:00:00                      
+#SBATCH --mem=256G                           
+#SBATCH --cpus-per-task=8   
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 

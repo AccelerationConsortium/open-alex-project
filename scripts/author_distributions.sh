@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=last_author_distributions
 #SBATCH --account=def-kmcel          # CHANGE THIS
-#SBATCH --time=03:00:00                      # 30 minutes (should be enough for 3 years)
-#SBATCH --mem=128G                            # 32GB RAM
+#SBATCH --time=01:00:00                      # 30 minutes (should be enough for 3 years)
+#SBATCH --mem=64G                            # 32GB RAM
 #SBATCH --cpus-per-task=1                    
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err

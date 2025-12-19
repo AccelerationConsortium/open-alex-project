@@ -1,42 +1,42 @@
                             OLS Regression Results                            
 ==============================================================================
-Dep. Variable:           author_count   R-squared:                       0.293
-Model:                            OLS   Adj. R-squared:                  0.293
-Method:                 Least Squares   F-statistic:                 1.071e+04
-Date:                Sun, 09 Nov 2025   Prob (F-statistic):               0.00
-Time:                        20:19:37   Log-Likelihood:            -1.2771e+06
-No. Observations:              490434   AIC:                         2.554e+06
-Df Residuals:                  490414   BIC:                         2.555e+06
+Dep. Variable:           author_count   R-squared:                       0.305
+Model:                            OLS   Adj. R-squared:                  0.305
+Method:                 Least Squares   F-statistic:                 1.132e+04
+Date:                Wed, 17 Dec 2025   Prob (F-statistic):               0.00
+Time:                        15:37:05   Log-Likelihood:            -1.2731e+06
+No. Observations:              490434   AIC:                         2.546e+06
+Df Residuals:                  490414   BIC:                         2.546e+06
 Df Model:                          19                                         
 Covariance Type:            nonrobust                                         
 ================================================================================================
                                    coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------------------------
-Intercept                        2.5662      0.032     81.264      0.000       2.504       2.628
-C(publication_year)[T.2013]      0.1455      0.038      3.802      0.000       0.071       0.220
-C(publication_year)[T.2014]      0.1943      0.037      5.296      0.000       0.122       0.266
-C(publication_year)[T.2015]      0.2251      0.036      6.282      0.000       0.155       0.295
-C(publication_year)[T.2016]      0.3897      0.035     11.092      0.000       0.321       0.459
-C(publication_year)[T.2017]      0.4921      0.035     14.206      0.000       0.424       0.560
-C(publication_year)[T.2018]      0.5292      0.034     15.745      0.000       0.463       0.595
-C(publication_year)[T.2019]      0.6047      0.033     18.471      0.000       0.540       0.669
-C(publication_year)[T.2020]      0.6693      0.032     20.802      0.000       0.606       0.732
-C(publication_year)[T.2021]      0.9066      0.032     28.351      0.000       0.844       0.969
-C(publication_year)[T.2022]      2.3163      0.032     72.076      0.000       2.253       2.379
-C(publication_year)[T.2023]      1.3682      0.032     42.855      0.000       1.306       1.431
-C(publication_year)[T.2024]      1.8128      0.032     57.274      0.000       1.751       1.875
-C(publication_year)[T.2025]      2.2106      0.033     67.416      0.000       2.146       2.275
-SDL                              0.7768      0.156      4.988      0.000       0.472       1.082
-num_paper_affiliations           0.9705      0.002    400.605      0.000       0.966       0.975
-asinh_first_author_papers       -0.2436      0.007    -35.402      0.000      -0.257      -0.230
-asinh_first_author_citations     0.1094      0.004     26.420      0.000       0.101       0.118
-asinh_last_author_papers        -0.3272      0.008    -42.819      0.000      -0.342      -0.312
-asinh_last_author_citations      0.2733      0.005     56.330      0.000       0.264       0.283
+Intercept                        1.4629      0.033     44.315      0.000       1.398       1.528
+C(publication_year)[T.2013]      0.1397      0.038      3.680      0.000       0.065       0.214
+C(publication_year)[T.2014]      0.1912      0.036      5.257      0.000       0.120       0.263
+C(publication_year)[T.2015]      0.2158      0.036      6.071      0.000       0.146       0.286
+C(publication_year)[T.2016]      0.3806      0.035     10.923      0.000       0.312       0.449
+C(publication_year)[T.2017]      0.4837      0.034     14.075      0.000       0.416       0.551
+C(publication_year)[T.2018]      0.5408      0.033     16.217      0.000       0.475       0.606
+C(publication_year)[T.2019]      0.6347      0.032     19.539      0.000       0.571       0.698
+C(publication_year)[T.2020]      0.7303      0.032     22.875      0.000       0.668       0.793
+C(publication_year)[T.2021]      0.9965      0.032     31.397      0.000       0.934       1.059
+C(publication_year)[T.2022]      2.5825      0.032     81.710      0.000       2.521       2.644
+C(publication_year)[T.2023]      1.5364      0.032     48.496      0.000       1.474       1.598
+C(publication_year)[T.2024]      2.0415      0.031     64.967      0.000       1.980       2.103
+C(publication_year)[T.2025]      2.4661      0.033     75.722      0.000       2.402       2.530
+SDL                              0.6474      0.154      4.192      0.000       0.345       0.950
+num_paper_affiliations           0.9278      0.002    379.174      0.000       0.923       0.933
+asinh_first_author_papers       -0.2355      0.007    -33.081      0.000      -0.249      -0.222
+asinh_first_author_citations     0.2032      0.004     45.445      0.000       0.194       0.212
+asinh_last_author_papers        -0.3294      0.008    -39.535      0.000      -0.346      -0.313
+asinh_last_author_citations      0.3352      0.005     62.323      0.000       0.325       0.346
 ==============================================================================
-Omnibus:                   472664.967   Durbin-Watson:                   1.834
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):        112751744.895
-Skew:                           4.125   Prob(JB):                         0.00
-Kurtosis:                      76.821   Cond. No.                         363.
+Omnibus:                   481477.605   Durbin-Watson:                   1.849
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):        124402908.910
+Skew:                           4.239   Prob(JB):                         0.00
+Kurtosis:                      80.563   Cond. No.                         395.
 ==============================================================================
 
 Notes:

@@ -17,10 +17,10 @@ import joblib
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # Input: Your regression dataset with abstracts (490k papers)
-REGRESSION_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset_subset.csv"
+REGRESSION_DATA = PROJECT_DIR / "data" / "regression/test" / "regression_dataset_filtered.csv"
 
 # Output directory
-OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression/sample/test" 
+OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression/test" 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -90,13 +90,13 @@ def build_feature_matrix():
         nltk.download('stopwords')
         stop_words = list(stopwords.words('english'))
     
-    print(f"\n  Settings: unigrams + bigrams, max 20k features, min_df=5")
+    print(f"\n  Settings: unigrams + bigrams, max 20k features, min_df=3")
     print(f"  Fitting vectorizer...")
     
     vectorizer = CountVectorizer(
         ngram_range=(1, 2),
         max_features=20000,
-        min_df=5,
+        min_df=3,
         stop_words=stop_words,
         lowercase=True
     )
@@ -166,11 +166,11 @@ def fit_lasso_logistic():
         print("  Run build_feature_matrix() first.")
         sys.exit(1)
     
-    # X = sparse.load_npz(X_file)
-    # y = pd.read_csv(y_file)['is_CS'].values
-    # vectorizer = joblib.load(vectorizer_file)
+    X = sparse.load_npz(X_file)
+    y = pd.read_csv(y_file)['is_CS'].values
+    vectorizer = joblib.load(vectorizer_file)
     
-    # print(f"  ✓ Loaded feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
+    print(f"  ✓ Loaded feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
     
     # # ========================================================================
     # # STEP 2: Train/test split
@@ -187,11 +187,6 @@ def fit_lasso_logistic():
     #     stratify=y
     # )
 
-    X = sparse.load_npz(X_file)
-    y = pd.read_csv(y_file)['is_CS'].values
-    vectorizer = joblib.load(vectorizer_file)
-
-    print(f"  ✓ Loaded feature matrix: {X.shape[0]:,} papers × {X.shape[1]:,} features")
 
     # Optional: Sample data for faster training
     SAMPLE_SIZE = 100000  # Set to None to use full dataset
