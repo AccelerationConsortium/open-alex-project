@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=year_regression_dataset
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=4:00:00                      
-#SBATCH --mem=512G                           
-#SBATCH --cpus-per-task=8                 
+#SBATCH --time=1:00:00                      
+#SBATCH --mem=64G                           
+#SBATCH --cpus-per-task=1                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -28,7 +28,7 @@ python --version
 echo ""
 
 # Run the author extraction
-python year_regression_dataset.py
+python year_author_dataset.py
 
 echo ""
 echo "=========================================="
