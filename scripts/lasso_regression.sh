@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=lasso_rebuild
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=5:00:00                      
-#SBATCH --mem=64G                           
-#SBATCH --cpus-per-task=16      
+#SBATCH --time=3:00:00                      
+#SBATCH --mem=256G                           
+#SBATCH --cpus-per-task=1      
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -31,7 +31,7 @@ python --version
 echo ""
 
 # Run the regression dataset creation
-time python lasso_regression.py
+time python sdl_lasso_regression.py
 
 echo ""
 echo "=========================================="

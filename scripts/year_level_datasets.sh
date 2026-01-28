@@ -2,7 +2,7 @@
 #SBATCH --job-name=year_regression_dataset
 #SBATCH --account=def-kmcel                  
 #SBATCH --time=1:00:00                      
-#SBATCH --mem=64G                           
+#SBATCH --mem=4G                           
 #SBATCH --cpus-per-task=1                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
