@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=Engineering_Extraction_2020
+#SBATCH --job-name=SDL_Classification
 #SBATCH --account=def-kmcel                  
 #SBATCH --time=01:00:00                      
-#SBATCH --mem=64G                           
+#SBATCH --mem=128G                           
 #SBATCH --cpus-per-task=1                  
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
@@ -28,7 +28,7 @@ python --version
 echo ""
 
 # Run the analysis - ALL OUTPUT GOES TO LOG FILE
-python test.py
+python scibert_2.py
 
 echo ""
 echo "=========================================="

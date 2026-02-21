@@ -958,12 +958,12 @@
 #     main()
 #     # perform_eda_and_save(csv_file, output_file_eda)
 
+
+# ## AUTHOR DATASET CREATION WITH NEW DATA 
 # """
 # Build comprehensive author-level dataset from paper TSV files
-# Optimized for HPC with multiprocessing
-
-# Phase 1: Process each field in parallel, accumulating author data
-# Phase 2: Merge field results and aggregate into final metrics
+# Optimized for HPC with multiprocessing (12 cores)
+# Updated: Separate SDL metrics for Brown and Tomet et al
 # """
 # import pandas as pd
 # import json
@@ -971,491 +971,7 @@
 # import numpy as np
 # from pathlib import Path
 # import multiprocessing as mp
-
-# # ============================================================================
-# # CONFIGURATION
-# # ============================================================================
-
-# PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
-
-# FIELDS = {
-#     'chemistry': PROJECT_DIR / "data/fields" / "chemistry",
-#     'materials_science': PROJECT_DIR / "data/fields" / "materials_science",  # FIXED: was material_science
-#     'engineering': PROJECT_DIR / "data/fields" / "engineering",
-#     'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
-# }
-
-# OUTPUT_DIR = PROJECT_DIR / "data" / "author/test"
-# OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-# OUTPUT_FILE = OUTPUT_DIR / "author_metrics.csv"
-
-# YEARS = range(2012, 2026)
-# CHUNK_SIZE = 500000
-# NUM_CORES = 8  # Adjust based on your SLURM allocation
-
-# # ============================================================================
-# # EXTRACTION FUNCTIONS
-# # ============================================================================
-
-# def parse_authorships(raw_data_json):
-#     """Extract authorship information from raw_data JSON"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return []
-    
-#     try:
-#         data = json.loads(raw_data_json)
-#         authorships = data.get('authorships', [])
-        
-#         result = []
-#         num_authors = len(authorships)
-        
-#         for idx, authorship in enumerate(authorships):
-#             author = authorship.get('author', {})
-#             author_id = author.get('id', '').replace('https://openalex.org/', '')
-            
-#             if not author_id:
-#                 continue
-            
-#             institutions = []
-#             for inst in authorship.get('institutions', []):
-#                 inst_id = inst.get('id', '').replace('https://openalex.org/', '')
-#                 if inst_id:
-#                     institutions.append(inst_id)
-            
-#             result.append({
-#                 'author_id': author_id,
-#                 'author_name': author.get('display_name', ''),
-#                 'position': idx,
-#                 'is_first': (idx == 0),
-#                 'is_last': (idx == num_authors - 1),
-#                 'institutions': institutions
-#             })
-        
-#         return result
-#     except:
-#         return []
-
-
-# def parse_primary_topic(raw_data_json):
-#     """Extract primary topic from raw_data"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None
-#     try:
-#         data = json.loads(raw_data_json)
-#         topics = data.get('topics', [])
-#         if topics and len(topics) > 0:
-#             return topics[0].get('display_name', None)
-#     except:
-#         pass
-#     return None
-
-
-# def parse_journal(raw_data_json):
-#     """Extract journal name from raw_data"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None
-#     try:
-#         data = json.loads(raw_data_json)
-#         return data.get('primary_location', {}).get('source', {}).get('display_name')
-#     except:
-#         return None
-
-
-# def parse_corresponding_author_ids(raw_data_json):
-#     """Extract corresponding author IDs from raw_data"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return []
-#     try:
-#         data = json.loads(raw_data_json)
-#         corresponding_ids = data.get('corresponding_author_ids', [])
-#         return [aid.replace('https://openalex.org/', '') for aid in corresponding_ids if aid]
-#     except:
-#         return []
-
-
-# def parse_cited_by_count(raw_data_json):
-#     """Extract cited_by_count from raw_data"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return 0
-#     try:
-#         data = json.loads(raw_data_json)
-#         cited_by_count = data.get('cited_by_count', 0)
-#         return cited_by_count if cited_by_count else 0
-#     except:
-#         return 0
-
-
-# # ============================================================================
-# # AUTHOR DATA STRUCTURE
-# # ============================================================================
-
-# def create_author_entry():
-#     """Factory function to create new author data entry"""
-#     return {
-#         'names': [],
-#         'citations_list': [],
-#         'fields': [],
-#         'topics': [],
-#         'journals': [],
-#         'affiliations': set(),
-#         'paper_count': 0,
-#         'first_author_count': 0,
-#         'last_author_count': 0,
-#         'corresponding_author_count': 0,
-#         'citation_sum': 0,
-#         'sdl_count': 0,
-#         'ai_count': 0,
-#         'robotics_count': 0
-#     }
-
-
-# # ============================================================================
-# # SINGLE YEAR PROCESSING (FOR MULTIPROCESSING)
-# # ============================================================================
-
-# def process_single_year_file(args):
-#     """
-#     Process a single year file for a given field
-#     Returns dictionary of author data for that year/field
-#     """
-#     field_name, field_dir, year = args
-    
-#     # Find the file
-#     possible_files = [
-#         field_dir / f"{field_name}_{year}.tsv",
-#         field_dir / f"{field_name.replace('_', '')}_{year}.tsv",
-#     ]
-    
-#     tsv_file = None
-#     for pf in possible_files:
-#         if pf.exists():
-#             tsv_file = pf
-#             break
-    
-#     if not tsv_file:
-#         return {}
-    
-#     # Process file
-#     author_data = {}
-#     papers_processed = 0
-    
-#     try:
-#         # Check columns
-#         sample = pd.read_csv(tsv_file, sep='\t', nrows=5)
-#         available_cols = set(sample.columns)
-        
-#         required = ['raw_data', 'SDL', 'AI_Paper', 'Robotics_Paper']
-#         columns_to_read = [col for col in required if col in available_cols]
-        
-#         if 'raw_data' not in columns_to_read:
-#             return {}
-        
-#         # Read in chunks
-#         for chunk in pd.read_csv(tsv_file, sep='\t', usecols=columns_to_read,
-#                                 chunksize=CHUNK_SIZE, low_memory=False,
-#                                 on_bad_lines='skip'):
-            
-#             for _, row in chunk.iterrows():
-#                 try:
-#                     authorships = parse_authorships(row.get('raw_data'))
-#                     if not authorships:
-#                         continue
-                    
-#                     citations = parse_cited_by_count(row.get('raw_data'))
-#                     is_sdl = row.get('SDL', 0) == 1
-#                     is_ai = row.get('AI_Paper', 0) == 1
-#                     is_robotics = row.get('Robotics_Paper', 0) == 1
-                    
-#                     topic = parse_primary_topic(row.get('raw_data'))
-#                     journal = parse_journal(row.get('raw_data'))
-#                     corresponding_ids = parse_corresponding_author_ids(row.get('raw_data'))
-                    
-#                     for authorship in authorships:
-#                         author_id = authorship['author_id']
-                        
-#                         if author_id not in author_data:
-#                             author_data[author_id] = create_author_entry()
-                        
-#                         data = author_data[author_id]
-                        
-#                         data['names'].append(authorship['author_name'])
-#                         data['citations_list'].append(citations)
-#                         data['citation_sum'] += citations
-#                         data['fields'].append(field_name)
-                        
-#                         if topic:
-#                             data['topics'].append(topic)
-#                         if journal:
-#                             data['journals'].append(journal)
-                        
-#                         data['affiliations'].update(authorship['institutions'])
-#                         data['paper_count'] += 1
-                        
-#                         if authorship['is_first']:
-#                             data['first_author_count'] += 1
-#                         if authorship['is_last']:
-#                             data['last_author_count'] += 1
-#                         if author_id in corresponding_ids:
-#                             data['corresponding_author_count'] += 1
-                        
-#                         if is_sdl:
-#                             data['sdl_count'] += 1
-#                         if is_ai:
-#                             data['ai_count'] += 1
-#                         if is_robotics:
-#                             data['robotics_count'] += 1
-                    
-#                     papers_processed += 1
-                
-#                 except:
-#                     continue
-    
-#     except:
-#         pass
-    
-#     return author_data
-
-
-# # ============================================================================
-# # MERGE DICTIONARIES
-# # ============================================================================
-
-# def merge_author_dicts(dict1, dict2):
-#     """Merge two author data dictionaries"""
-#     for author_id, data2 in dict2.items():
-#         if author_id not in dict1:
-#             dict1[author_id] = data2
-#         else:
-#             data1 = dict1[author_id]
-#             data1['names'].extend(data2['names'])
-#             data1['citations_list'].extend(data2['citations_list'])
-#             data1['fields'].extend(data2['fields'])
-#             data1['topics'].extend(data2['topics'])
-#             data1['journals'].extend(data2['journals'])
-#             data1['affiliations'].update(data2['affiliations'])
-#             data1['paper_count'] += data2['paper_count']
-#             data1['first_author_count'] += data2['first_author_count']
-#             data1['last_author_count'] += data2['last_author_count']
-#             data1['corresponding_author_count'] += data2['corresponding_author_count']
-#             data1['citation_sum'] += data2['citation_sum']
-#             data1['sdl_count'] += data2['sdl_count']
-#             data1['ai_count'] += data2['ai_count']
-#             data1['robotics_count'] += data2['robotics_count']
-    
-#     return dict1
-
-
-# # ============================================================================
-# # AGGREGATION
-# # ============================================================================
-
-# def aggregate_author_metrics(all_author_data):
-#     """Convert accumulated data into final metrics"""
-    
-#     print(f"\nComputing final metrics for {len(all_author_data):,} authors...")
-    
-#     rows = []
-    
-#     for idx, (author_id, data) in enumerate(all_author_data.items()):
-#         if (idx + 1) % 100000 == 0:
-#             print(f"  {idx + 1:,} authors processed...", flush=True)
-        
-#         author_name = Counter(data['names']).most_common(1)[0][0] if data['names'] else ''
-        
-#         total_papers = data['paper_count']
-#         first_author_papers = data['first_author_count']
-#         last_author_papers = data['last_author_count']
-#         corresponding_author_papers = data['corresponding_author_count']
-        
-#         total_citations = data['citation_sum']
-#         avg_citations = np.mean(data['citations_list']) if data['citations_list'] else 0
-        
-#         if data['fields']:
-#             field_counter = Counter(data['fields'])
-#             top_field_name, top_field_count = field_counter.most_common(1)[0]
-#             num_unique_fields = len(field_counter)
-#         else:
-#             top_field_name, top_field_count, num_unique_fields = '', 0, 0
-        
-#         if data['topics']:
-#             topic_counter = Counter(data['topics'])
-#             top_topic_name, top_topic_count = topic_counter.most_common(1)[0]
-#             num_unique_topics = len(topic_counter)
-#         else:
-#             top_topic_name, top_topic_count, num_unique_topics = '', 0, 0
-        
-#         if data['journals']:
-#             journal_counter = Counter(data['journals'])
-#             top_journal_name, top_journal_count = journal_counter.most_common(1)[0]
-#             num_unique_journals = len(journal_counter)
-#         else:
-#             top_journal_name, top_journal_count, num_unique_journals = '', 0, 0
-        
-#         num_affiliations = len(data['affiliations'])
-#         top_affiliation = list(data['affiliations'])[0] if data['affiliations'] else ''
-        
-#         rows.append({
-#             'author_id': author_id,
-#             'author_name': author_name,
-#             'total_papers': total_papers,
-#             'first_author_papers': first_author_papers,
-#             'last_author_papers': last_author_papers,
-#             'corresponding_author_papers': corresponding_author_papers,
-#             'total_citations': int(total_citations),
-#             'avg_citations_per_paper': round(avg_citations, 2),
-#             'top_field': top_field_name,
-#             'top_field_paper_count': top_field_count,
-#             'num_unique_fields': num_unique_fields,
-#             'top_topic': top_topic_name,
-#             'top_topic_paper_count': top_topic_count,
-#             'num_unique_topics': num_unique_topics,
-#             'top_journal': top_journal_name,
-#             'top_journal_paper_count': top_journal_count,
-#             'num_unique_journals': num_unique_journals,
-#             'num_affiliations': num_affiliations,
-#             'top_affiliation': top_affiliation,
-#             'sdl_papers': data['sdl_count'],
-#             'ai_papers': data['ai_count'],
-#             'robotics_papers': data['robotics_count']
-#         })
-    
-#     return pd.DataFrame(rows)
-
-
-# # ============================================================================
-# # MAIN EXECUTION
-# # ============================================================================
-
-# def main():
-#     print("="*70)
-#     print("BUILDING AUTHOR-LEVEL DATASET (MULTIPROCESSING)")
-#     print("="*70)
-#     print(f"\nConfiguration:")
-#     print(f"  Project dir: {PROJECT_DIR}")
-#     print(f"  Output dir: {OUTPUT_DIR}")
-#     print(f"  Years: {min(YEARS)}-{max(YEARS)-1}")
-#     print(f"  Chunk size: {CHUNK_SIZE:,}")
-#     print(f"  CPU cores: {NUM_CORES}")
-    
-#     # Verify field directories
-#     print(f"\nVerifying field directories:")
-#     fields_to_process = []
-#     for name, path in FIELDS.items():
-#         exists = path.exists()
-#         status = "✓" if exists else "✗"
-#         print(f"  {status} {name}: {path}")
-#         if exists:
-#             fields_to_process.append((name, path))
-    
-#     if not fields_to_process:
-#         print("\n✗ ERROR: No valid field directories found!")
-#         return 1
-    
-#     # ========================================================================
-#     # PHASE 1: Parallel processing by year/field
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("PHASE 1: Processing all year/field combinations in parallel")
-#     print(f"{'='*70}")
-    
-#     # Create list of all (field_name, field_dir, year) combinations
-#     tasks = []
-#     for field_name, field_dir in fields_to_process:
-#         for year in YEARS:
-#             tasks.append((field_name, field_dir, year))
-    
-#     print(f"Total tasks: {len(tasks)}")
-#     print(f"Processing with {NUM_CORES} cores...")
-    
-#     # Process in parallel
-#     with mp.Pool(NUM_CORES) as pool:
-#         results = pool.map(process_single_year_file, tasks)
-    
-#     print(f"\n✓ Parallel processing complete")
-    
-#     # ========================================================================
-#     # PHASE 2: Merge all results
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("PHASE 2: Merging results")
-#     print(f"{'='*70}")
-    
-#     all_author_data = {}
-    
-#     for i, result_dict in enumerate(results):
-#         if result_dict:  # Skip empty results
-#             all_author_data = merge_author_dicts(all_author_data, result_dict)
-#             if (i + 1) % 10 == 0:
-#                 print(f"  Merged {i+1}/{len(results)} results... ({len(all_author_data):,} unique authors)", flush=True)
-    
-#     print(f"\n✓ Merge complete: {len(all_author_data):,} unique authors")
-    
-#     # ========================================================================
-#     # PHASE 3: Aggregation
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("PHASE 3: Computing final metrics")
-#     print(f"{'='*70}")
-    
-#     df_authors = aggregate_author_metrics(all_author_data)
-    
-#     # ========================================================================
-#     # Save output
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("SAVING OUTPUT")
-#     print(f"{'='*70}")
-    
-#     df_authors.to_csv(OUTPUT_FILE, index=False)
-    
-#     file_size_mb = OUTPUT_FILE.stat().st_size / (1024 * 1024)
-#     print(f"  File: {OUTPUT_FILE}")
-#     print(f"  Size: {file_size_mb:.1f} MB")
-#     print(f"  Rows: {len(df_authors):,}")
-#     print(f"  Columns: {len(df_authors.columns)}")
-    
-#     # Summary stats
-#     print(f"\n{'='*70}")
-#     print("SUMMARY STATISTICS")
-#     print(f"{'='*70}")
-#     print(df_authors[['total_papers', 'total_citations', 
-#                      'first_author_papers', 'last_author_papers']].describe())
-    
-#     print(f"\n{'='*70}")
-#     print("TOP 10 AUTHORS BY TOTAL PAPERS")
-#     print(f"{'='*70}")
-#     top_authors = df_authors.nlargest(10, 'total_papers')[
-#         ['author_name', 'total_papers', 'total_citations', 'top_field', 'top_topic']
-#     ]
-#     print(top_authors.to_string(index=False))
-    
-#     print(f"\n{'='*70}")
-#     print("✅ COMPLETE!")
-#     print(f"{'='*70}")
-#     print(f"Output: {OUTPUT_FILE}\n")
-    
-#     return 0
-
-
-# if __name__ == "__main__":
-#     main()
-
-# """
-# Build comprehensive author-level dataset from paper TSV files
-# Optimized for HPC with multiprocessing
-# """
-# import pandas as pd
-# import json
-# from collections import Counter
-# import numpy as np
-# from pathlib import Path
-# import multiprocessing as mp
-# import ast
+# import time
 
 # # ============================================================================
 # # CONFIGURATION
@@ -1476,11 +992,11 @@
 # OUTPUT_DIR = PROJECT_DIR / "data" / "author/test"
 # OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# OUTPUT_FILE = OUTPUT_DIR / "author_metrics.csv"
+# OUTPUT_FILE = OUTPUT_DIR / "author_metrics_full11.csv"
 
-# YEARS = range(2012, 2026)
+# YEARS = range(2004, 2026)  # 2004-2025
 # CHUNK_SIZE = 500000
-# NUM_CORES = 8 
+# NUM_CORES = 10
 
 # # ============================================================================
 # # HELPER FUNCTIONS (CS Keyword Matching)
@@ -1650,7 +1166,16 @@
 #         # TEAM SIZE ACCUMULATORS
 #         'team_size_sum': 0,             # For overall avg
 #         'team_size_sum_last_author': 0, # For managerial avg
-#         'team_size_sum_sdl': 0          # For SDL-specific avg
+        
+#         # SEPARATED SDL METRICS
+#         'sdl_brown_count': 0,           # Brown SDL papers
+#         'sdl_tomet_count': 0,           # Tomet et al SDL papers
+#         'team_size_sum_sdl_brown': 0,   # Team size on Brown SDL papers
+#         'team_size_sum_sdl_tomet': 0,   # Team size on Tomet SDL papers
+        
+#         # HIGH AUTOMATION METRICS
+#         'high_automation_count': 0,           # High automation papers
+#         'team_size_sum_high_automation': 0    # Team size on high automation papers
 #     }
 
 # # ============================================================================
@@ -1661,35 +1186,44 @@
 #     """Process a single year file for a given field"""
 #     field_name, field_dir, year = args
     
-#     # Locate file
+#     # Locate file - check both classified and original naming
 #     possible_files = [
+#         field_dir / f"{field_name}_{year}_sdl_classified.tsv",
 #         field_dir / f"{field_name}_{year}.tsv",
-#         field_dir / f"{field_name.replace('_', '')}_{year}.tsv",
 #     ]
 #     tsv_file = next((f for f in possible_files if f.exists()), None)
     
-#     if not tsv_file: return {}
+#     if not tsv_file: 
+#         return {}, f"{field_name}_{year}", "FILE_NOT_FOUND"
     
 #     # Load CS Keywords (once per process)
 #     cs_keywords = load_cs_keywords(CS_KEYWORDS_FILE)
     
 #     author_data = {}
+#     rows_processed = 0
     
 #     try:
 #         # Check available columns
 #         sample = pd.read_csv(tsv_file, sep='\t', nrows=5)
 #         available_cols = set(sample.columns)
-#         # Added 'author_count'
-#         required = ['raw_data', 'SDL', 'AI_Paper', 'Robotics_Paper', 'author_count']
+        
+#         # Required columns
+#         required = ['raw_data', 'author_count', 
+#                    'brown_SDL_papers', 'tomet_al_SDL',
+#                    'high_automation_dummy',
+#                    'AI_Paper', 'Robotics_Paper']
+        
 #         columns_to_read = [col for col in required if col in available_cols]
         
-#         if 'raw_data' not in columns_to_read: return {}
+#         if 'raw_data' not in columns_to_read: 
+#             return {}, f"{field_name}_{year}", "NO_RAW_DATA"
         
 #         for chunk in pd.read_csv(tsv_file, sep='\t', usecols=columns_to_read,
 #                                 chunksize=CHUNK_SIZE, low_memory=False,
 #                                 on_bad_lines='skip'):
             
 #             for _, row in chunk.iterrows():
+#                 rows_processed += 1
 #                 try:
 #                     raw = row.get('raw_data')
 #                     authorships = parse_authorships(raw)
@@ -1697,7 +1231,15 @@
                     
 #                     # Metadata Extraction
 #                     citations = parse_cited_by_count(raw)
-#                     is_sdl = row.get('SDL', 0) == 1
+                    
+#                     # SEPARATED SDL FLAGS
+#                     is_sdl_brown = row.get('brown_SDL_papers', 0) == 1
+#                     is_sdl_tomet = row.get('tomet_al_SDL', 0) == 1
+#                     is_sdl_any = is_sdl_brown or is_sdl_tomet
+                    
+#                     # HIGH AUTOMATION FLAG
+#                     is_high_automation = row.get('high_automation_dummy', 0) == 1
+                    
 #                     is_ai = row.get('AI_Paper', 0) == 1
 #                     is_robotics = row.get('Robotics_Paper', 0) == 1
                     
@@ -1739,9 +1281,10 @@
 #                         if authorship['is_last']: data['last_author_count'] += 1
 #                         if author_id in corresponding_ids: data['corresponding_author_count'] += 1
                         
-#                         if is_sdl: data['sdl_count'] += 1
+#                         if is_sdl_any: data['sdl_count'] += 1
 #                         if is_ai: data['ai_count'] += 1
 #                         if is_robotics: data['robotics_count'] += 1
+#                         if is_high_automation: data['high_automation_count'] += 1
                         
 #                         if is_cs_paper: data['has_cs_exp'] = True
 
@@ -1753,14 +1296,26 @@
 #                         if authorship['is_last']:
 #                             data['team_size_sum_last_author'] += team_size
                             
-#                         # 3. Team Size on SDL Papers (Context Proxy)
-#                         if is_sdl:
-#                             data['team_size_sum_sdl'] += team_size
+#                         # 3. SEPARATED SDL METRICS
+#                         if is_sdl_brown:
+#                             data['sdl_brown_count'] += 1
+#                             data['team_size_sum_sdl_brown'] += team_size
                             
-#                 except: continue
-#     except: pass
-    
-#     return author_data
+#                         if is_sdl_tomet:
+#                             data['sdl_tomet_count'] += 1
+#                             data['team_size_sum_sdl_tomet'] += team_size
+                            
+#                         # 4. HIGH AUTOMATION METRICS
+#                         if is_high_automation:
+#                             data['team_size_sum_high_automation'] += team_size
+                            
+#                 except: 
+#                     continue
+                    
+#         return author_data, f"{field_name}_{year}", f"SUCCESS_{rows_processed}"
+        
+#     except Exception as e:
+#         return {}, f"{field_name}_{year}", f"ERROR_{str(e)}"
 
 # # ============================================================================
 # # MERGE DICTIONARIES
@@ -1788,13 +1343,22 @@
 #             data1['sdl_count'] += data2['sdl_count']
 #             data1['ai_count'] += data2['ai_count']
 #             data1['robotics_count'] += data2['robotics_count']
+#             data1['high_automation_count'] += data2['high_automation_count']
             
 #             if data2['has_cs_exp']: data1['has_cs_exp'] = True
             
 #             # Merge Team Size Accumulators
 #             data1['team_size_sum'] += data2['team_size_sum']
 #             data1['team_size_sum_last_author'] += data2['team_size_sum_last_author']
-#             data1['team_size_sum_sdl'] += data2['team_size_sum_sdl']
+            
+#             # Merge Separated SDL Metrics
+#             data1['sdl_brown_count'] += data2['sdl_brown_count']
+#             data1['sdl_tomet_count'] += data2['sdl_tomet_count']
+#             data1['team_size_sum_sdl_brown'] += data2['team_size_sum_sdl_brown']
+#             data1['team_size_sum_sdl_tomet'] += data2['team_size_sum_sdl_tomet']
+            
+#             # Merge High Automation Metrics
+#             data1['team_size_sum_high_automation'] += data2['team_size_sum_high_automation']
                 
 #     return dict1
 
@@ -1805,13 +1369,15 @@
 # def aggregate_author_metrics(all_author_data):
 #     """Convert accumulated data into final metrics"""
     
-#     print(f"\nComputing final metrics for {len(all_author_data):,} authors...")
+#     print(f"\n{'='*70}")
+#     print(f"AGGREGATING METRICS FOR {len(all_author_data):,} AUTHORS")
+#     print(f"{'='*70}")
     
 #     rows = []
     
 #     for idx, (author_id, data) in enumerate(all_author_data.items()):
 #         if (idx + 1) % 100000 == 0:
-#             print(f"  {idx + 1:,} authors processed...", flush=True)
+#             print(f"  Progress: {idx + 1:,} / {len(all_author_data):,} authors processed", flush=True)
         
 #         # Basic Stats
 #         author_name = Counter(data['names']).most_common(1)[0][0] if data['names'] else ''
@@ -1830,11 +1396,19 @@
 #         if last_papers > 0:
 #             avg_team_size_last = data['team_size_sum_last_author'] / last_papers
             
-#         # 3. Avg Team Size (SDL)
-#         avg_team_size_sdl = 0
-#         sdl_papers = data['sdl_count']
-#         if sdl_papers > 0:
-#             avg_team_size_sdl = data['team_size_sum_sdl'] / sdl_papers
+#         # 3. SEPARATED SDL TEAM SIZES
+#         avg_team_size_sdl_brown = 0
+#         if data['sdl_brown_count'] > 0:
+#             avg_team_size_sdl_brown = data['team_size_sum_sdl_brown'] / data['sdl_brown_count']
+            
+#         avg_team_size_sdl_tomet = 0
+#         if data['sdl_tomet_count'] > 0:
+#             avg_team_size_sdl_tomet = data['team_size_sum_sdl_tomet'] / data['sdl_tomet_count']
+            
+#         # 4. HIGH AUTOMATION TEAM SIZE
+#         avg_team_size_high_automation = 0
+#         if data['high_automation_count'] > 0:
+#             avg_team_size_high_automation = data['team_size_sum_high_automation'] / data['high_automation_count']
 
 #         # Field Analysis
 #         field_counter = Counter(data['fields'])
@@ -1892,10 +1466,19 @@
 #             'total_citations': int(data['citation_sum']),
 #             'avg_citations_per_paper': round(np.mean(data['citations_list']) if data['citations_list'] else 0, 2),
             
-#             # --- NEW VARIABLES ---
+#             # --- TEAM SIZE VARIABLES ---
 #             'avg_team_size': round(avg_team_size, 2),
 #             'avg_team_size_last_author': round(avg_team_size_last, 2),
-#             'avg_team_size_sdl': round(avg_team_size_sdl, 2),
+            
+#             # --- SEPARATED SDL METRICS ---
+#             'avg_team_size_sdl_brown': round(avg_team_size_sdl_brown, 2),
+#             'avg_team_size_sdl_tomet': round(avg_team_size_sdl_tomet, 2),
+#             'sdl_brown_papers': data['sdl_brown_count'],
+#             'sdl_tomet_papers': data['sdl_tomet_count'],
+            
+#             # --- HIGH AUTOMATION METRICS ---
+#             'avg_team_size_high_automation': round(avg_team_size_high_automation, 2),
+#             'high_automation_papers': data['high_automation_count'],
             
 #             # Field Vars
 #             'top_field': top_field_name,
@@ -1907,7 +1490,7 @@
 #             # CS Experience
 #             'has_cs_experience': 1 if data['has_cs_exp'] else 0,
             
-#             # Other Metrcis
+#             # Other Metrics
 #             'top_topic': top_topic_name,
 #             'top_topic_paper_count': top_topic_count,
 #             'num_unique_topics': num_unique_topics,
@@ -1916,10 +1499,12 @@
 #             'num_unique_journals': num_unique_journals,
 #             'num_affiliations': len(data['affiliations']),
 #             'top_affiliation': list(data['affiliations'])[0] if data['affiliations'] else '',
-#             'sdl_papers': data['sdl_count'],
+#             'sdl_papers': data['sdl_count'],  # Total SDL (Brown OR Tomet)
 #             'ai_papers': data['ai_count'],
 #             'robotics_papers': data['robotics_count']
 #         })
+    
+#     print(f"  ✓ Completed aggregation for all {len(all_author_data):,} authors\n")
     
 #     return pd.DataFrame(rows)
 
@@ -1928,60 +1513,134 @@
 # # ============================================================================
 
 # def main():
-#     print("="*70)
-#     print("BUILDING AUTHOR-LEVEL DATASET (V3 - TEAM SIZES)")
+#     print("\n" + "="*70)
+#     print("BUILDING AUTHOR-LEVEL DATASET")
 #     print("="*70)
 #     print(f"Output: {OUTPUT_FILE}")
 #     print(f"Using {NUM_CORES} cores")
 #     print(f"CS Keywords: {CS_KEYWORDS_FILE}")
+#     print(f"Years: {YEARS[0]}-{YEARS[-1]}")
+#     print("="*70)
     
 #     # Check Directories
 #     fields_to_process = []
 #     for name, path in FIELDS.items():
-#         if path.exists(): fields_to_process.append((name, path))
+#         if path.exists(): 
+#             fields_to_process.append((name, path))
+#             print(f"  ✓ Found field: {name}")
+#         else:
+#             print(f"  ✗ Missing field: {name}")
     
 #     if not fields_to_process:
-#         print("Error: No field directories found.")
+#         print("\nError: No field directories found.")
 #         return
+    
+#     print()
         
 #     # Phase 1: Parallel Processing
 #     tasks = [(name, path, year) for name, path in fields_to_process for year in YEARS]
-#     print(f"Processing {len(tasks)} file tasks...")
+#     print(f"{'='*70}")
+#     print(f"PHASE 1: PROCESSING {len(tasks)} FILES IN PARALLEL")
+#     print(f"{'='*70}\n")
+    
+#     start_time = time.time()
     
 #     with mp.Pool(NUM_CORES) as pool:
 #         results = pool.map(process_single_year_file, tasks)
-        
+    
+#     # Track results
+#     successful = 0
+#     failed = 0
+#     not_found = 0
+    
+#     for author_dict, file_name, status in results:
+#         if status.startswith("SUCCESS"):
+#             successful += 1
+#             rows = status.split("_")[1]
+#             if successful % 10 == 0:
+#                 print(f"  ✓ Completed: {file_name} ({rows} rows)")
+#         elif status == "FILE_NOT_FOUND":
+#             not_found += 1
+#         else:
+#             failed += 1
+#             print(f"  ✗ Failed: {file_name} - {status}")
+    
+#     elapsed = time.time() - start_time
+    
+#     print(f"\n{'='*70}")
+#     print(f"PHASE 1 COMPLETE - {elapsed:.1f}s")
+#     print(f"{'='*70}")
+#     print(f"  Successful: {successful}")
+#     print(f"  Not Found: {not_found}")
+#     print(f"  Failed: {failed}")
+#     print(f"{'='*70}\n")
+    
 #     # Phase 2: Merge
-#     print("\nMerging results...")
+#     print(f"{'='*70}")
+#     print(f"PHASE 2: MERGING AUTHOR DATA")
+#     print(f"{'='*70}\n")
+    
+#     merge_start = time.time()
 #     all_author_data = {}
-#     for res in results:
-#         if res: all_author_data = merge_author_dicts(all_author_data, res)
+    
+#     for idx, (author_dict, file_name, status) in enumerate(results):
+#         if author_dict:
+#             all_author_data = merge_author_dicts(all_author_data, author_dict)
+#         if (idx + 1) % 20 == 0:
+#             print(f"  Merged {idx + 1}/{len(results)} files... ({len(all_author_data):,} unique authors so far)")
+    
+#     merge_elapsed = time.time() - merge_start
+    
+#     print(f"\n  ✓ Merge complete - {merge_elapsed:.1f}s")
+#     print(f"  Total unique authors: {len(all_author_data):,}\n")
         
 #     # Phase 3: Aggregate
-#     print("\nAggregating metrics...")
+#     print(f"{'='*70}")
+#     print(f"PHASE 3: COMPUTING FINAL METRICS")
+#     print(f"{'='*70}\n")
+    
+#     agg_start = time.time()
 #     df = aggregate_author_metrics(all_author_data)
+#     agg_elapsed = time.time() - agg_start
+    
+#     print(f"  ✓ Aggregation complete - {agg_elapsed:.1f}s\n")
     
 #     # Save
+#     print(f"{'='*70}")
+#     print(f"SAVING TO FILE")
+#     print(f"{'='*70}\n")
+    
 #     df.to_csv(OUTPUT_FILE, index=False)
-#     print(f"\nSaved {len(df):,} authors to {OUTPUT_FILE}")
-#     print("Columns:", list(df.columns))
+    
+#     total_elapsed = time.time() - start_time
+    
+#     print(f"  ✓ Saved {len(df):,} authors to:")
+#     print(f"    {OUTPUT_FILE}")
+#     print(f"\n  Columns ({len(df.columns)}):")
+#     for col in df.columns:
+#         print(f"    - {col}")
+    
+#     print(f"\n{'='*70}")
+#     print(f"COMPLETE - Total Time: {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
+#     print(f"{'='*70}\n")
 
 # if __name__ == "__main__":
 #     main()
 
+
 import pandas as pd
 import numpy as np
 import sys
+import ast
 from pathlib import Path
 from datetime import datetime
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
-
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
-INPUT_FILE = PROJECT_DIR / "data/author/test/author_metrics.csv"
-OUTPUT_FILE = PROJECT_DIR / "data/author/test/author_eda_report.txt"
+INPUT_FILE = PROJECT_DIR / "data/author/test/author_metrics_full11.csv"
+OUTPUT_FILE = PROJECT_DIR / "data/author/test/author_eda_report_full.txt"
 
 # Ensure output directory exists
 OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -2008,20 +1667,17 @@ class Logger(object):
         self.terminal.flush()
         self.log.flush()
 
-# Redirect output to file and console
 sys.stdout = Logger(OUTPUT_FILE)
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
-
 def print_header(title):
     print("\n" + "="*80)
     print(title)
     print("="*80)
 
 def print_dist(series, bins, labels):
-    # include_lowest=True handles the first edge
     dist = pd.cut(series, bins=bins, labels=labels, include_lowest=True).value_counts().sort_index()
     for label, count in dist.items():
         print(f"  {label:<10}: {count:>9,} ({count/len(series)*100:.2f}%)")
@@ -2029,60 +1685,50 @@ def print_dist(series, bins, labels):
 # ============================================================================
 # MAIN EDA SCRIPT
 # ============================================================================
-
 def main():
     if not INPUT_FILE.exists():
         print(f"Error: File not found at {INPUT_FILE}")
         return
 
     print("Loading data... (this may take a minute due to size)")
-    df = pd.read_csv(INPUT_FILE)
+    df = pd.read_csv(INPUT_FILE, low_memory=False)
     
     print("="*80)
-    print("EXPLORATORY DATA ANALYSIS - AUTHOR DATASET (V3)")
+    print("EXPLORATORY DATA ANALYSIS - AUTHOR DATASET (V4 - NEW METRICS)")
     print("="*80)
     print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Source file: {INPUT_FILE}")
     print("="*80)
 
     # ============================================================================
-    # 1. DATASET OVERVIEW
+    # 1. OVERVIEW
     # ============================================================================
     print_header("1. DATASET OVERVIEW")
-    
     print(f"Total authors: {len(df):,}")
     print(f"Total columns: {len(df.columns)}")
     print(f"Memory usage: {df.memory_usage(deep=True).sum() / 1024**2:.2f} MB\n")
-
+    
     print("Columns:")
     for i, col in enumerate(df.columns, 1):
         print(f"  {i:>2}. {col}")
 
     # ============================================================================
-    # 2. MISSING VALUES ANALYSIS
+    # 2. MISSING VALUES
     # ============================================================================
     print_header("2. MISSING VALUES ANALYSIS")
-    
-    print("Columns with missing values:")
     missing = df.isnull().sum()
     missing = missing[missing > 0].sort_values(ascending=False)
     for col, val in missing.items():
         print(f"  {col}: {val:,} ({val/len(df)*100:.2f}%)")
-        
-    print("\nEmpty string check:")
-    obj_cols = df.select_dtypes(include=['object']).columns
-    for col in obj_cols:
-        empty_count = (df[col] == '').sum()
-        if empty_count > 0:
-            print(f"  {col}: {empty_count:,} empty strings")
 
     # ============================================================================
-    # 3. PUBLICATION COUNTS STATISTICS
+    # 3. PUBLICATION COUNTS
     # ============================================================================
     print_header("3. PUBLICATION COUNTS STATISTICS")
-
     cols = ['total_papers', 'first_author_papers', 'last_author_papers', 
-            'corresponding_author_papers', 'sdl_papers', 'ai_papers', 'robotics_papers']
+            'corresponding_author_papers', 'sdl_papers', 'ai_papers', 'robotics_papers',
+            'sdl_brown_papers', 'sdl_tomet_papers', 'high_automation_papers']
+    
     cols = [c for c in cols if c in df.columns]
     print(df[cols].describe().to_string())
 
@@ -2099,7 +1745,6 @@ def main():
     # 4. CITATION STATISTICS
     # ============================================================================
     print_header("4. CITATION STATISTICS")
-
     cit_cols = ['total_citations', 'avg_citations_per_paper']
     print(df[cit_cols].describe().to_string())
 
@@ -2114,7 +1759,6 @@ def main():
     # 5. FIELD DISTRIBUTION
     # ============================================================================
     print_header("5. FIELD DISTRIBUTION")
-
     print("Authors by top field:")
     print(df['top_field'].value_counts(dropna=False).head(5).to_string())
 
@@ -2131,8 +1775,6 @@ def main():
     print_header("6. TOP AUTHORS")
     
     show_cols = ['author_name', 'total_papers', 'total_citations', 'top_field', 'top_topic', 'sdl_papers']
-    show_cols = [c for c in show_cols if c in df.columns]
-
     print("Top 20 authors by total papers:")
     print("-" * 80)
     print(df.nlargest(20, 'total_papers')[show_cols].to_string(index=False))
@@ -2142,287 +1784,103 @@ def main():
     show_cols_cit = ['author_name', 'total_papers', 'total_citations', 'avg_citations_per_paper', 'top_field']
     print(df.nlargest(20, 'total_citations')[show_cols_cit].to_string(index=False))
 
-    print("\nTop 20 authors by avg citations per paper (min 10 papers):")
-    print("-" * 80)
-    mask = df['total_papers'] >= 10
-    print(df[mask].nlargest(20, 'avg_citations_per_paper')[show_cols_cit].to_string(index=False))
-
     # ============================================================================
     # 7. SDL/AI/ROBOTICS INVOLVEMENT
     # ============================================================================
     print_header("7. SDL/AI/ROBOTICS INVOLVEMENT")
-
-    print("Authors with SDL/AI/Robotics papers:")
-    for col, name in [('sdl_papers', 'SDL'), ('ai_papers', 'AI'), ('robotics_papers', 'Robotics')]:
+    
+    print("Authors with papers in new categories:")
+    for col in ['sdl_brown_papers', 'sdl_tomet_papers', 'high_automation_papers']:
         if col in df.columns:
-            print(f"  Authors with >=1 {name} paper: {len(df[df[col] >= 1]):,}")
-            if name != 'SDL':
-                print(f"  Authors with >=10 {name} papers: {len(df[df[col] >= 10]):,}")
-            else:
-                print(f"  Authors with >=5 {name} papers: {len(df[df[col] >= 5]):,}")
-                print(f"  Authors with >=10 {name} papers: {len(df[df[col] >= 10]):,}")
-        print()
+            count = len(df[df[col] >= 1])
+            print(f"  Authors with >=1 {col}: {count:,}")
 
-    print("Top 20 SDL authors:")
+    print("\nTop 20 SDL (Any) authors:")
     print("-" * 80)
-    sdl_show = ['author_name', 'total_papers', 'sdl_papers', 'ai_papers', 'robotics_papers', 'top_field']
+    sdl_show = ['author_name', 'total_papers', 'sdl_papers', 'sdl_brown_papers', 'sdl_tomet_papers', 'high_automation_papers', 'top_field']
     sdl_show = [c for c in sdl_show if c in df.columns]
     print(df.nlargest(20, 'sdl_papers')[sdl_show].to_string(index=False))
 
     # ============================================================================
-    # 8. TOPIC ANALYSIS
+    # 8-10. TOPIC / JOURNAL / AUTHORSHIP
     # ============================================================================
-    print_header("8. TOPIC ANALYSIS")
+    print_header("8-10. TOPICS, JOURNALS, AUTHORSHIP (Summary)")
+    print(f"Unique Topics: {df['top_topic'].nunique():,}")
+    print(f"Unique Journals: {df['top_journal'].nunique():,}")
+    print(f"Avg Affiliations: {df['num_affiliations'].mean():.2f}")
+
+    # ============================================================================
+    # 11-13. QUALITY & PATTERNS
+    # ============================================================================
+    print_header("11-13. DATA QUALITY & PATTERNS")
+    prolific_uncited = len(df[(df['total_papers'] > 50) & (df['total_citations'] == 0)])
+    print(f"Prolific but uncited (>50 papers, 0 cites): {prolific_uncited:,}")
+
+    # ============================================================================
+    # 14. NEW VARIABLES (CS & PROFILE)
+    # ============================================================================
+    print_header("14. NEW VARIABLES ANALYSIS")
     
-    print("Top 30 research topics by author count:")
-    if 'top_topic' in df.columns:
-        counts = df['top_topic'].value_counts().head(30)
-        for i, (topic, count) in enumerate(counts.items(), 1):
-            print(f"  {i:>2}. {topic:<50}: {count:,} ({count/len(df)*100:.2f}%)")
-            
-        print("\nTopic diversity:")
-        print(f"  Unique topics in dataset: {df['top_topic'].nunique():,}")
-        if 'num_unique_topics' in df.columns:
-            print(f"  Avg topics per author: {df['num_unique_topics'].mean():.2f}")
-            print(f"  Max topics by single author: {df['num_unique_topics'].max()}")
+    if 'has_cs_experience' in df.columns:
+        print("A. Computer Science Experience:")
+        cs_exp = df['has_cs_experience'].sum()
+        print(f"  Total Authors with CS Exp: {cs_exp:,} ({cs_exp/len(df)*100:.2f}%)")
+        print("\n  CS Exp Rate by Field:")
+        print(pd.crosstab(df['top_field'], df['has_cs_experience']).to_string())
 
-    # ============================================================================
-    # 9. JOURNAL ANALYSIS
-    # ============================================================================
-    print_header("9. JOURNAL ANALYSIS")
-
-    print("Top 30 journals by author count:")
-    if 'top_journal' in df.columns:
-        counts = df['top_journal'].value_counts().head(30)
-        for i, (journal, count) in enumerate(counts.items(), 1):
-            print(f"  {i:>2}. {journal:<50}: {count:,} ({count/len(df)*100:.2f}%)")
-
-        print("\nJournal diversity:")
-        print(f"  Unique journals in dataset: {df['top_journal'].nunique():,}")
-        if 'num_unique_journals' in df.columns:
-            print(f"  Avg journals per author: {df['num_unique_journals'].mean():.2f}")
-            print(f"  Max journals by single author: {df['num_unique_journals'].max()}")
-
-    # ============================================================================
-    # 10. AUTHORSHIP POSITION ANALYSIS
-    # ============================================================================
-    print_header("10. AUTHORSHIP POSITION ANALYSIS")
-
-    if 'first_author_papers' in df.columns:
-        print("First authorship:")
-        print(f"  Authors who were NEVER first author: {len(df[df['first_author_papers'] == 0]):,}")
-        print(f"  Authors who were ALWAYS first author: {len(df[df['first_author_papers'] == df['total_papers']]):,}")
-        print(f"  Avg first author papers: {df['first_author_papers'].mean():.2f}")
-
-    if 'last_author_papers' in df.columns:
-        print("\nLast authorship:")
-        print(f"  Authors who were NEVER last author: {len(df[df['last_author_papers'] == 0]):,}")
-        print(f"  Authors who were ALWAYS last author: {len(df[df['last_author_papers'] == df['total_papers']]):,}")
-        print(f"  Avg last author papers: {df['last_author_papers'].mean():.2f}")
-
-    if 'corresponding_author_papers' in df.columns:
-        print("\nCorresponding authorship:")
-        print(f"  Authors who were NEVER corresponding: {len(df[df['corresponding_author_papers'] == 0]):,}")
-        print(f"  Authors corresponding on all papers: {len(df[df['corresponding_author_papers'] == df['total_papers']]):,}")
-        print(f"  Avg corresponding papers: {df['corresponding_author_papers'].mean():.2f}")
-
-    # ============================================================================
-    # 11. DATA QUALITY CHECKS & ANOMALIES
-    # ============================================================================
-    print_header("11. DATA QUALITY CHECKS & ANOMALIES")
-    print("ANOMALY CHECKS:")
-    
-    if 'first_author_papers' in df.columns and 'last_author_papers' in df.columns:
-        anom = df[df['first_author_papers'] + df['last_author_papers'] > df['total_papers']]
-        print(f"\n1. Authors where (first + last) > total papers: {len(anom):,}")
-        print("   NOTE: This should only happen for single-author papers!")
-        
-        single_author_cases = len(df[df['total_papers'] == 1])
-        print(f"   Single-author cases: {single_author_cases:,}")
-        
-        real_anom = anom[anom['total_papers'] > 1]
-        print(f"   POTENTIAL ANOMALIES (Multi-paper authors): {len(real_anom):,}")
-
-    num_cols = df.select_dtypes(include=[np.number]).columns
-    neg_check = (df[num_cols] < 0).sum().sum()
-    print(f"\n2. Negative value check:")
-    if neg_check == 0:
-        print("   ✓ No negative values found")
-    else:
-        print(f"   ✗ Found {neg_check} negative values!")
-
-    no_papers_with_cites = len(df[(df['total_papers'] == 0) & (df['total_citations'] > 0)])
-    print(f"\n3. Authors with citations but no papers: {no_papers_with_cites}")
-    
-    papers_no_cites = len(df[(df['total_papers'] > 0) & (df['total_citations'] == 0)])
-    print(f"\n4. Authors with papers but ZERO citations: {papers_no_cites:,} ({papers_no_cites/len(df)*100:.2f}%)")
-
-    high_avg = df[df['avg_citations_per_paper'] > 1000]
-    print(f"\n5. Authors with avg >1000 citations per paper: {len(high_avg):,}")
-    print("   Top cases:")
-    print(high_avg.nlargest(5, 'avg_citations_per_paper')[['author_name', 'total_citations', 'total_papers']].to_string(index=False))
-
-    # ============================================================================
-    # 12. AFFILIATION ANALYSIS
-    # ============================================================================
-    print_header("12. AFFILIATION ANALYSIS")
-
-    if 'num_affiliations' in df.columns:
-        print("Affiliation statistics:")
-        print(f"  Avg affiliations per author: {df['num_affiliations'].mean():.2f}")
-        print(f"  Median affiliations: {df['num_affiliations'].median():.0f}")
-        print(f"  Max affiliations by single author: {df['num_affiliations'].max()}")
-
-        print("\nAffiliation distribution:")
-        # Corrected bins handling
-        bins = [-1, 0, 1, 4, 9, 19, 49, 10000]
-        labels = ['0', '1', '2-4', '5-9', '10-19', '20-49', '50+']
-        
-        max_val = df['num_affiliations'].max()
-        if max_val > bins[-1]:
-            bins[-1] = max_val + 1
-            
-        print_dist(df['num_affiliations'], bins, labels)
-
-    # ============================================================================
-    # 13. INTERESTING PATTERNS
-    # ============================================================================
-    print_header("13. INTERESTING PATTERNS")
-
-    prolific_uncited = df[(df['total_papers'] > 50) & (df['total_citations'] == 0)]
-    print(f"Prolific but uncited authors (>50 papers, 0 citations):")
-    print(f"  Count: {len(prolific_uncited):,}")
-    if len(prolific_uncited) > 0:
-        print("  Top cases:")
-        print(prolific_uncited.nlargest(5, 'total_papers')[['author_name', 'total_papers']].to_string(index=False))
-
-    efficient = df[(df['total_citations'] > 1000) & (df['total_papers'] < 10)]
-    print(f"\nHighly efficient authors (>1000 citations, <10 papers):")
-    print(f"  Count: {len(efficient):,}")
-    if len(efficient) > 0:
-        print("  Top cases:")
-        print(efficient.nlargest(5, 'total_citations')[['author_name', 'total_citations', 'total_papers']].to_string(index=False))
-
-    # ============================================================================
-    # 14. NEW VARIABLES ANALYSIS (ENHANCED)
-    # ============================================================================
-    print_header("14. NEW VARIABLES ANALYSIS (ENHANCED)")
-
-    # A. CS EXPERIENCE
-    if 'has_cs_experience' in df.columns and 'top_field' in df.columns:
-        print("A. Computer Science Experience Logic Check")
-        cs_exp_count = df['has_cs_experience'].sum()
-        print(f"  Total Authors with CS Exp: {cs_exp_count:,} ({cs_exp_count/len(df)*100:.2f}%)")
-        
-        non_cs_authors = df[df['top_field'] != 'computer_science']
-        non_cs_with_exp = non_cs_authors['has_cs_experience'].sum()
-        print(f"\n  Non-CS Authors (Chem/Eng/MatSci): {len(non_cs_authors):,}")
-        print(f"  -> With CS Experience:            {non_cs_with_exp:,} ({non_cs_with_exp/len(non_cs_authors)*100:.2f}%)")
-
-        print("\n  CS Experience Rate by Top Field:")
-        ct = pd.crosstab(df['top_field'], df['has_cs_experience'])
-        if 1 in ct.columns:
-            ct['Total'] = ct.sum(axis=1)
-            ct['% with CS Exp'] = (ct[1] / ct['Total'] * 100)
-            print(ct.sort_values(by='% with CS Exp', ascending=False)[['Total', 1, '% with CS Exp']].to_string())
-
-    # B. AUTHOR PROFILE
     if 'author_profile' in df.columns:
-        print("\nB. Author Profile (Specialist vs. Generalist)")
-        print("  Profile Distribution:")
-        counts = df['author_profile'].value_counts()
-        for profile, count in counts.items():
-            print(f"  {profile:<30}: {count:>9,} ({count/len(df)*100:.2f}%)")
-            
-        print("\n  Productivity (Avg Papers) by Profile:")
-        perf = df.groupby('author_profile')[['total_papers', 'total_citations']].mean()
-        perf['citations_per_paper'] = perf['total_citations'] / perf['total_papers']
-        print(perf.sort_values('total_papers', ascending=False).to_string(float_format="{:.1f}".format))
-
-    # C. FIELD COUNTS
-    if 'field_counts' in df.columns:
-        print("\nC. Field Counts Analysis (Parsing Strings)")
-        import ast
-        sample_size = 10000
-        valid_sample = df['field_counts'].dropna().head(sample_size)
-        try:
-            parsed_counts = valid_sample.apply(ast.literal_eval)
-            def calc_diversity(d):
-                if not d: return 0
-                total = sum(d.values())
-                if total == 0: return 0
-                top = max(d.values())
-                return 1.0 - (top / total)
-            diversity_scores = parsed_counts.apply(calc_diversity)
-            print(f"  Analyzed sample of {sample_size:,} authors:")
-            print(f"  Avg % of papers OUTSIDE top field: {diversity_scores.mean()*100:.2f}%")
-        except Exception as e:
-            print(f"  ERROR parsing field_counts: {e}")
+        print("\nB. Author Profile:")
+        print(df['author_profile'].value_counts().to_string())
 
     # ============================================================================
-    # 15. TEAM SIZE ANALYSIS (NEW)
+    # 15. TEAM SIZE ANALYSIS (UPDATED)
     # ============================================================================
-    print_header("15. TEAM SIZE ANALYSIS (NEW VARIABLES)")
+    print_header("15. TEAM SIZE ANALYSIS (UPDATED)")
     
-    # 1. Variable check
-    team_vars = ['avg_team_size', 'avg_team_size_last_author', 'avg_team_size_sdl']
-    available_vars = [v for v in team_vars if v in df.columns]
+    team_vars = ['avg_team_size', 'avg_team_size_last_author', 
+                 'avg_team_size_sdl_brown', 'avg_team_size_sdl_tomet',
+                 'avg_team_size_high_automation']
     
-    if not available_vars:
-        print("  NOTE: Team size variables not found in dataset.")
-    else:
-        # 2. Descriptive Stats
+    available = [c for c in team_vars if c in df.columns]
+    
+    if available:
         print("Descriptive Statistics:")
-        print(df[available_vars].describe().to_string())
+        print(df[available].describe().to_string())
         
-        # 3. Distribution of Overall Team Size
-        if 'avg_team_size' in df.columns:
-            print("\nDistribution of Overall Avg Team Size:")
-            # Bins suitable for team sizes: 1, 2-3, 4-6, 7-10, 11-20, 20+
-            # Using -0.001 to catch 0 if any, though team size >= 1 usually
-            bins = [0, 1, 3, 6, 10, 20, 10000]
-            labels = ['1', '2-3', '4-6', '7-10', '11-20', '20+']
-            
-            # Handle max
-            max_val = df['avg_team_size'].max()
-            if max_val > bins[-1]: bins[-1] = max_val + 1
-            
-            print_dist(df['avg_team_size'], bins, labels)
-            
-        # 4. Managerial Hypothesis Check (Last Author vs Overall)
-        # Hypothesis: Do they supervise larger teams than they participate in?
-        if 'avg_team_size_last_author' in df.columns and 'avg_team_size' in df.columns:
-            print("\nManagerial Proxy Check (Last Author vs Overall):")
-            
-            # Filter for authors who have actually been a last author
-            last_authors = df[df['last_author_papers'] > 0].copy()
-            print(f"  Authors with >0 last author papers: {len(last_authors):,}")
-            
-            last_authors['managerial_diff'] = last_authors['avg_team_size_last_author'] - last_authors['avg_team_size']
-            
-            print(f"  Avg Overall Team Size:      {last_authors['avg_team_size'].mean():.2f}")
-            print(f"  Avg Last-Author Team Size:  {last_authors['avg_team_size_last_author'].mean():.2f}")
-            print(f"  Avg Difference (Last-Over): {last_authors['managerial_diff'].mean():.2f}")
-            
-            pos_diff = (last_authors['managerial_diff'] > 0).sum()
-            print(f"  Authors supervising LARGER teams than avg: {pos_diff:,} ({pos_diff/len(last_authors)*100:.1f}%)")
+        print("\nDistribution of Overall Avg Team Size:")
+        bins = [0, 1, 3, 6, 10, 20, 10000]
+        labels = ['1', '2-3', '4-6', '7-10', '11-20', '20+']
+        
+        # Handle max
+        max_val = df['avg_team_size'].max()
+        if max_val > bins[-1]: bins[-1] = max_val + 1
+        
+        print_dist(df['avg_team_size'], bins, labels)
 
-        # 5. SDL Context Check
-        # Hypothesis: Are SDL teams larger?
-        if 'avg_team_size_sdl' in df.columns and 'avg_team_size' in df.columns:
-            print("\nSDL Context Check (SDL vs Overall):")
+    # ============================================================================
+    # 16. HIGH AUTOMATION vs SDL OVERLAP (NEW)
+    # ============================================================================
+    print_header("16. HIGH AUTOMATION AUTHOR OVERLAP")
+    
+    if 'high_automation_papers' in df.columns:
+        ha_authors = df[df['high_automation_papers'] > 0]
+        print(f"Authors with >=1 High Automation Paper: {len(ha_authors):,}")
+        
+        if len(ha_authors) > 0:
+            print("\nAmong High Automation Authors:")
             
-            sdl_authors = df[df['sdl_papers'] > 0].copy()
-            print(f"  Authors with >0 SDL papers: {len(sdl_authors):,}")
+            # Intersection with SDL Brown
+            brown_overlap = len(ha_authors[ha_authors['sdl_brown_papers'] > 0])
+            print(f"  Also have SDL Brown paper: {brown_overlap:,} ({brown_overlap/len(ha_authors)*100:.2f}%)")
             
-            sdl_authors['sdl_diff'] = sdl_authors['avg_team_size_sdl'] - sdl_authors['avg_team_size']
+            # Intersection with SDL Tomet
+            tomet_overlap = len(ha_authors[ha_authors['sdl_tomet_papers'] > 0])
+            print(f"  Also have SDL Tomet paper: {tomet_overlap:,} ({tomet_overlap/len(ha_authors)*100:.2f}%)")
             
-            print(f"  Avg Overall Team Size:      {sdl_authors['avg_team_size'].mean():.2f}")
-            print(f"  Avg SDL Team Size:          {sdl_authors['avg_team_size_sdl'].mean():.2f}")
-            print(f"  Avg Difference (SDL-Over):  {sdl_authors['sdl_diff'].mean():.2f}")
-            
-            pos_diff = (sdl_authors['sdl_diff'] > 0).sum()
-            print(f"  Authors with LARGER SDL teams than avg: {pos_diff:,} ({pos_diff/len(sdl_authors)*100:.1f}%)")
+            print("\nAvg Team Size Comparison (High Auto Authors):")
+            print(f"  Overall: {ha_authors['avg_team_size'].mean():.2f}")
+            if 'avg_team_size_high_automation' in ha_authors.columns:
+                print(f"  On High Auto Papers: {ha_authors['avg_team_size_high_automation'].mean():.2f}")
 
     print("\n" + "="*80)
     print("END OF REPORT")

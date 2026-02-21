@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=490kregression_dataset
+#SBATCH --job-name=s1234
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=01:00:00                      
-#SBATCH --mem=64G                           
+#SBATCH --time=00:30:00                      
+#SBATCH --mem=32G                           
 #SBATCH --cpus-per-task=1
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
@@ -20,7 +20,7 @@ source ~/openalex_env/bin/activate
 
 # module load python/3.10.13
 # source ~/venvs/regression_env/bin/activate
-# Navigate to project directory
+# Navigate to project directory 
 cd /project/def-kmcel/hridansh/openalex_project/py_code
 
 # Print Python info
@@ -31,7 +31,7 @@ echo ""
 
 # Run the regression dataset creation
 time python regression_dataset.py
-
+    
 echo ""
 echo "=========================================="
 echo "Completed at: $(date)"

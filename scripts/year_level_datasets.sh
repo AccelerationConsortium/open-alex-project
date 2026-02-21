@@ -2,7 +2,7 @@
 #SBATCH --job-name=year_regression_dataset
 #SBATCH --account=def-kmcel                  
 #SBATCH --time=1:00:00                      
-#SBATCH --mem=4G                           
+#SBATCH --mem=128G                           
 #SBATCH --cpus-per-task=1                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
@@ -28,7 +28,7 @@ python --version
 echo ""
 
 # Run the author extraction
-python year_author_dataset.py
+python temporal_trends.py
 
 echo ""
 echo "=========================================="

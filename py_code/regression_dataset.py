@@ -1005,62 +1005,70 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 # if __name__ == "__main__":
 #     df = build_regression_dataset()
 
+
+
+# # NEW REGRESSION DATASET 2004 ONWARDS
+
+# """
+# Build regression dataset from field TSV files with author metrics
+# - Separated SDL metrics (Brown, Tomet)
+# - High automation papers
+# - SDL Filtered Tom classification
+# - SDL VENUE FILTERING (journals + topics)
+# - No corresponding author variables
+# - Multiprocessing with progress tracking
+# """
 # import json
 # import pandas as pd
 # import numpy as np
 # from pathlib import Path
 # import sys
-# from multiprocessing import Pool, cpu_count
+# from multiprocessing import Pool
+# import time
 
 # # ============================================================================
-# # CONFIGURATION - TOGGLE BETWEEN FULL AND FILTERED
-# # ============================================================================
-
-# # UNCOMMENT ONE OF THE FOLLOWING:
-# # DATASET_MODE = 'FULL'      # 26M papers: all fields, no filtering, no abstracts, no CS exp
-# DATASET_MODE = 'FILTERED'  # 490K papers: SDL venue matched, with abstracts, with CS exp
-
-# # ============================================================================
-# # PATHS
+# # CONFIGURATION
 # # ============================================================================
 
 # PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # FIELDS = {
 #     'chemistry': PROJECT_DIR / "data/fields" / "chemistry",
-#     'materials_science': PROJECT_DIR / "data/fields" / "material_science",
+#     'materials_science': PROJECT_DIR / "data/fields" / "materials_science",
 #     'engineering': PROJECT_DIR / "data/fields" / "engineering",
 #     'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
 # }
 
-# AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author" / "author_metrics.csv"
+# AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author/test" / "author_metrics_full.csv"
 
-# # For FILTERED mode only
 # CS_KEYWORDS_FILE = PROJECT_DIR / "data/lasso_regression" / "cs_keywords_shortlisted.txt"
-# SDL_KEYWORDS_FILE = PROJECT_DIR / "data" / "keywords" / "sdl_Keywords.csv"  # New SDL Keywords
+# SDL_KEYWORDS_FILE = PROJECT_DIR / "data" / "keywords" / "sdl_Keywords.csv"
 
+# # SDL VENUE FILTERING FILES (CRITICAL - MISSING IN NEW VERSION)
 # SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
 # SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_primary_topics.txt"
 
 # OUTPUT_DIR = PROJECT_DIR / "data" / "regression/test"
 # OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# YEARS = range(2012, 2026)
+# OUTPUT_FILE = OUTPUT_DIR / "regression_dataset_filtered_2004_onwards.csv"
+
+# YEARS = range(2004, 2026)  # 2004-2025
 # CHUNK_SIZE = 500000
+# NUM_CORES = 8  # As requested
 
 # # ============================================================================
 # # HELPER FUNCTIONS
 # # ============================================================================
 
 # def load_keywords(file_path):
-#     """Load keywords from text or CSV file, skip commented lines"""
+#     """Load keywords from text or CSV file"""
 #     keywords = set()
 #     try:
 #         with open(file_path, 'r', encoding='utf-8') as f:
 #             for line in f:
 #                 line = line.strip()
 #                 if line and not line.startswith('#'):
-#                     # Handle CSV by removing quotes if present
 #                     if file_path.suffix == '.csv':
 #                         line = line.replace('"', '').replace("'", "")
 #                     keywords.add(line.lower())
@@ -1069,99 +1077,177 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 #     return keywords
 
 
-# def count_keyword_matches(primary_topic, all_topics_str, title, abstract, keywords_set):
-#     """
-#     Count how many unique keywords appear in the paper metadata.
-#     Returns the count of unique matched keywords.
-#     """
-#     if not keywords_set:
-#         return 0
+# def load_sdl_venues(journals_file, topics_file):
+#     """Load SDL journals and topics for filtering"""
+#     journals = set()
+#     topics = set()
+    
+#     try:
+#         with open(journals_file, 'r', encoding='utf-8') as f:
+#             journals = {line.strip() for line in f if line.strip()}
+#         print(f"  Loaded {len(journals)} SDL journals")
+#     except Exception as e:
+#         print(f"  Warning: Could not load SDL journals: {e}")
+    
+#     try:
+#         with open(topics_file, 'r', encoding='utf-8') as f:
+#             topics = {line.strip() for line in f if line.strip()}
+#         print(f"  Loaded {len(topics)} SDL topics")
+#     except Exception as e:
+#         print(f"  Warning: Could not load SDL topics: {e}")
+    
+#     return journals, topics
 
+
+# def count_keyword_matches(primary_topic, all_topics_str, title, abstract, keywords_set):
+#     """Count how many unique keywords appear in the paper metadata"""
+#     if not keywords_set: return 0
 #     matched_keywords = set()
     
-#     # Check primary topic
 #     if primary_topic:
 #         primary_lower = primary_topic.lower()
 #         for keyword in keywords_set:
-#             if keyword in primary_lower:
+#             if keyword in primary_lower: 
 #                 matched_keywords.add(keyword)
     
-#     # Check all topics
 #     if all_topics_str:
 #         all_topics_lower = all_topics_str.lower()
 #         for keyword in keywords_set:
-#             if keyword in all_topics_lower:
+#             if keyword in all_topics_lower: 
 #                 matched_keywords.add(keyword)
     
-#     # Check title
 #     if title and isinstance(title, str):
 #         title_lower = title.lower()
 #         for keyword in keywords_set:
-#             if keyword in title_lower:
+#             if keyword in title_lower: 
 #                 matched_keywords.add(keyword)
     
-#     # Check abstract
 #     if abstract and isinstance(abstract, str):
 #         abstract_lower = abstract.lower()
 #         for keyword in keywords_set:
-#             if keyword in abstract_lower:
+#             if keyword in abstract_lower: 
 #                 matched_keywords.add(keyword)
     
 #     return len(matched_keywords)
 
 
+# def classify_sdl_filtered_tom(title, abstract):
+#     """
+#     Classify paper using SDL Filtered Tom definition
+#     Returns 1 if paper matches ANY of the 6 category criteria
+#     """
+#     if pd.isna(title): title = ""
+#     if pd.isna(abstract): abstract = ""
+    
+#     title_lower = title.lower()
+#     abstract_lower = abstract.lower()
+    
+#     # Category 1: Bayesian Optimization
+#     bayes = 0
+#     if "bayes" in title_lower or "bayes" in abstract_lower:
+#         if "optim" in title_lower or "optim" in abstract_lower:
+#             bayes = 1
+    
+#     # Category 2: Closed-loop
+#     closedloop = 0
+#     closed_terms = ["closed-loop", "closed loop", "closedloop"]
+#     for term in closed_terms:
+#         if term in title_lower or term in abstract_lower:
+#             closedloop = 1
+#             break
+    
+#     # Category 3: Process optimization
+#     proopt = 0
+#     if "process opt" in title_lower or "process opt" in abstract_lower:
+#         proopt = 1
+    
+#     # Category 4: Autonomous condition optimization
+#     autocond = 0
+#     if ("auton" in title_lower and "optim" in title_lower) or \
+#        ("auton" in abstract_lower and "optim" in abstract_lower):
+#         autocond = 1
+    
+#     # Category 5: Self-optimizing
+#     selfopt = 0
+#     selfopt_terms = ["self-opt", "self opt"]
+#     for term in selfopt_terms:
+#         if term in title_lower or term in abstract_lower:
+#             selfopt = 1
+#             break
+    
+#     # Category 6: Self-driving (comprehensive)
+#     selfdriv = 0
+    
+#     selfdriv_simple = [
+#         "self-driv", "self driv",
+#         "autonomous experimentation",
+#         "automated exper",
+#         "autonomous chemi",
+#         "automated chemi",
+#         "autonomous lab",
+#         "automated lab",
+#         "autonomous synth",
+#         "automated synth",
+#         "acceleration materials platform",
+#         "acceleration platform",
+#         "high-throughput"
+#     ]
+    
+#     for term in selfdriv_simple:
+#         if term in title_lower or term in abstract_lower:
+#             selfdriv = 1
+#             break
+    
+#     if not selfdriv:
+#         if ("autonomous disc" in title_lower and "discov" in abstract_lower) or \
+#            ("autonomous disc" in abstract_lower and "discov" in abstract_lower):
+#             selfdriv = 1
+#         elif ("automated disc" in title_lower and "discov" in abstract_lower) or \
+#              ("automated disc" in abstract_lower and "discov" in abstract_lower):
+#             selfdriv = 1
+    
+#     if not selfdriv:
+#         if (("accelerated" in title_lower or "accelerated" in abstract_lower) and 
+#             ("autonomous" in title_lower or "autonomous" in abstract_lower)):
+#             selfdriv = 1
+#         elif (("accelerated" in title_lower or "accelerated" in abstract_lower) and 
+#               ("automated" in title_lower or "automated" in abstract_lower)):
+#             selfdriv = 1
+#         elif (("experiment" in title_lower or "experiment" in abstract_lower) and 
+#               ("robot" in title_lower or "robot" in abstract_lower) and 
+#               ("platform" in title_lower or "platform" in abstract_lower)):
+#             selfdriv = 1
+    
+#     sdl_filtered_tom = 1 if (bayes or closedloop or proopt or autocond or selfopt or selfdriv) else 0
+    
+#     return sdl_filtered_tom
+
+
 # def clean_author_id(author_id):
 #     """Remove URL prefix from author ID"""
-#     if pd.isna(author_id) or author_id == '':
-#         return None
+#     if pd.isna(author_id) or author_id == '': return None
 #     return str(author_id).replace('https://openalex.org/', '')
 
 
 # def parse_authorships(raw_data_json):
 #     """Extract first and last author IDs"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None, None
-    
+#     if pd.isna(raw_data_json) or raw_data_json == '': return None, None
 #     try:
 #         data = json.loads(raw_data_json)
 #         authorships = data.get('authorships', [])
-        
-#         if not authorships:
-#             return None, None
+#         if not authorships: return None, None
         
 #         first_author_id = clean_author_id(authorships[0].get('author', {}).get('id'))
 #         last_author_id = clean_author_id(authorships[-1].get('author', {}).get('id'))
-        
 #         return first_author_id, last_author_id
-#     except:
-#         return None, None
+#     except: return None, None
 
 
-# def parse_corresponding_authors(raw_data_json):
-#     """Extract corresponding author IDs and select primary one"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None, []
-    
-#     try:
-#         data = json.loads(raw_data_json)
-#         corr_ids = data.get('corresponding_author_ids', [])
-        
-#         if not corr_ids:
-#             return None, []
-        
-#         cleaned_ids = [clean_author_id(aid) for aid in corr_ids if aid]
-#         primary_corr = cleaned_ids[0] if cleaned_ids else None
-        
-#         return primary_corr, cleaned_ids
-#     except:
-#         return None, []
-
-
-# def parse_paper_metadata(raw_data_json, include_abstract=False):
-#     """Extract paper metadata (topics, journal, citations, affiliations, date, abstract)"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
+# def parse_paper_metadata(raw_data_json):
+#     """Extract paper metadata including abstract"""
+#     if pd.isna(raw_data_json) or raw_data_json == '': 
 #         return None, None, None, 0, 0, None, None
-    
+        
 #     try:
 #         data = json.loads(raw_data_json)
         
@@ -1180,53 +1266,30 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 #         # Publication date
 #         publication_date = data.get('publication_date')
         
-#         # Abstract (only if requested)
+#         # Abstract (reconstruct from inverted index)
 #         abstract_text = None
-#         if include_abstract:
-#             abstract_inverted = data.get('abstract_inverted_index')
-#             if abstract_inverted:
-#                 word_positions = []
-#                 for word, positions in abstract_inverted.items():
-#                     for pos in positions:
-#                         word_positions.append((pos, word))
-#                 word_positions.sort(key=lambda x: x[0])
-#                 abstract_text = ' '.join([word for pos, word in word_positions])
+#         abstract_inverted = data.get('abstract_inverted_index')
+#         if abstract_inverted:
+#             word_positions = []
+#             for word, positions in abstract_inverted.items():
+#                 for pos in positions: 
+#                     word_positions.append((pos, word))
+#             word_positions.sort(key=lambda x: x[0])
+#             abstract_text = ' '.join([word for pos, word in word_positions])
         
-#         # Count unique affiliations
+#         # Affiliations
 #         authorships = data.get('authorships', [])
 #         all_institutions = set()
 #         for authorship in authorships:
 #             for inst in authorship.get('institutions', []):
 #                 inst_id = inst.get('id')
-#                 if inst_id:
-#                     all_institutions.add(inst_id)
-        
+#                 if inst_id: all_institutions.add(inst_id)
 #         num_paper_affiliations = len(all_institutions)
         
 #         return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date, abstract_text
-#     except:
+        
+#     except: 
 #         return None, None, None, 0, 0, None, None
-
-
-# def get_corresponding_position(first_id, last_id, corr_id, corr_ids_list):
-#     """Determine position of corresponding author"""
-#     if not corr_id:
-#         return 'missing'
-    
-#     if first_id == last_id:
-#         return 'only'
-    
-#     is_first = (corr_id == first_id)
-#     is_last = (corr_id == last_id)
-    
-#     if is_first and is_last:
-#         return 'both'
-#     elif is_first:
-#         return 'first'
-#     elif is_last:
-#         return 'last'
-#     else:
-#         return 'middle'
 
 
 # # ============================================================================
@@ -1235,161 +1298,134 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 
 # def process_field_year(args):
 #     """Process a single (field, year) combination"""
-#     field_name, field_dir, year, author_metrics_path, mode, cs_keywords_path, sdl_keywords_path = args
+#     field_name, field_dir, year, author_metrics_path, cs_keywords, sdl_keywords = args
     
-#     tsv_file = field_dir / f"{field_name}_{year}.tsv"
+#     # Locate file
+#     possible_files = [
+#         field_dir / f"{field_name}_{year}_sdl_classified.tsv",
+#         field_dir / f"{field_name}_{year}.tsv",
+#     ]
+#     tsv_file = next((f for f in possible_files if f.exists()), None)
     
-#     if not tsv_file.exists():
-#         return field_name, year, [], 0, 0
+#     if not tsv_file: 
+#         return field_name, year, [], 0, 0, "FILE_NOT_FOUND"
     
 #     # Load author metrics
-#     author_df = pd.read_csv(author_metrics_path)
-#     author_df = author_df.set_index('author_id')
-    
-#     # Load keywords if in FILTERED mode
-#     cs_keywords = None
-#     sdl_keywords = None
-#     if mode == 'FILTERED':
-#         cs_keywords = load_keywords(cs_keywords_path)
-#         sdl_keywords = load_keywords(sdl_keywords_path)
+#     author_df = pd.read_csv(author_metrics_path).set_index('author_id')
     
 #     papers = []
 #     total = 0
 #     skipped = 0
     
-#     # Determine whether to include abstract
-#     include_abstract = (mode == 'FILTERED')
-    
 #     try:
-#         for chunk in pd.read_csv(
-#             tsv_file, 
-#             sep='\t',
-#             usecols=['article_id', 'doi', 'title', 
-#                      'publication_year', 'author_count', 'SDL', 
-#                      'AI_Paper', 'Robotics_Paper', 'raw_data'],
-#             chunksize=CHUNK_SIZE,
-#             low_memory=False,
-#             on_bad_lines='skip'
-#         ):
+#         # Columns to read
+#         use_cols = ['article_id', 'doi', 'title', 'publication_year', 'author_count', 
+#                     'brown_SDL_papers', 'tomet_al_SDL', 'high_automation_dummy',
+#                     'AI_Paper', 'Robotics_Paper', 'raw_data']
+        
+#         # Check which columns exist
+#         header = pd.read_csv(tsv_file, sep='\t', nrows=0).columns.tolist()
+#         use_cols = [col for col in use_cols if col in header]
+        
+#         if 'raw_data' not in use_cols:
+#             return field_name, year, [], 0, 0, "NO_RAW_DATA"
+        
+#         for chunk in pd.read_csv(tsv_file, sep='\t', usecols=use_cols,
+#                                 chunksize=CHUNK_SIZE, low_memory=False, 
+#                                 on_bad_lines='skip'):
             
 #             for _, row in chunk.iterrows():
 #                 try:
 #                     # Parse authorships
 #                     first_author_id, last_author_id = parse_authorships(row['raw_data'])
-                    
 #                     if not first_author_id or not last_author_id:
 #                         skipped += 1
 #                         continue
                     
-#                     # Parse corresponding authors
-#                     primary_corr_id, all_corr_ids = parse_corresponding_authors(row['raw_data'])
-                    
-#                     # Parse paper metadata
+#                     # Parse metadata
 #                     primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date, abstract = \
-#                         parse_paper_metadata(row['raw_data'], include_abstract=include_abstract)
+#                         parse_paper_metadata(row['raw_data'])
                     
 #                     title = row.get('title', '')
                     
-#                     # --------------------------------------------------------
-#                     # KEYWORD ANALYSES (FILTERED mode only)
-#                     # --------------------------------------------------------
-#                     comp_sci_experience_paper = 0
-#                     sdl_keyword_paper = 0
-#                     number_of_sdl_words = 0
+#                     # SDL Classifications
+#                     sdl_brown = row.get('brown_SDL_papers', 0)
+#                     if pd.isna(sdl_brown): sdl_brown = 0
                     
-#                     if mode == 'FILTERED':
-#                         # 1. CS Experience
-#                         # Logic: Field is CS OR >= 2 keywords matched
-#                         if field_name == 'computer_science':
-#                             comp_sci_experience_paper = 1
-#                         else:
-#                             matches = count_keyword_matches(
-#                                 primary_topic, all_topics_str, title, abstract, cs_keywords
-#                             )
-#                             comp_sci_experience_paper = 1 if matches >= 2 else 0
-
-#                         # 2. SDL Keyword Measure
-#                         # Logic: >= 1 keyword matched (phrases are specific enough)
-#                         matches_sdl = count_keyword_matches(
-#                             primary_topic, all_topics_str, title, abstract, sdl_keywords
-#                         )
-#                         number_of_sdl_words = matches_sdl
-#                         sdl_keyword_paper = 1 if matches_sdl >= 1 else 0
-
-#                     # --------------------------------------------------------
-#                     # AUTHOR METRICS
-#                     # --------------------------------------------------------
-#                     # --- FIRST AUTHOR METRICS ---
+#                     sdl_tomet = row.get('tomet_al_SDL', 0)
+#                     if pd.isna(sdl_tomet): sdl_tomet = 0
+                    
+#                     high_auto = row.get('high_automation_dummy', 0)
+#                     if pd.isna(high_auto): high_auto = 0
+                    
+#                     # CS Experience Classification
+#                     comp_sci_experience_paper = 0
+#                     if field_name == 'computer_science':
+#                         comp_sci_experience_paper = 1
+#                     else:
+#                         matches = count_keyword_matches(primary_topic, all_topics_str, 
+#                                                        title, abstract, cs_keywords)
+#                         comp_sci_experience_paper = 1 if matches >= 2 else 0
+                    
+#                     # SDL Keyword Classification
+#                     matches_sdl = count_keyword_matches(primary_topic, all_topics_str, 
+#                                                         title, abstract, sdl_keywords)
+#                     sdl_keyword_measure = 1 if matches_sdl >= 1 else 0
+#                     number_of_SDL_words = matches_sdl  # Count for compatibility
+                    
+#                     # SDL Filtered Tom Classification
+#                     sdl_filtered_tom = classify_sdl_filtered_tom(title, abstract)
+                    
+#                     # First Author Metrics
 #                     if first_author_id in author_df.index:
 #                         first_author = author_df.loc[first_author_id]
-#                         # Existing variables
-#                         first_papers = first_author['total_papers']
-#                         first_citations = first_author['total_citations']
-#                         first_sdl_exp = first_author['sdl_papers']
-#                         first_field = first_author['top_field']
-                        
-#                         # New variables
-#                         first_top_topic = first_author['top_topic']
-#                         first_top_journal = first_author['top_journal']
-#                         first_unique_fields = first_author['num_unique_fields']
-#                         first_unique_topics = first_author['num_unique_topics']
-#                         first_unique_journals = first_author['num_unique_journals']
+#                         f_papers = first_author['total_papers']
+#                         f_cites = first_author['total_citations']
+#                         f_sdl_brown = first_author.get('sdl_brown_papers', 0)
+#                         f_sdl_tomet = first_author.get('sdl_tomet_papers', 0)
+#                         f_field = first_author['top_field']
+#                         f_top_topic = first_author['top_topic']
+#                         f_top_journal = first_author['top_journal']
+#                         f_uniq_fields = first_author['num_unique_fields']
+#                         f_uniq_topics = first_author['num_unique_topics']
+#                         f_uniq_journals = first_author['num_unique_journals']
 #                     else:
-#                         first_papers = 0
-#                         first_citations = 0
-#                         first_sdl_exp = 0
-#                         first_field = ''
-#                         first_top_topic = ''
-#                         first_top_journal = ''
-#                         first_unique_fields = 0
-#                         first_unique_topics = 0
-#                         first_unique_journals = 0
+#                         f_papers, f_cites = 0, 0
+#                         f_sdl_brown, f_sdl_tomet = 0, 0
+#                         f_field, f_top_topic, f_top_journal = '', '', ''
+#                         f_uniq_fields, f_uniq_topics, f_uniq_journals = 0, 0, 0
                     
-#                     # --- LAST AUTHOR METRICS ---
+#                     # Last Author Metrics
 #                     if last_author_id in author_df.index:
 #                         last_author = author_df.loc[last_author_id]
-#                         # Existing variables
-#                         last_papers = last_author['total_papers']
-#                         last_citations = last_author['total_citations']
-#                         last_sdl_exp = last_author['sdl_papers']
-#                         last_field = last_author['top_field']
-                        
-#                         # New variables
-#                         last_top_topic = last_author['top_topic']
-#                         last_top_journal = last_author['top_journal']
-#                         last_unique_fields = last_author['num_unique_fields']
-#                         last_unique_topics = last_author['num_unique_topics']
-#                         last_unique_journals = last_author['num_unique_journals']
+#                         l_papers = last_author['total_papers']
+#                         l_cites = last_author['total_citations']
+#                         l_sdl_brown = last_author.get('sdl_brown_papers', 0)
+#                         l_sdl_tomet = last_author.get('sdl_tomet_papers', 0)
+#                         l_field = last_author['top_field']
+#                         l_top_topic = last_author['top_topic']
+#                         l_top_journal = last_author['top_journal']
+#                         l_uniq_fields = last_author['num_unique_fields']
+#                         l_uniq_topics = last_author['num_unique_topics']
+#                         l_uniq_journals = last_author['num_unique_journals']
+#                         l_has_cs = 1 if last_author.get('has_cs_experience', 0) == 1 else 0
+#                         l_avg_team = last_author.get('avg_team_size', 0)
+#                         l_avg_team_man = last_author.get('avg_team_size_last_author', 0)
+#                         l_avg_team_sdl_brown = last_author.get('avg_team_size_sdl_brown', 0)
+#                         l_avg_team_sdl_tomet = last_author.get('avg_team_size_sdl_tomet', 0)
+#                         l_avg_team_high_auto = last_author.get('avg_team_size_high_automation', 0)
+#                         l_profile = last_author.get('author_profile', 'Unknown')
+#                         l_field_counts = last_author.get('field_counts', '{}')
 #                     else:
-#                         last_papers = 0
-#                         last_citations = 0
-#                         last_sdl_exp = 0
-#                         last_field = ''
-#                         last_top_topic = ''
-#                         last_top_journal = ''
-#                         last_unique_fields = 0
-#                         last_unique_topics = 0
-#                         last_unique_journals = 0
-                    
-#                     # Get corresponding author metrics
-#                     if primary_corr_id and primary_corr_id in author_df.index:
-#                         corr_author = author_df.loc[primary_corr_id]
-#                         corr_papers = corr_author['total_papers']
-#                         corr_citations = corr_author['total_citations']
-#                         corr_sdl_exp = corr_author['sdl_papers']
-#                     else:
-#                         corr_papers = 0
-#                         corr_citations = 0
-#                         corr_sdl_exp = 0
-                    
-#                     # Corresponding position
-#                     corr_position = get_corresponding_position(
-#                         first_author_id, last_author_id, primary_corr_id, all_corr_ids
-#                     )
-                    
-#                     # Check if first/last is corresponding
-#                     first_is_corr = 1 if first_author_id in all_corr_ids else 0
-#                     last_is_corr = 1 if last_author_id in all_corr_ids else 0
+#                         l_papers, l_cites = 0, 0
+#                         l_sdl_brown, l_sdl_tomet = 0, 0
+#                         l_field, l_top_topic, l_top_journal = '', '', ''
+#                         l_uniq_fields, l_uniq_topics, l_uniq_journals = 0, 0, 0
+#                         l_has_cs = 0
+#                         l_avg_team, l_avg_team_man = 0, 0
+#                         l_avg_team_sdl_brown, l_avg_team_sdl_tomet = 0, 0
+#                         l_avg_team_high_auto = 0
+#                         l_profile, l_field_counts = 'Unknown', '{}'
                     
 #                     # Create paper record
 #                     paper_record = {
@@ -1399,68 +1435,73 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 #                         'publication_year': row['publication_year'],
 #                         'publication_date': publication_date or '',
 #                         'author_count': row['author_count'],
-#                         'SDL': row['SDL'],
+                        
+#                         # SDL Classifications (separated)
+#                         'SDL_Brown': sdl_brown,
+#                         'SDL_Tomet': sdl_tomet,
+#                         'high_automation': high_auto,
+#                         'sdl_keyword_measure': sdl_keyword_measure,
+#                         'number_of_SDL_words': number_of_SDL_words,  # Added for compatibility
+#                         'SDL_Filtered_Tom': sdl_filtered_tom,
+                        
 #                         'AI_Paper': row.get('AI_Paper', 0),
 #                         'Robotics_Paper': row.get('Robotics_Paper', 0),
+                        
 #                         'num_paper_affiliations': num_affiliations,
 #                         'primary_topic': primary_topic or 'MISSING',
 #                         'all_topics': all_topics_str or '',
 #                         'journal': journal or 'MISSING',
 #                         'cited_by_count': cited_by_count,
 #                         'field': field_name,
+#                         'abstract': abstract or '',
+#                         'comp_sci_experience_paper': comp_sci_experience_paper,
                         
 #                         # First Author
 #                         'first_author_id': first_author_id,
-#                         'first_author_papers': first_papers,
-#                         'first_author_citations': first_citations,
-#                         'first_author_sdl_experience': first_sdl_exp,
-#                         'first_author_is_corresponding': first_is_corr,
-#                         'first_author_field': first_field,
-#                         'first_author_top_topic': first_top_topic if pd.notna(first_top_topic) else '',
-#                         'first_author_top_journal': first_top_journal if pd.notna(first_top_journal) else '',
-#                         'first_author_unique_fields_count': first_unique_fields,
-#                         'first_author_unique_topics_count': first_unique_topics,
-#                         'first_author_unique_journals_count': first_unique_journals,
-
+#                         'first_author_papers': f_papers,
+#                         'first_author_citations': f_cites,
+#                         'first_author_sdl_brown_experience': f_sdl_brown,
+#                         'first_author_sdl_tomet_experience': f_sdl_tomet,
+#                         'first_author_field': f_field,
+#                         'first_author_top_topic': f_top_topic if pd.notna(f_top_topic) else '',
+#                         'first_author_top_journal': f_top_journal if pd.notna(f_top_journal) else '',
+#                         'first_author_unique_fields_count': f_uniq_fields,
+#                         'first_author_unique_topics_count': f_uniq_topics,
+#                         'first_author_unique_journals_count': f_uniq_journals,
+                        
 #                         # Last Author
 #                         'last_author_id': last_author_id,
-#                         'last_author_papers': last_papers,
-#                         'last_author_citations': last_citations,
-#                         'last_author_sdl_experience': last_sdl_exp,
-#                         'last_author_is_corresponding': last_is_corr,
-#                         'last_author_field': last_field,
-#                         'last_author_top_topic': last_top_topic if pd.notna(last_top_topic) else '',
-#                         'last_author_top_journal': last_top_journal if pd.notna(last_top_journal) else '',
-#                         'last_author_unique_fields_count': last_unique_fields,
-#                         'last_author_unique_topics_count': last_unique_topics,
-#                         'last_author_unique_journals_count': last_unique_journals,
-
-#                         # Corresponding Author
-#                         'corresponding_author_id': primary_corr_id or '',
-#                         'corresponding_author_papers': corr_papers,
-#                         'corresponding_author_citations': corr_citations,
-#                         'corresponding_author_sdl_experience': corr_sdl_exp,
-#                         'corresponding_position': corr_position,
-#                         'num_corresponding_authors': len(all_corr_ids)
+#                         'last_author_papers': l_papers,
+#                         'last_author_citations': l_cites,
+#                         'last_author_sdl_brown_experience': l_sdl_brown,
+#                         'last_author_sdl_tomet_experience': l_sdl_tomet,
+#                         'last_author_field': l_field,
+#                         'last_author_top_topic': l_top_topic if pd.notna(l_top_topic) else '',
+#                         'last_author_top_journal': l_top_journal if pd.notna(l_top_journal) else '',
+#                         'last_author_unique_fields_count': l_uniq_fields,
+#                         'last_author_unique_topics_count': l_uniq_topics,
+#                         'last_author_unique_journals_count': l_uniq_journals,
+#                         'last_author_has_cs_exp': l_has_cs,
+#                         'last_author_avg_team_size_overall': l_avg_team,
+#                         'last_author_avg_team_size_managerial': l_avg_team_man,
+#                         'last_author_avg_team_size_sdl_brown': l_avg_team_sdl_brown,
+#                         'last_author_avg_team_size_sdl_tomet': l_avg_team_sdl_tomet,
+#                         'last_author_avg_team_size_high_automation': l_avg_team_high_auto,
+#                         'last_author_profile': l_profile,
+#                         'last_author_field_counts': l_field_counts,
 #                     }
-                    
-#                     # Add abstract and CS/SDL experience for FILTERED mode
-#                     if mode == 'FILTERED':
-#                         paper_record['abstract'] = abstract or ''
-#                         paper_record['comp_sci_experience_paper'] = comp_sci_experience_paper
-#                         paper_record['SDL_Keyword_Paper'] = sdl_keyword_paper
-#                         paper_record['number_of_SDL_words'] = number_of_sdl_words
                     
 #                     papers.append(paper_record)
 #                     total += 1
                     
 #                 except Exception as e:
 #                     skipped += 1
-        
+#                     continue
+                    
 #     except Exception as e:
-#         pass
+#         return field_name, year, [], 0, 0, f"ERROR: {str(e)}"
     
-#     return field_name, year, papers, total, skipped
+#     return field_name, year, papers, total, skipped, f"SUCCESS"
 
 
 # # ============================================================================
@@ -1468,121 +1509,119 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 # # ============================================================================
 
 # def build_regression_dataset():
-#     """Build regression dataset based on DATASET_MODE"""
+#     """Build regression dataset with SDL venue filtering"""
     
+#     print("\n" + "="*80)
+#     print("BUILDING REGRESSION DATASET (FILTERED MODE)")
 #     print("="*80)
-#     print(f"BUILDING REGRESSION DATASET - {DATASET_MODE} MODE")
-#     print("="*80)
-    
-#     if DATASET_MODE == 'FULL':
-#         print("Configuration: 26M papers (all fields, no filtering)")
-#     elif DATASET_MODE == 'FILTERED':
-#         print("Configuration: 490K papers (SDL venue matched, with abstracts & CS exp)")
-    
-#     print(f"\nOutput directory: {OUTPUT_DIR}")
-#     print(f"Years: {min(YEARS)}-{max(YEARS)-1}")
+#     print(f"Output: {OUTPUT_FILE}")
+#     print(f"Years: {YEARS[0]}-{YEARS[-1]}")
 #     print(f"Fields: {len(FIELDS)}")
-#     print(f"CPU cores: {cpu_count()}\n")
+#     print(f"CPU cores: {NUM_CORES}")
+#     print("="*80 + "\n")
     
-#     # ========================================================================
 #     # Verify files
-#     # ========================================================================
-    
-#     print("="*80)
-#     print("Verifying required files")
-#     print("="*80)
+#     print("Verifying required files...")
     
 #     if not AUTHOR_METRICS_FILE.exists():
-#         print(f"❌ ERROR: {AUTHOR_METRICS_FILE}")
+#         print(f"  ✗ ERROR: Author metrics not found")
+#         print(f"    {AUTHOR_METRICS_FILE}")
 #         sys.exit(1)
-#     print(f"✓ {AUTHOR_METRICS_FILE}")
+#     print(f"  ✓ Author metrics: {AUTHOR_METRICS_FILE}")
     
-#     # For FILTERED mode, verify additional files
-#     sdl_journals = set()
-#     sdl_topics = set()
-#     cs_keywords = None
+#     if not CS_KEYWORDS_FILE.exists():
+#         print(f"  ✗ ERROR: CS keywords not found")
+#         sys.exit(1)
+#     print(f"  ✓ CS keywords: {CS_KEYWORDS_FILE}")
     
-#     if DATASET_MODE == 'FILTERED':
-#         # Check CS Keywords
-#         if not CS_KEYWORDS_FILE.exists():
-#             print(f"❌ ERROR: {CS_KEYWORDS_FILE}")
-#             sys.exit(1)
-#         print(f"✓ {CS_KEYWORDS_FILE}")
-#         cs_keywords = load_keywords(CS_KEYWORDS_FILE)
-#         print(f"  Loaded {len(cs_keywords)} CS keywords")
-
-#         # Check SDL Keywords (NEW)
-#         if not SDL_KEYWORDS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_KEYWORDS_FILE}")
-#             sys.exit(1)
-#         print(f"✓ {SDL_KEYWORDS_FILE}")
-#         sdl_keywords = load_keywords(SDL_KEYWORDS_FILE)
-#         print(f"  Loaded {len(sdl_keywords)} SDL keywords")
-        
-#         # Check SDL Journals/Topics
-#         if not SDL_JOURNALS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_JOURNALS_FILE}")
-#             sys.exit(1)
-#         with open(SDL_JOURNALS_FILE, 'r') as f:
-#             sdl_journals = {line.strip() for line in f if line.strip()}
-#         print(f"✓ {SDL_JOURNALS_FILE} ({len(sdl_journals)} journals)")
-        
-#         if not SDL_TOPICS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_TOPICS_FILE}")
-#             sys.exit(1)
-#         with open(SDL_TOPICS_FILE, 'r') as f:
-#             sdl_topics = {line.strip() for line in f if line.strip()}
-#         print(f"✓ {SDL_TOPICS_FILE} ({len(sdl_topics)} topics)")
+#     if not SDL_KEYWORDS_FILE.exists():
+#         print(f"  ✗ ERROR: SDL keywords not found")
+#         sys.exit(1)
+#     print(f"  ✓ SDL keywords: {SDL_KEYWORDS_FILE}")
     
-#     # ========================================================================
+#     if not SDL_JOURNALS_FILE.exists():
+#         print(f"  ✗ ERROR: SDL journals file not found")
+#         sys.exit(1)
+#     print(f"  ✓ SDL journals: {SDL_JOURNALS_FILE}")
+    
+#     if not SDL_TOPICS_FILE.exists():
+#         print(f"  ✗ ERROR: SDL topics file not found")
+#         sys.exit(1)
+#     print(f"  ✓ SDL topics: {SDL_TOPICS_FILE}")
+    
+#     # Load keywords and venues
+#     print("\nLoading keywords and venues...")
+#     cs_keywords = load_keywords(CS_KEYWORDS_FILE)
+#     sdl_keywords = load_keywords(SDL_KEYWORDS_FILE)
+#     print(f"  CS keywords: {len(cs_keywords)}")
+#     print(f"  SDL keywords: {len(sdl_keywords)}")
+    
+#     sdl_journals, sdl_topics = load_sdl_venues(SDL_JOURNALS_FILE, SDL_TOPICS_FILE)
+    
 #     # Build task list
-#     # ========================================================================
-    
 #     print(f"\n{'='*80}")
-#     print("Building task list")
-#     print("="*80)
+#     print("Building task list...")
     
 #     tasks = []
 #     for field_name, field_dir in FIELDS.items():
 #         if not field_dir.exists():
 #             print(f"  ✗ {field_name}: directory not found")
 #             continue
-        
 #         print(f"  ✓ {field_name}")
 #         for year in YEARS:
-#             # Pass BOTH keyword paths now
-#             tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, DATASET_MODE, CS_KEYWORDS_FILE, SDL_KEYWORDS_FILE))
+#             tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, 
+#                          cs_keywords, sdl_keywords))
     
-#     print(f"\n✓ {len(tasks)} tasks ready\n")
+#     print(f"\n  Total tasks: {len(tasks)}")
     
-#     # ========================================================================
 #     # Process in parallel
-#     # ========================================================================
+#     print(f"\n{'='*80}")
+#     print(f"PROCESSING {len(tasks)} FILES IN PARALLEL")
+#     print(f"{'='*80}\n")
     
-#     print("="*80)
-#     print("Processing in parallel")
-#     print("="*80)
+#     start_time = time.time()
     
-#     num_processes = min(8, len(tasks), cpu_count())
-    
-#     with Pool(processes=num_processes) as pool:
+#     with Pool(NUM_CORES) as pool:
 #         results = pool.map(process_field_year, tasks)
     
-#     # ========================================================================
-#     # Combine results
-#     # ========================================================================
+#     # Track results
+#     successful = 0
+#     failed = 0
+#     not_found = 0
+    
+#     print("\nProcessing complete. Results:")
+#     for field_name, year, papers, total, skipped, status in results:
+#         if status == "SUCCESS":
+#             successful += 1
+#             if successful % 10 == 0:
+#                 print(f"  ✓ {field_name}_{year}: {total:,} papers ({skipped:,} skipped)")
+#         elif status == "FILE_NOT_FOUND":
+#             not_found += 1
+#         else:
+#             failed += 1
+#             print(f"  ✗ {field_name}_{year}: {status}")
+    
+#     elapsed = time.time() - start_time
     
 #     print(f"\n{'='*80}")
-#     print("Combining results")
-#     print("="*80)
+#     print(f"PHASE 1 COMPLETE - {elapsed:.1f}s")
+#     print(f"{'='*80}")
+#     print(f"  Successful: {successful}")
+#     print(f"  Not Found: {not_found}")
+#     print(f"  Failed: {failed}")
+#     print(f"{'='*80}\n")
+    
+#     # Combine results
+#     print(f"{'='*80}")
+#     print("COMBINING RESULTS")
+#     print(f"{'='*80}\n")
     
 #     all_papers = []
 #     total_papers = 0
 #     total_skipped = 0
-    
 #     field_summary = {}
     
-#     for field_name, year, papers, total, skipped in results:
+#     for field_name, year, papers, total, skipped, status in results:
 #         all_papers.extend(papers)
 #         total_papers += total
 #         total_skipped += skipped
@@ -1592,21 +1631,44 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 #         field_summary[field_name]['papers'] += total
 #         field_summary[field_name]['skipped'] += skipped
     
+#     print("Papers by field:")
 #     for field_name, stats in field_summary.items():
 #         print(f"  {field_name}: {stats['papers']:,} papers ({stats['skipped']:,} skipped)")
     
-#     print(f"\nTOTAL: {total_papers:,} papers ({total_skipped:,} skipped)\n")
+#     print(f"\nTOTAL BEFORE FILTERING: {total_papers:,} papers ({total_skipped:,} skipped)\n")
     
-#     # ========================================================================
-#     # Create DataFrame and transformations
-#     # ========================================================================
-    
-#     print("="*80)
-#     print("Creating DataFrame and transformations")
-#     print("="*80)
+#     # Create DataFrame
+#     print(f"{'='*80}")
+#     print("CREATING DATAFRAME")
+#     print(f"{'='*80}\n")
     
 #     df = pd.DataFrame(all_papers)
-#     print(f"  DataFrame shape: {df.shape}")
+#     print(f"  DataFrame shape (before filtering): {df.shape}")
+#     print(f"  Columns: {len(df.columns)}")
+    
+#     # ========================================================================
+#     # CRITICAL: SDL VENUE FILTERING (WAS MISSING IN NEW VERSION)
+#     # ========================================================================
+#     print(f"\n{'='*80}")
+#     print("APPLYING SDL VENUE FILTERING")
+#     print(f"{'='*80}\n")
+    
+#     print(f"  Before filtering: {len(df):,} papers")
+    
+#     # Filter by SDL journals AND topics
+#     print(f"  Applying venue filters...")
+#     mask = df['journal'].isin(sdl_journals) & df['primary_topic'].isin(sdl_topics)
+#     df = df[mask].copy()
+#     print(f"  After venue filtering: {len(df):,} papers")
+    
+#     # Remove rows with missing key variables
+#     key_vars = ['author_count', 'publication_year', 'field', 
+#                 'first_author_papers', 'last_author_papers']
+    
+#     pre_dropna = len(df)
+#     df = df.dropna(subset=key_vars)
+#     print(f"  Removed {pre_dropna - len(df):,} with missing key variables")
+#     print(f"  FINAL after filtering: {len(df):,} papers\n")
     
 #     # Apply transformations
 #     print("  Applying transformations...")
@@ -1614,90 +1676,50 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 #     df['asinh_first_author_citations'] = np.arcsinh(df['first_author_citations'].astype(float))
 #     df['asinh_last_author_papers'] = np.arcsinh(df['last_author_papers'].astype(float))
 #     df['asinh_last_author_citations'] = np.arcsinh(df['last_author_citations'].astype(float))
-#     df['asinh_corresponding_papers'] = np.arcsinh(df['corresponding_author_papers'].astype(float))
-#     df['asinh_corresponding_citations'] = np.arcsinh(df['corresponding_author_citations'].astype(float))
 #     df['asinh_paper_citations'] = np.arcsinh(df['cited_by_count'].astype(float))
 #     df['log_author_count'] = np.log(df['author_count'].astype(float).replace(0, np.nan))
     
 #     print("  ✓ Transformations complete\n")
     
-#     # ========================================================================
-#     # Apply filtering for FILTERED mode
-#     # ========================================================================
-    
-#     if DATASET_MODE == 'FILTERED':
-#         print(f"{'='*80}")
-#         print("Applying filters")
-#         print("="*80)
-        
-#         initial_count = len(df)
-        
-#         # Venue filtering
-#         print(f"  Applying venue filters...")
-#         # Note: We keep papers that match venue/topic OR if they are SDL via keywords
-#         # But per original logic, it seems we stick to venue/topic as the base universe
-#         mask = df['journal'].isin(sdl_journals) & df['primary_topic'].isin(sdl_topics)
-#         df = df[mask].copy()
-#         print(f"  After venue filtering: {len(df):,}")
-        
-#         # Remove missing key variables
-#         key_vars = ['author_count', 'publication_year', 'field', 
-#                     'asinh_first_author_papers', 'asinh_last_author_papers']
-#         pre_dropna = len(df)
-#         df = df.dropna(subset=key_vars)
-#         print(f"  Removed {pre_dropna - len(df):,} with missing key variables")
-#         print(f"  Final: {len(df):,}\n")
-    
-#     # ========================================================================
 #     # Save
-#     # ========================================================================
-    
 #     print(f"{'='*80}")
-#     print("Saving dataset")
-#     print("="*80)
+#     print("SAVING DATASET")
+#     print(f"{'='*80}\n")
     
-#     if DATASET_MODE == 'FULL':
-#         output_file = OUTPUT_DIR / "regression_dataset_full.csv"
-#     else:
-#         output_file = OUTPUT_DIR / "regression_dataset_filtered.csv"
+#     print(f"  Saving to: {OUTPUT_FILE}")
+#     df.to_csv(OUTPUT_FILE, index=False)
     
-#     print(f"  Saving to: {output_file}")
-#     df.to_csv(output_file, index=False)
+#     file_size = OUTPUT_FILE.stat().st_size / (1024 * 1024)
+#     print(f"  ✓ Saved: {file_size:.1f} MB")
     
-#     file_size = output_file.stat().st_size / (1024 * 1024)
-#     print(f"  Size: {file_size:.1f} MB")
-#     print(f"  Rows: {len(df):,}")
-#     print(f"  Columns: {len(df.columns)}")
-    
-#     # ========================================================================
 #     # Summary
-#     # ========================================================================
-    
 #     print(f"\n{'='*80}")
 #     print("SUMMARY")
-#     print("="*80)
+#     print(f"{'='*80}\n")
     
-#     print(f"\nTotal papers: {len(df):,}")
-#     print(f"  SDL papers (Original): {df['SDL'].sum():,}")
+#     print(f"Total papers (filtered): {len(df):,}")
+#     print(f"\nSDL Classifications:")
+#     print(f"  SDL Brown: {df['SDL_Brown'].sum():,}")
+#     print(f"  SDL Tomet: {df['SDL_Tomet'].sum():,}")
+#     print(f"  SDL Keyword: {df['sdl_keyword_measure'].sum():,}")
+#     print(f"  SDL Filtered Tom: {df['SDL_Filtered_Tom'].sum():,}")
+#     print(f"  High Automation: {df['high_automation'].sum():,}")
     
-#     if 'SDL_Keyword_Paper' in df.columns:
-#         print(f"  SDL papers (Keyword): {df['SDL_Keyword_Paper'].sum():,}")
-        
-#     print(f"  AI papers: {df['AI_Paper'].sum():,}")
-#     print(f"  Robotics papers: {df['Robotics_Paper'].sum():,}")
+#     print(f"\nOther Classifications:")
+#     print(f"  AI Papers: {df['AI_Paper'].sum():,}")
+#     print(f"  Robotics Papers: {df['Robotics_Paper'].sum():,}")
+#     print(f"  CS Experience Papers: {df['comp_sci_experience_paper'].sum():,}")
     
-#     if DATASET_MODE == 'FILTERED':
-#         with_abstract = df['abstract'].notna().sum()
-#         print(f"  Papers with abstracts: {with_abstract:,} ({with_abstract/len(df)*100:.1f}%)")
-#         print(f"  CS Experience papers: {df['comp_sci_experience_paper'].sum():,}")
+#     with_abstract = df['abstract'].notna().sum()
+#     print(f"\nPapers with abstracts: {with_abstract:,} ({with_abstract/len(df)*100:.1f}%)")
     
 #     print(f"\nPapers by field:")
 #     print(df['field'].value_counts().to_string())
     
+#     total_elapsed = time.time() - start_time
 #     print(f"\n{'='*80}")
-#     print("✅ COMPLETE!")
-#     print("="*80)
-#     print(f"\nOutput: {output_file}\n")
+#     print(f"COMPLETE - Total Time: {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
+#     print(f"{'='*80}\n")
     
 #     return df
 
@@ -1709,1035 +1731,823 @@ Creates transformed variables (asinh, log) for use in regression analysis.
 # if __name__ == "__main__":
 #     df = build_regression_dataset()
 
-# import json
-# import pandas as pd
-# import numpy as np
-# from pathlib import Path
-# import sys
-# from multiprocessing import Pool, cpu_count
 
-# # ============================================================================
-# # CONFIGURATION - TOGGLE BETWEEN FULL AND FILTERED
-# # ============================================================================
+# # NEW REGRESSION DATASET 2004 ONWARDS (BROWN + TOMET VENUE FILTERING)
 
-# # UNCOMMENT ONE OF THE FOLLOWING:
-# # DATASET_MODE = 'FULL'      # 26M papers: all fields, no filtering, no abstracts, no CS exp
-# DATASET_MODE = 'FILTERED'  # 490K papers: SDL venue matched, with abstracts, with CS exp
-
-# # ============================================================================
-# # PATHS
-# # ============================================================================
-
-# PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
-
-# FIELDS = {
-#     'chemistry': PROJECT_DIR / "data/fields" / "chemistry",
-#     'materials_science': PROJECT_DIR / "data/fields" / "material_science",
-#     'engineering': PROJECT_DIR / "data/fields" / "engineering",
-#     'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
-# }
-
-# AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author/test" / "author_metrics.csv"
-
-# # For FILTERED mode only
-# CS_KEYWORDS_FILE = PROJECT_DIR / "data/lasso_regression" / "cs_keywords_shortlisted.txt"
-# SDL_KEYWORDS_FILE = PROJECT_DIR / "data" / "keywords" / "sdl_Keywords.csv" 
-
-# SDL_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_journals.txt"
-# SDL_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "sdl_primary_topics.txt"
-
-# OUTPUT_DIR = PROJECT_DIR / "data" / "regression/test"
-# OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
-# YEARS = range(2012, 2026)
-# CHUNK_SIZE = 500000
-
-# # ============================================================================
-# # HELPER FUNCTIONS
-# # ============================================================================
-
-# def load_keywords(file_path):
-#     """Load keywords from text or CSV file, skip commented lines"""
-#     keywords = set()
-#     try:
-#         with open(file_path, 'r', encoding='utf-8') as f:
-#             for line in f:
-#                 line = line.strip()
-#                 if line and not line.startswith('#'):
-#                     # Handle CSV by removing quotes if present
-#                     if file_path.suffix == '.csv':
-#                         line = line.replace('"', '').replace("'", "")
-#                     keywords.add(line.lower())
-#     except Exception as e:
-#         print(f"Warning: Could not load keywords from {file_path}: {e}")
-#     return keywords
-
-
-# def count_keyword_matches(primary_topic, all_topics_str, title, abstract, keywords_set):
-#     """
-#     Count how many unique keywords appear in the paper metadata.
-#     Returns the count of unique matched keywords.
-#     """
-#     if not keywords_set:
-#         return 0
-
-#     matched_keywords = set()
-    
-#     # Check primary topic
-#     if primary_topic:
-#         primary_lower = primary_topic.lower()
-#         for keyword in keywords_set:
-#             if keyword in primary_lower:
-#                 matched_keywords.add(keyword)
-    
-#     # Check all topics
-#     if all_topics_str:
-#         all_topics_lower = all_topics_str.lower()
-#         for keyword in keywords_set:
-#             if keyword in all_topics_lower:
-#                 matched_keywords.add(keyword)
-    
-#     # Check title
-#     if title and isinstance(title, str):
-#         title_lower = title.lower()
-#         for keyword in keywords_set:
-#             if keyword in title_lower:
-#                 matched_keywords.add(keyword)
-    
-#     # Check abstract
-#     if abstract and isinstance(abstract, str):
-#         abstract_lower = abstract.lower()
-#         for keyword in keywords_set:
-#             if keyword in abstract_lower:
-#                 matched_keywords.add(keyword)
-    
-#     return len(matched_keywords)
-
-
-# def clean_author_id(author_id):
-#     """Remove URL prefix from author ID"""
-#     if pd.isna(author_id) or author_id == '':
-#         return None
-#     return str(author_id).replace('https://openalex.org/', '')
-
-
-# def parse_authorships(raw_data_json):
-#     """Extract first and last author IDs"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None, None
-    
-#     try:
-#         data = json.loads(raw_data_json)
-#         authorships = data.get('authorships', [])
-        
-#         if not authorships:
-#             return None, None
-        
-#         first_author_id = clean_author_id(authorships[0].get('author', {}).get('id'))
-#         last_author_id = clean_author_id(authorships[-1].get('author', {}).get('id'))
-        
-#         return first_author_id, last_author_id
-#     except:
-#         return None, None
-
-
-# def parse_corresponding_authors(raw_data_json):
-#     """Extract corresponding author IDs and select primary one"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None, []
-    
-#     try:
-#         data = json.loads(raw_data_json)
-#         corr_ids = data.get('corresponding_author_ids', [])
-        
-#         if not corr_ids:
-#             return None, []
-        
-#         cleaned_ids = [clean_author_id(aid) for aid in corr_ids if aid]
-#         primary_corr = cleaned_ids[0] if cleaned_ids else None
-        
-#         return primary_corr, cleaned_ids
-#     except:
-#         return None, []
-
-
-# def parse_paper_metadata(raw_data_json, include_abstract=False):
-#     """Extract paper metadata (topics, journal, citations, affiliations, date, abstract)"""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return None, None, None, 0, 0, None, None
-    
-#     try:
-#         data = json.loads(raw_data_json)
-        
-#         # Topics
-#         topics = data.get('topics', [])
-#         primary_topic = topics[0].get('display_name') if topics else None
-#         all_topics = [t.get('display_name') for t in topics if t.get('display_name')]
-#         all_topics_str = '|'.join(all_topics) if all_topics else None
-        
-#         # Journal
-#         journal = data.get('primary_location', {}).get('source', {}).get('display_name')
-        
-#         # Citations
-#         cited_by_count = data.get('cited_by_count', 0) or 0
-        
-#         # Publication date
-#         publication_date = data.get('publication_date')
-        
-#         # Abstract (only if requested)
-#         abstract_text = None
-#         if include_abstract:
-#             abstract_inverted = data.get('abstract_inverted_index')
-#             if abstract_inverted:
-#                 word_positions = []
-#                 for word, positions in abstract_inverted.items():
-#                     for pos in positions:
-#                         word_positions.append((pos, word))
-#                 word_positions.sort(key=lambda x: x[0])
-#                 abstract_text = ' '.join([word for pos, word in word_positions])
-        
-#         # Count unique affiliations
-#         authorships = data.get('authorships', [])
-#         all_institutions = set()
-#         for authorship in authorships:
-#             for inst in authorship.get('institutions', []):
-#                 inst_id = inst.get('id')
-#                 if inst_id:
-#                     all_institutions.add(inst_id)
-        
-#         num_paper_affiliations = len(all_institutions)
-        
-#         return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date, abstract_text
-#     except:
-#         return None, None, None, 0, 0, None, None
-
-
-# def get_corresponding_position(first_id, last_id, corr_id, corr_ids_list):
-#     """Determine position of corresponding author"""
-#     if not corr_id:
-#         return 'missing'
-    
-#     if first_id == last_id:
-#         return 'only'
-    
-#     is_first = (corr_id == first_id)
-#     is_last = (corr_id == last_id)
-    
-#     if is_first and is_last:
-#         return 'both'
-#     elif is_first:
-#         return 'first'
-#     elif is_last:
-#         return 'last'
-#     else:
-#         return 'middle'
-
-
-# # ============================================================================
-# # PARALLEL PROCESSING FUNCTION
-# # ============================================================================
-
-# def process_field_year(args):
-#     """Process a single (field, year) combination"""
-#     field_name, field_dir, year, author_metrics_path, mode, cs_keywords_path, sdl_keywords_path = args
-    
-#     tsv_file = field_dir / f"{field_name}_{year}.tsv"
-    
-#     if not tsv_file.exists():
-#         return field_name, year, [], 0, 0
-    
-#     # Load author metrics
-#     author_df = pd.read_csv(author_metrics_path)
-#     author_df = author_df.set_index('author_id')
-    
-#     # Load keywords if in FILTERED mode
-#     cs_keywords = None
-#     sdl_keywords = None
-#     if mode == 'FILTERED':
-#         cs_keywords = load_keywords(cs_keywords_path)
-#         sdl_keywords = load_keywords(sdl_keywords_path)
-    
-#     papers = []
-#     total = 0
-#     skipped = 0
-    
-#     # Determine whether to include abstract
-#     include_abstract = (mode == 'FILTERED')
-    
-#     try:
-#         for chunk in pd.read_csv(
-#             tsv_file, 
-#             sep='\t',
-#             usecols=['article_id', 'doi', 'title', 
-#                      'publication_year', 'author_count', 'SDL', 
-#                      'AI_Paper', 'Robotics_Paper', 'raw_data'],
-#             chunksize=CHUNK_SIZE,
-#             low_memory=False,
-#             on_bad_lines='skip'
-#         ):
-            
-#             for _, row in chunk.iterrows():
-#                 try:
-#                     # Parse authorships
-#                     first_author_id, last_author_id = parse_authorships(row['raw_data'])
-                    
-#                     if not first_author_id or not last_author_id:
-#                         skipped += 1
-#                         continue
-                    
-#                     # Parse corresponding authors
-#                     primary_corr_id, all_corr_ids = parse_corresponding_authors(row['raw_data'])
-                    
-#                     # Parse paper metadata
-#                     primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date, abstract = \
-#                         parse_paper_metadata(row['raw_data'], include_abstract=include_abstract)
-                    
-#                     title = row.get('title', '')
-                    
-#                     # --------------------------------------------------------
-#                     # KEYWORD ANALYSES (FILTERED mode only)
-#                     # --------------------------------------------------------
-#                     comp_sci_experience_paper = 0
-#                     sdl_keyword_paper = 0
-#                     number_of_sdl_words = 0
-                    
-#                     if mode == 'FILTERED':
-#                         # 1. CS Experience
-#                         # Logic: Field is CS OR >= 2 keywords matched
-#                         if field_name == 'computer_science':
-#                             comp_sci_experience_paper = 1
-#                         else:
-#                             matches = count_keyword_matches(
-#                                 primary_topic, all_topics_str, title, abstract, cs_keywords
-#                             )
-#                             comp_sci_experience_paper = 1 if matches >= 2 else 0
-
-#                         # 2. SDL Keyword Measure
-#                         # Logic: >= 1 keyword matched (phrases are specific enough)
-#                         matches_sdl = count_keyword_matches(
-#                             primary_topic, all_topics_str, title, abstract, sdl_keywords
-#                         )
-#                         number_of_sdl_words = matches_sdl
-#                         sdl_keyword_paper = 1 if matches_sdl >= 1 else 0
-
-#                     # --------------------------------------------------------
-#                     # AUTHOR METRICS
-#                     # --------------------------------------------------------
-#                     # --- FIRST AUTHOR METRICS ---
-#                     if first_author_id in author_df.index:
-#                         first_author = author_df.loc[first_author_id]
-#                         # Existing variables
-#                         first_papers = first_author['total_papers']
-#                         first_citations = first_author['total_citations']
-#                         first_sdl_exp = first_author['sdl_papers']
-#                         first_field = first_author['top_field']
-                        
-#                         # New variables (Breadth metrics)
-#                         first_top_topic = first_author['top_topic']
-#                         first_top_journal = first_author['top_journal']
-#                         first_unique_fields = first_author['num_unique_fields']
-#                         first_unique_topics = first_author['num_unique_topics']
-#                         first_unique_journals = first_author['num_unique_journals']
-#                     else:
-#                         first_papers = 0
-#                         first_citations = 0
-#                         first_sdl_exp = 0
-#                         first_field = ''
-#                         first_top_topic = ''
-#                         first_top_journal = ''
-#                         first_unique_fields = 0
-#                         first_unique_topics = 0
-#                         first_unique_journals = 0
-                    
-#                     # --- LAST AUTHOR METRICS ---
-#                     if last_author_id in author_df.index:
-#                         last_author = author_df.loc[last_author_id]
-#                         # Existing variables
-#                         last_papers = last_author['total_papers']
-#                         last_citations = last_author['total_citations']
-#                         last_sdl_exp = last_author['sdl_papers']
-#                         last_field = last_author['top_field']
-                        
-#                         # Breadth variables
-#                         last_top_topic = last_author['top_topic']
-#                         last_top_journal = last_author['top_journal']
-#                         last_unique_fields = last_author['num_unique_fields']
-#                         last_unique_topics = last_author['num_unique_topics']
-#                         last_unique_journals = last_author['num_unique_journals']
-                        
-#                         # --- NEW VARIABLES (ADDED V5) ---
-#                         # CS Experience (Author Level)
-#                         last_has_cs_exp = 1 if last_author.get('has_cs_experience', 0) == 1 else 0
-                        
-#                         # Team Size Metrics
-#                         last_avg_team_overall = last_author.get('avg_team_size', 0)
-#                         last_avg_team_managerial = last_author.get('avg_team_size_last_author', 0)
-#                         last_avg_team_sdl = last_author.get('avg_team_size_sdl', 0)
-                        
-#                         # Profile & Field Counts
-#                         last_profile = last_author.get('author_profile', 'Unknown')
-#                         last_field_counts = last_author.get('field_counts', '{}')
-                        
-#                     else:
-#                         last_papers = 0
-#                         last_citations = 0
-#                         last_sdl_exp = 0
-#                         last_field = ''
-#                         last_top_topic = ''
-#                         last_top_journal = ''
-#                         last_unique_fields = 0
-#                         last_unique_topics = 0
-#                         last_unique_journals = 0
-                        
-#                         # Defaults for new vars
-#                         last_has_cs_exp = 0
-#                         last_avg_team_overall = 0
-#                         last_avg_team_managerial = 0
-#                         last_avg_team_sdl = 0
-#                         last_profile = 'Unknown'
-#                         last_field_counts = '{}'
-                    
-#                     # Get corresponding author metrics
-#                     if primary_corr_id and primary_corr_id in author_df.index:
-#                         corr_author = author_df.loc[primary_corr_id]
-#                         corr_papers = corr_author['total_papers']
-#                         corr_citations = corr_author['total_citations']
-#                         corr_sdl_exp = corr_author['sdl_papers']
-#                     else:
-#                         corr_papers = 0
-#                         corr_citations = 0
-#                         corr_sdl_exp = 0
-                    
-#                     # Corresponding position
-#                     corr_position = get_corresponding_position(
-#                         first_author_id, last_author_id, primary_corr_id, all_corr_ids
-#                     )
-                    
-#                     # Check if first/last is corresponding
-#                     first_is_corr = 1 if first_author_id in all_corr_ids else 0
-#                     last_is_corr = 1 if last_author_id in all_corr_ids else 0
-                    
-#                     # Create paper record
-#                     paper_record = {
-#                         'article_id': row['article_id'],
-#                         'doi': row.get('doi', ''),
-#                         'title': title,
-#                         'publication_year': row['publication_year'],
-#                         'publication_date': publication_date or '',
-#                         'author_count': row['author_count'],
-#                         'SDL': row['SDL'],
-#                         'AI_Paper': row.get('AI_Paper', 0),
-#                         'Robotics_Paper': row.get('Robotics_Paper', 0),
-#                         'num_paper_affiliations': num_affiliations,
-#                         'primary_topic': primary_topic or 'MISSING',
-#                         'all_topics': all_topics_str or '',
-#                         'journal': journal or 'MISSING',
-#                         'cited_by_count': cited_by_count,
-#                         'field': field_name,
-                        
-#                         # First Author
-#                         'first_author_id': first_author_id,
-#                         'first_author_papers': first_papers,
-#                         'first_author_citations': first_citations,
-#                         'first_author_sdl_experience': first_sdl_exp,
-#                         'first_author_is_corresponding': first_is_corr,
-#                         'first_author_field': first_field,
-#                         'first_author_top_topic': first_top_topic if pd.notna(first_top_topic) else '',
-#                         'first_author_top_journal': first_top_journal if pd.notna(first_top_journal) else '',
-#                         'first_author_unique_fields_count': first_unique_fields,
-#                         'first_author_unique_topics_count': first_unique_topics,
-#                         'first_author_unique_journals_count': first_unique_journals,
-
-#                         # Last Author
-#                         'last_author_id': last_author_id,
-#                         'last_author_papers': last_papers,
-#                         'last_author_citations': last_citations,
-#                         'last_author_sdl_experience': last_sdl_exp,
-#                         'last_author_is_corresponding': last_is_corr,
-#                         'last_author_field': last_field,
-#                         'last_author_top_topic': last_top_topic if pd.notna(last_top_topic) else '',
-#                         'last_author_top_journal': last_top_journal if pd.notna(last_top_journal) else '',
-#                         'last_author_unique_fields_count': last_unique_fields,
-#                         'last_author_unique_topics_count': last_unique_topics,
-#                         'last_author_unique_journals_count': last_unique_journals,
-                        
-#                         # NEW Last Author Variables
-#                         'last_author_has_cs_exp': last_has_cs_exp,
-#                         'last_author_avg_team_size_overall': last_avg_team_overall,
-#                         'last_author_avg_team_size_managerial': last_avg_team_managerial,
-#                         'last_author_avg_team_size_sdl': last_avg_team_sdl,
-#                         'last_author_profile': last_profile,
-#                         'last_author_field_counts': last_field_counts,
-
-#                         # Corresponding Author
-#                         'corresponding_author_id': primary_corr_id or '',
-#                         'corresponding_author_papers': corr_papers,
-#                         'corresponding_author_citations': corr_citations,
-#                         'corresponding_author_sdl_experience': corr_sdl_exp,
-#                         'corresponding_position': corr_position,
-#                         'num_corresponding_authors': len(all_corr_ids)
-#                     }
-                    
-#                     # Add abstract and CS/SDL experience for FILTERED mode
-#                     if mode == 'FILTERED':
-#                         paper_record['abstract'] = abstract or ''
-#                         paper_record['comp_sci_experience_paper'] = comp_sci_experience_paper
-#                         paper_record['SDL_Keyword_Paper'] = sdl_keyword_paper
-#                         paper_record['number_of_SDL_words'] = number_of_sdl_words
-                    
-#                     papers.append(paper_record)
-#                     total += 1
-                    
-#                 except Exception as e:
-#                     skipped += 1
-        
-#     except Exception as e:
-#         pass
-    
-#     return field_name, year, papers, total, skipped
-
-
-# # ============================================================================
-# # MAIN PROCESSING
-# # ============================================================================
-
-# def build_regression_dataset():
-#     """Build regression dataset based on DATASET_MODE"""
-    
-#     print("="*80)
-#     print(f"BUILDING REGRESSION DATASET - {DATASET_MODE} MODE")
-#     print("="*80)
-    
-#     if DATASET_MODE == 'FULL':
-#         print("Configuration: 26M papers (all fields, no filtering)")
-#     elif DATASET_MODE == 'FILTERED':
-#         print("Configuration: 490K papers (SDL venue matched, with abstracts & CS exp)")
-    
-#     print(f"\nOutput directory: {OUTPUT_DIR}")
-#     print(f"Years: {min(YEARS)}-{max(YEARS)-1}")
-#     print(f"Fields: {len(FIELDS)}")
-#     print(f"CPU cores: {cpu_count()}\n")
-    
-#     # ========================================================================
-#     # Verify files
-#     # ========================================================================
-    
-#     print("="*80)
-#     print("Verifying required files")
-#     print("="*80)
-    
-#     if not AUTHOR_METRICS_FILE.exists():
-#         print(f"❌ ERROR: {AUTHOR_METRICS_FILE}")
-#         sys.exit(1)
-#     print(f"✓ {AUTHOR_METRICS_FILE}")
-    
-#     # For FILTERED mode, verify additional files
-#     sdl_journals = set()
-#     sdl_topics = set()
-#     cs_keywords = None
-    
-#     if DATASET_MODE == 'FILTERED':
-#         # Check CS Keywords
-#         if not CS_KEYWORDS_FILE.exists():
-#             print(f"❌ ERROR: {CS_KEYWORDS_FILE}")
-#             sys.exit(1)
-#         print(f"✓ {CS_KEYWORDS_FILE}")
-#         cs_keywords = load_keywords(CS_KEYWORDS_FILE)
-#         print(f"  Loaded {len(cs_keywords)} CS keywords")
-
-#         # Check SDL Keywords (NEW)
-#         if not SDL_KEYWORDS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_KEYWORDS_FILE}")
-#             sys.exit(1)
-#         print(f"✓ {SDL_KEYWORDS_FILE}")
-#         sdl_keywords = load_keywords(SDL_KEYWORDS_FILE)
-#         print(f"  Loaded {len(sdl_keywords)} SDL keywords")
-        
-#         # Check SDL Journals/Topics
-#         if not SDL_JOURNALS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_JOURNALS_FILE}")
-#             sys.exit(1)
-#         with open(SDL_JOURNALS_FILE, 'r') as f:
-#             sdl_journals = {line.strip() for line in f if line.strip()}
-#         print(f"✓ {SDL_JOURNALS_FILE} ({len(sdl_journals)} journals)")
-        
-#         if not SDL_TOPICS_FILE.exists():
-#             print(f"❌ ERROR: {SDL_TOPICS_FILE}")
-#             sys.exit(1)
-#         with open(SDL_TOPICS_FILE, 'r') as f:
-#             sdl_topics = {line.strip() for line in f if line.strip()}
-#         print(f"✓ {SDL_TOPICS_FILE} ({len(sdl_topics)} topics)")
-    
-#     # ========================================================================
-#     # Build task list
-#     # ========================================================================
-    
-#     print(f"\n{'='*80}")
-#     print("Building task list")
-#     print("="*80)
-    
-#     tasks = []
-#     for field_name, field_dir in FIELDS.items():
-#         if not field_dir.exists():
-#             print(f"  ✗ {field_name}: directory not found")
-#             continue
-        
-#         print(f"  ✓ {field_name}")
-#         for year in YEARS:
-#             # Pass BOTH keyword paths now
-#             tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, DATASET_MODE, CS_KEYWORDS_FILE, SDL_KEYWORDS_FILE))
-    
-#     print(f"\n✓ {len(tasks)} tasks ready\n")
-    
-#     # ========================================================================
-#     # Process in parallel
-#     # ========================================================================
-    
-#     print("="*80)
-#     print("Processing in parallel")
-#     print("="*80)
-    
-#     num_processes = min(8, len(tasks), cpu_count())
-    
-#     with Pool(processes=num_processes) as pool:
-#         results = pool.map(process_field_year, tasks)
-    
-#     # ========================================================================
-#     # Combine results
-#     # ========================================================================
-    
-#     print(f"\n{'='*80}")
-#     print("Combining results")
-#     print("="*80)
-    
-#     all_papers = []
-#     total_papers = 0
-#     total_skipped = 0
-    
-#     field_summary = {}
-    
-#     for field_name, year, papers, total, skipped in results:
-#         all_papers.extend(papers)
-#         total_papers += total
-#         total_skipped += skipped
-        
-#         if field_name not in field_summary:
-#             field_summary[field_name] = {'papers': 0, 'skipped': 0}
-#         field_summary[field_name]['papers'] += total
-#         field_summary[field_name]['skipped'] += skipped
-    
-#     for field_name, stats in field_summary.items():
-#         print(f"  {field_name}: {stats['papers']:,} papers ({stats['skipped']:,} skipped)")
-    
-#     print(f"\nTOTAL: {total_papers:,} papers ({total_skipped:,} skipped)\n")
-    
-#     # ========================================================================
-#     # Create DataFrame and transformations
-#     # ========================================================================
-    
-#     print("="*80)
-#     print("Creating DataFrame and transformations")
-#     print("="*80)
-    
-#     df = pd.DataFrame(all_papers)
-#     print(f"  DataFrame shape: {df.shape}")
-    
-#     # Apply transformations
-#     print("  Applying transformations...")
-#     df['asinh_first_author_papers'] = np.arcsinh(df['first_author_papers'].astype(float))
-#     df['asinh_first_author_citations'] = np.arcsinh(df['first_author_citations'].astype(float))
-#     df['asinh_last_author_papers'] = np.arcsinh(df['last_author_papers'].astype(float))
-#     df['asinh_last_author_citations'] = np.arcsinh(df['last_author_citations'].astype(float))
-#     df['asinh_corresponding_papers'] = np.arcsinh(df['corresponding_author_papers'].astype(float))
-#     df['asinh_corresponding_citations'] = np.arcsinh(df['corresponding_author_citations'].astype(float))
-#     df['asinh_paper_citations'] = np.arcsinh(df['cited_by_count'].astype(float))
-#     df['log_author_count'] = np.log(df['author_count'].astype(float).replace(0, np.nan))
-    
-#     print("  ✓ Transformations complete\n")
-    
-#     # ========================================================================
-#     # Apply filtering for FILTERED mode
-#     # ========================================================================
-    
-#     if DATASET_MODE == 'FILTERED':
-#         print(f"{'='*80}")
-#         print("Applying filters")
-#         print("="*80)
-        
-#         initial_count = len(df)
-        
-#         # Venue filtering
-#         print(f"  Applying venue filters...")
-#         mask = df['journal'].isin(sdl_journals) & df['primary_topic'].isin(sdl_topics)
-#         df = df[mask].copy()
-#         print(f"  After venue filtering: {len(df):,}")
-        
-#         # Remove missing key variables
-#         key_vars = ['author_count', 'publication_year', 'field', 
-#                     'asinh_first_author_papers', 'asinh_last_author_papers']
-#         pre_dropna = len(df)
-#         df = df.dropna(subset=key_vars)
-#         print(f"  Removed {pre_dropna - len(df):,} with missing key variables")
-#         print(f"  Final: {len(df):,}\n")
-    
-#     # ========================================================================
-#     # Save
-#     # ========================================================================
-    
-#     print(f"{'='*80}")
-#     print("Saving dataset")
-#     print("="*80)
-    
-#     if DATASET_MODE == 'FULL':
-#         output_file = OUTPUT_DIR / "regression_dataset_full.csv"
-#     else:
-#         output_file = OUTPUT_DIR / "regression_dataset_filtered_v21.csv"
-    
-#     print(f"  Saving to: {output_file}")
-#     df.to_csv(output_file, index=False)
-    
-#     file_size = output_file.stat().st_size / (1024 * 1024)
-#     print(f"  Size: {file_size:.1f} MB")
-#     print(f"  Rows: {len(df):,}")
-#     print(f"  Columns: {len(df.columns)}")
-    
-#     # ========================================================================
-#     # Summary
-#     # ========================================================================
-    
-#     print(f"\n{'='*80}")
-#     print("SUMMARY")
-#     print("="*80)
-    
-#     print(f"\nTotal papers: {len(df):,}")
-#     print(f"  SDL papers (Original): {df['SDL'].sum():,}")
-    
-#     if 'SDL_Keyword_Paper' in df.columns:
-#         print(f"  SDL papers (Keyword): {df['SDL_Keyword_Paper'].sum():,}")
-        
-#     print(f"  AI papers: {df['AI_Paper'].sum():,}")
-#     print(f"  Robotics papers: {df['Robotics_Paper'].sum():,}")
-    
-#     if DATASET_MODE == 'FILTERED':
-#         with_abstract = df['abstract'].notna().sum()
-#         print(f"  Papers with abstracts: {with_abstract:,} ({with_abstract/len(df)*100:.1f}%)")
-#         print(f"  CS Experience papers: {df['comp_sci_experience_paper'].sum():,}")
-    
-#     print(f"\nPapers by field:")
-#     print(df['field'].value_counts().to_string())
-    
-#     print(f"\n{'='*80}")
-#     print("✅ COMPLETE!")
-#     print("="*80)
-#     print(f"\nOutput: {output_file}\n")
-    
-#     return df
-
-
-# # ============================================================================
-# # MAIN
-# # ============================================================================
-
-# if __name__ == "__main__":
-#     df = build_regression_dataset()
-
+"""
+Build regression dataset from field TSV files with author metrics
+- Separated SDL metrics (Brown, Tomet)
+- High automation papers
+- SDL Filtered Tom classification
+- SDL VENUE FILTERING: Now uses Brown + Tomet combined journals and topics
+- No corresponding author variables
+- Multiprocessing with progress tracking
+"""
+import json
 import pandas as pd
 import numpy as np
-import sys
-import ast
 from pathlib import Path
-from datetime import datetime
+import sys
+from multiprocessing import Pool
+import time
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
+
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
-# Update this to point to your newly created dataset (e.g., filtered_v2.csv)
-INPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/regression_dataset_filtered_v21.csv")
-OUTPUT_FILE = PROJECT_DIR / "data/regression/test/regression_eda_report_v2.txt"
+FIELDS = {
+    'chemistry': PROJECT_DIR / "data/fields" / "chemistry",
+    'materials_science': PROJECT_DIR / "data/fields" / "materials_science",
+    'engineering': PROJECT_DIR / "data/fields" / "engineering",
+    'computer_science': PROJECT_DIR / "data/fields" / "computer_science"
+}
 
-# Ensure output directory exists
-OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+AUTHOR_METRICS_FILE = PROJECT_DIR / "data" / "author" / "author_metrics.csv"
 
-# Formatting settings
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', 1000)
-pd.set_option('display.float_format', '{:.2f}'.format)
+CS_KEYWORDS_FILE = PROJECT_DIR / "data/lasso_regression" / "cs_keywords_shortlisted.txt"
+SDL_KEYWORDS_FILE = PROJECT_DIR / "data" / "keywords" / "sdl_Keywords.csv"
 
 # ============================================================================
-# LOGGING UTILITY
+# CRITICAL CHANGE: SDL VENUE FILTERING FILES
 # ============================================================================
-class Logger(object):
-    def __init__(self, filename):
-        self.terminal = sys.stdout
-        self.log = open(filename, "w", encoding='utf-8')
+# UPDATED: Now uses 4 separate files (Brown + Tomet journals and topics)
+# Will combine them into union sets for filtering
+SDL_BROWN_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "brown_journals.csv"
+SDL_TOMET_JOURNALS_FILE = PROJECT_DIR / "data" / "sdl" / "tom_journals.csv"
+SDL_BROWN_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "brown_primary_topics.csv"
+SDL_TOMET_TOPICS_FILE = PROJECT_DIR / "data" / "sdl" / "tom_primary_topics.csv"
 
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
+OUTPUT_DIR = PROJECT_DIR / "data" / "regression/test"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    def flush(self):
-        self.terminal.flush()
-        self.log.flush()
+OUTPUT_FILE = OUTPUT_DIR / "regression_dataset_filtered_2004_12345.csv"
 
-sys.stdout = Logger(OUTPUT_FILE)
+YEARS = range(2004, 2026)  # 2004-2025
+CHUNK_SIZE = 500000
+NUM_CORES = 8
 
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
-def print_header(title):
+
+def load_keywords(file_path):
+    """Load keywords from text or CSV file"""
+    keywords = set()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    if file_path.suffix == '.csv':
+                        line = line.replace('"', '').replace("'", "")
+                    keywords.add(line.lower())
+    except Exception as e:
+        print(f"Warning: Could not load keywords from {file_path}: {e}")
+    return keywords
+
+
+def load_sdl_venues(brown_journals_file, tomet_journals_file, brown_topics_file, tomet_topics_file):
+    """
+    Load SDL journals and topics from 4 separate CSV files
+    Returns union (deduplicated) of Brown and Tomet venues
+    
+    Filter logic: Paper must match:
+      - Journal in (Brown journals OR Tomet journals) AND
+      - Topic in (Brown topics OR Tomet topics)
+    """
+    brown_journals = set()
+    tomet_journals = set()
+    brown_topics = set()
+    tomet_topics = set()
+    
+    # Load Brown journals
+    try:
+        df = pd.read_csv(brown_journals_file, header=None)
+        brown_journals = {str(val).strip() for val in df[0].dropna() if str(val).strip()}
+        print(f"  Loaded {len(brown_journals)} Brown journals")
+    except Exception as e:
+        print(f"  Warning: Could not load Brown journals: {e}")
+    
+    # Load Tomet journals
+    try:
+        df = pd.read_csv(tomet_journals_file, header=None,sep='\t',on_bad_lines='skip')
+        tomet_journals = {str(val).strip() for val in df[0].dropna() if str(val).strip()}
+        print(f"  Loaded {len(tomet_journals)} Tomet journals")
+    except Exception as e:
+        print(f"  Warning: Could not load Tomet journals: {e}")
+    
+    # Load Brown topics
+    try:
+        df = pd.read_csv(brown_topics_file, header=None)
+        brown_topics = {str(val).strip() for val in df[0].dropna() if str(val).strip()}
+        print(f"  Loaded {len(brown_topics)} Brown topics")
+    except Exception as e:
+        print(f"  Warning: Could not load Brown topics: {e}")
+    
+    # Load Tomet topics
+    try:
+        df = pd.read_csv(tomet_topics_file, header=None)
+        tomet_topics = {str(val).strip() for val in df[0].dropna() if str(val).strip()}
+        print(f"  Loaded {len(tomet_topics)} Tomet topics")
+    except Exception as e:
+        print(f"  Warning: Could not load Tomet topics: {e}")
+    
+    # Combine into unions (automatically deduplicates)
+    all_journals = brown_journals | tomet_journals
+    all_topics = brown_topics | tomet_topics
+    
+    print(f"\n  Combined (deduplicated):")
+    print(f"    Total journals: {len(all_journals)} (Brown: {len(brown_journals)}, Tomet: {len(tomet_journals)}, Overlap: {len(brown_journals & tomet_journals)})")
+    print(f"    Total topics: {len(all_topics)} (Brown: {len(brown_topics)}, Tomet: {len(tomet_topics)}, Overlap: {len(brown_topics & tomet_topics)})")
+    
+    return all_journals, all_topics
+
+
+def count_keyword_matches(primary_topic, all_topics_str, title, abstract, keywords_set):
+    """Count how many unique keywords appear in the paper metadata"""
+    if not keywords_set: return 0
+    matched_keywords = set()
+    
+    if primary_topic:
+        primary_lower = primary_topic.lower()
+        for keyword in keywords_set:
+            if keyword in primary_lower: 
+                matched_keywords.add(keyword)
+    
+    if all_topics_str:
+        all_topics_lower = all_topics_str.lower()
+        for keyword in keywords_set:
+            if keyword in all_topics_lower: 
+                matched_keywords.add(keyword)
+    
+    if title and isinstance(title, str):
+        title_lower = title.lower()
+        for keyword in keywords_set:
+            if keyword in title_lower: 
+                matched_keywords.add(keyword)
+    
+    if abstract and isinstance(abstract, str):
+        abstract_lower = abstract.lower()
+        for keyword in keywords_set:
+            if keyword in abstract_lower: 
+                matched_keywords.add(keyword)
+    
+    return len(matched_keywords)
+
+
+def classify_sdl_filtered_tom(title, abstract, sdl_brown, sdl_tomet):
+    """
+    Classify paper using SDL Filtered Tom definition
+    
+    CRITICAL CHANGE: Only applies to papers already classified as SDL
+    
+    Logic:
+    1. IF paper is NOT SDL (Brown=0 AND Tomet=0): Return 0 (skip keyword check)
+    2. IF paper IS SDL (Brown=1 OR Tomet=1): Check keywords
+       - Returns 1 if matches ANY of the 6 category criteria
+       - Returns 0 if no keyword matches found
+    
+    This means SDL_Filtered_Tom is a SUBSET of (Brown OR Tomet)
+    """
+    # CRITICAL: Only check keywords if paper is already SDL
+    if sdl_brown == 0 and sdl_tomet == 0:
+        return 0  # Not an SDL paper, don't check keywords
+    
+    # Paper IS SDL (Brown=1 OR Tomet=1), now check for keyword matches
+    if pd.isna(title): title = ""
+    if pd.isna(abstract): abstract = ""
+    
+    title_lower = title.lower()
+    abstract_lower = abstract.lower()
+    
+    # Category 1: Bayesian Optimization
+    bayes = 0
+    if "bayes" in title_lower or "bayes" in abstract_lower:
+        if "optim" in title_lower or "optim" in abstract_lower:
+            bayes = 1
+    
+    # Category 2: Closed-loop
+    closedloop = 0
+    closed_terms = ["closed-loop", "closed loop", "closedloop"]
+    for term in closed_terms:
+        if term in title_lower or term in abstract_lower:
+            closedloop = 1
+            break
+    
+    # Category 3: Process optimization
+    proopt = 0
+    if "process opt" in title_lower or "process opt" in abstract_lower:
+        proopt = 1
+    
+    # Category 4: Autonomous condition optimization
+    autocond = 0
+    if ("auton" in title_lower and "optim" in title_lower) or \
+       ("auton" in abstract_lower and "optim" in abstract_lower):
+        autocond = 1
+    
+    # Category 5: Self-optimizing
+    selfopt = 0
+    selfopt_terms = ["self-opt", "self opt"]
+    for term in selfopt_terms:
+        if term in title_lower or term in abstract_lower:
+            selfopt = 1
+            break
+    
+    # Category 6: Self-driving (comprehensive)
+    selfdriv = 0
+    
+    selfdriv_simple = [
+        "self-driv", "self driv",
+        "autonomous experimentation",
+        "automated exper",
+        "autonomous chemi",
+        "automated chemi",
+        "autonomous lab",
+        "automated lab",
+        "autonomous synth",
+        "automated synth",
+        "acceleration materials platform",
+        "acceleration platform",
+        "high-throughput"
+    ]
+    
+    for term in selfdriv_simple:
+        if term in title_lower or term in abstract_lower:
+            selfdriv = 1
+            break
+    
+    if not selfdriv:
+        if ("autonomous disc" in title_lower and "discov" in abstract_lower) or \
+           ("autonomous disc" in abstract_lower and "discov" in abstract_lower):
+            selfdriv = 1
+        elif ("automated disc" in title_lower and "discov" in abstract_lower) or \
+             ("automated disc" in abstract_lower and "discov" in abstract_lower):
+            selfdriv = 1
+    
+    if not selfdriv:
+        if (("accelerated" in title_lower or "accelerated" in abstract_lower) and 
+            ("autonomous" in title_lower or "autonomous" in abstract_lower)):
+            selfdriv = 1
+        elif (("accelerated" in title_lower or "accelerated" in abstract_lower) and 
+              ("automated" in title_lower or "automated" in abstract_lower)):
+            selfdriv = 1
+        elif (("experiment" in title_lower or "experiment" in abstract_lower) and 
+              ("robot" in title_lower or "robot" in abstract_lower) and 
+              ("platform" in title_lower or "platform" in abstract_lower)):
+            selfdriv = 1
+    
+    # Return 1 if ANY category matches, 0 if SDL but no keyword matches
+    sdl_filtered_tom = 1 if (bayes or closedloop or proopt or autocond or selfopt or selfdriv) else 0
+    
+    return sdl_filtered_tom
+
+
+def clean_author_id(author_id):
+    """Remove URL prefix from author ID"""
+    if pd.isna(author_id) or author_id == '': return None
+    return str(author_id).replace('https://openalex.org/', '')
+
+
+def parse_authorships(raw_data_json):
+    """Extract first and last author IDs"""
+    if pd.isna(raw_data_json) or raw_data_json == '': return None, None
+    try:
+        data = json.loads(raw_data_json)
+        authorships = data.get('authorships', [])
+        if not authorships: return None, None
+        
+        first_author_id = clean_author_id(authorships[0].get('author', {}).get('id'))
+        last_author_id = clean_author_id(authorships[-1].get('author', {}).get('id'))
+        return first_author_id, last_author_id
+    except: return None, None
+
+
+def parse_paper_metadata(raw_data_json):
+    """Extract paper metadata including abstract"""
+    if pd.isna(raw_data_json) or raw_data_json == '': 
+        return None, None, None, 0, 0, None, None
+        
+    try:
+        data = json.loads(raw_data_json)
+        
+        # Topics
+        topics = data.get('topics', [])
+        primary_topic = topics[0].get('display_name') if topics else None
+        all_topics = [t.get('display_name') for t in topics if t.get('display_name')]
+        all_topics_str = '|'.join(all_topics) if all_topics else None
+        
+        # Journal
+        journal = data.get('primary_location', {}).get('source', {}).get('display_name')
+        
+        # Citations
+        cited_by_count = data.get('cited_by_count', 0) or 0
+        
+        # Publication date
+        publication_date = data.get('publication_date')
+        
+        # Abstract (reconstruct from inverted index)
+        abstract_text = None
+        abstract_inverted = data.get('abstract_inverted_index')
+        if abstract_inverted:
+            word_positions = []
+            for word, positions in abstract_inverted.items():
+                for pos in positions: 
+                    word_positions.append((pos, word))
+            word_positions.sort(key=lambda x: x[0])
+            abstract_text = ' '.join([word for pos, word in word_positions])
+        
+        # Affiliations
+        authorships = data.get('authorships', [])
+        all_institutions = set()
+        for authorship in authorships:
+            for inst in authorship.get('institutions', []):
+                inst_id = inst.get('id')
+                if inst_id: all_institutions.add(inst_id)
+        num_paper_affiliations = len(all_institutions)
+        
+        return primary_topic, all_topics_str, journal, cited_by_count, num_paper_affiliations, publication_date, abstract_text
+        
+    except: 
+        return None, None, None, 0, 0, None, None
+
+
+# ============================================================================
+# PARALLEL PROCESSING FUNCTION
+# ============================================================================
+
+def process_field_year(args):
+    """Process a single (field, year) combination"""
+    field_name, field_dir, year, author_metrics_path, cs_keywords, sdl_keywords = args
+    
+    # Locate file
+    possible_files = [
+        field_dir / f"{field_name}_{year}_sdl_classified.tsv",
+        field_dir / f"{field_name}_{year}.tsv",
+    ]
+    tsv_file = next((f for f in possible_files if f.exists()), None)
+    
+    if not tsv_file: 
+        return field_name, year, [], 0, 0, "FILE_NOT_FOUND"
+    
+    # Load author metrics
+    author_df = pd.read_csv(author_metrics_path).set_index('author_id')
+    
+    papers = []
+    total = 0
+    skipped = 0
+    
+    try:
+        # Columns to read
+        use_cols = ['article_id', 'doi', 'title', 'publication_year', 'author_count', 
+                    'brown_SDL_papers', 'tomet_al_SDL', 'high_automation_dummy',
+                    'AI_Paper', 'Robotics_Paper', 'raw_data']
+        
+        # Check which columns exist
+        header = pd.read_csv(tsv_file, sep='\t', nrows=0).columns.tolist()
+        use_cols = [col for col in use_cols if col in header]
+        
+        if 'raw_data' not in use_cols:
+            return field_name, year, [], 0, 0, "NO_RAW_DATA"
+        
+        for chunk in pd.read_csv(tsv_file, sep='\t', usecols=use_cols,
+                                chunksize=CHUNK_SIZE, low_memory=False, 
+                                on_bad_lines='skip'):
+            
+            for _, row in chunk.iterrows():
+                try:
+                    # Parse authorships
+                    first_author_id, last_author_id = parse_authorships(row['raw_data'])
+                    if not first_author_id or not last_author_id:
+                        skipped += 1
+                        continue
+                    
+                    # Parse metadata
+                    primary_topic, all_topics_str, journal, cited_by_count, num_affiliations, publication_date, abstract = \
+                        parse_paper_metadata(row['raw_data'])
+                    
+                    title = row.get('title', '')
+                    
+                    # SDL Classifications
+                    sdl_brown = row.get('brown_SDL_papers', 0)
+                    if pd.isna(sdl_brown): sdl_brown = 0
+                    
+                    sdl_tomet = row.get('tomet_al_SDL', 0)
+                    if pd.isna(sdl_tomet): sdl_tomet = 0
+                    
+                    high_auto = row.get('high_automation_dummy', 0)
+                    if pd.isna(high_auto): high_auto = 0
+                    
+                    # CS Experience Classification
+                    comp_sci_experience_paper = 0
+                    if field_name == 'computer_science':
+                        comp_sci_experience_paper = 1
+                    else:
+                        matches = count_keyword_matches(primary_topic, all_topics_str, 
+                                                       title, abstract, cs_keywords)
+                        comp_sci_experience_paper = 1 if matches >= 2 else 0
+                    
+                    # SDL Keyword Classification
+                    matches_sdl = count_keyword_matches(primary_topic, all_topics_str, 
+                                                        title, abstract, sdl_keywords)
+                    sdl_keyword_measure = 1 if matches_sdl >= 1 else 0
+                    number_of_SDL_words = matches_sdl
+                    
+                    # SDL Filtered Tom Classification
+                    # CRITICAL: Now only checks keywords if paper is SDL (Brown=1 OR Tomet=1)
+                    sdl_filtered_tom = classify_sdl_filtered_tom(title, abstract, sdl_brown, sdl_tomet)
+                    
+                    # First Author Metrics
+                    if first_author_id in author_df.index:
+                        first_author = author_df.loc[first_author_id]
+                        f_papers = first_author['total_papers']
+                        f_cites = first_author['total_citations']
+                        f_sdl_brown = first_author.get('sdl_brown_papers', 0)
+                        f_sdl_tomet = first_author.get('sdl_tomet_papers', 0)
+                        f_field = first_author['top_field']
+                        f_top_topic = first_author['top_topic']
+                        f_top_journal = first_author['top_journal']
+                        f_uniq_fields = first_author['num_unique_fields']
+                        f_uniq_topics = first_author['num_unique_topics']
+                        f_uniq_journals = first_author['num_unique_journals']
+                    else:
+                        f_papers, f_cites = 0, 0
+                        f_sdl_brown, f_sdl_tomet = 0, 0
+                        f_field, f_top_topic, f_top_journal = '', '', ''
+                        f_uniq_fields, f_uniq_topics, f_uniq_journals = 0, 0, 0
+                    
+                    # Last Author Metrics
+                    if last_author_id in author_df.index:
+                        last_author = author_df.loc[last_author_id]
+                        l_papers = last_author['total_papers']
+                        l_cites = last_author['total_citations']
+                        l_sdl_brown = last_author.get('sdl_brown_papers', 0)
+                        l_sdl_tomet = last_author.get('sdl_tomet_papers', 0)
+                        l_field = last_author['top_field']
+                        l_top_topic = last_author['top_topic']
+                        l_top_journal = last_author['top_journal']
+                        l_uniq_fields = last_author['num_unique_fields']
+                        l_uniq_topics = last_author['num_unique_topics']
+                        l_uniq_journals = last_author['num_unique_journals']
+                        l_has_cs = 1 if last_author.get('has_cs_experience', 0) == 1 else 0
+                        l_avg_team = last_author.get('avg_team_size', 0)
+                        l_avg_team_man = last_author.get('avg_team_size_last_author', 0)
+                        l_avg_team_sdl_brown = last_author.get('avg_team_size_sdl_brown', 0)
+                        l_avg_team_sdl_tomet = last_author.get('avg_team_size_sdl_tomet', 0)
+                        l_avg_team_high_auto = last_author.get('avg_team_size_high_automation', 0)
+                        l_profile = last_author.get('author_profile', 'Unknown')
+                        l_field_counts = last_author.get('field_counts', '{}')
+                    else:
+                        l_papers, l_cites = 0, 0
+                        l_sdl_brown, l_sdl_tomet = 0, 0
+                        l_field, l_top_topic, l_top_journal = '', '', ''
+                        l_uniq_fields, l_uniq_topics, l_uniq_journals = 0, 0, 0
+                        l_has_cs = 0
+                        l_avg_team, l_avg_team_man = 0, 0
+                        l_avg_team_sdl_brown, l_avg_team_sdl_tomet = 0, 0
+                        l_avg_team_high_auto = 0
+                        l_profile, l_field_counts = 'Unknown', '{}'
+                    
+                    # Create paper record
+                    paper_record = {
+                        'article_id': row['article_id'],
+                        'doi': row.get('doi', ''),
+                        'title': title,
+                        'publication_year': row['publication_year'],
+                        'publication_date': publication_date or '',
+                        'author_count': row['author_count'],
+                        
+                        # SDL Classifications (separated)
+                        'SDL_Brown': sdl_brown,
+                        'SDL_Tomet': sdl_tomet,
+                        'high_automation': high_auto,
+                        'sdl_keyword_measure': sdl_keyword_measure,
+                        'number_of_SDL_words': number_of_SDL_words,
+                        'SDL_Filtered_Tom': sdl_filtered_tom,
+                        
+                        'AI_Paper': row.get('AI_Paper', 0),
+                        'Robotics_Paper': row.get('Robotics_Paper', 0),
+                        
+                        'num_paper_affiliations': num_affiliations,
+                        'primary_topic': primary_topic or 'MISSING',
+                        'all_topics': all_topics_str or '',
+                        'journal': journal or 'MISSING',
+                        'cited_by_count': cited_by_count,
+                        'field': field_name,
+                        'abstract': abstract or '',
+                        'comp_sci_experience_paper': comp_sci_experience_paper,
+                        
+                        # First Author
+                        'first_author_id': first_author_id,
+                        'first_author_papers': f_papers,
+                        'first_author_citations': f_cites,
+                        'first_author_sdl_brown_experience': f_sdl_brown,
+                        'first_author_sdl_tomet_experience': f_sdl_tomet,
+                        'first_author_field': f_field,
+                        'first_author_top_topic': f_top_topic if pd.notna(f_top_topic) else '',
+                        'first_author_top_journal': f_top_journal if pd.notna(f_top_journal) else '',
+                        'first_author_unique_fields_count': f_uniq_fields,
+                        'first_author_unique_topics_count': f_uniq_topics,
+                        'first_author_unique_journals_count': f_uniq_journals,
+                        
+                        # Last Author
+                        'last_author_id': last_author_id,
+                        'last_author_papers': l_papers,
+                        'last_author_citations': l_cites,
+                        'last_author_sdl_brown_experience': l_sdl_brown,
+                        'last_author_sdl_tomet_experience': l_sdl_tomet,
+                        'last_author_field': l_field,
+                        'last_author_top_topic': l_top_topic if pd.notna(l_top_topic) else '',
+                        'last_author_top_journal': l_top_journal if pd.notna(l_top_journal) else '',
+                        'last_author_unique_fields_count': l_uniq_fields,
+                        'last_author_unique_topics_count': l_uniq_topics,
+                        'last_author_unique_journals_count': l_uniq_journals,
+                        'last_author_has_cs_exp': l_has_cs,
+                        'last_author_avg_team_size_overall': l_avg_team,
+                        'last_author_avg_team_size_managerial': l_avg_team_man,
+                        'last_author_avg_team_size_sdl_brown': l_avg_team_sdl_brown,
+                        'last_author_avg_team_size_sdl_tomet': l_avg_team_sdl_tomet,
+                        'last_author_avg_team_size_high_automation': l_avg_team_high_auto,
+                        'last_author_profile': l_profile,
+                        'last_author_field_counts': l_field_counts,
+                    }
+                    
+                    papers.append(paper_record)
+                    total += 1
+                    
+                except Exception as e:
+                    skipped += 1
+                    continue
+                    
+    except Exception as e:
+        return field_name, year, [], 0, 0, f"ERROR: {str(e)}"
+    
+    return field_name, year, papers, total, skipped, f"SUCCESS"
+
+
+# ============================================================================
+# MAIN PROCESSING
+# ============================================================================
+
+def build_regression_dataset():
+    """
+    Build regression dataset with SDL venue filtering
+    
+    Filtering approach:
+    - Reads 4 CSV files: Brown journals, Tomet journals, Brown topics, Tomet topics
+    - Creates union (deduplicated) of journals and topics
+    - Keeps papers where:
+        * Journal matches (Brown OR Tomet journals) AND
+        * Primary topic matches (Brown OR Tomet topics)
+    """
+    
     print("\n" + "="*80)
-    print(title)
+    print("BUILDING REGRESSION DATASET")
+    print("FILTERING: Journal in (Brown OR Tomet) AND Topic in (Brown OR Tomet)")
     print("="*80)
-
-def print_dist(series, bins, labels):
-    dist = pd.cut(series, bins=bins, labels=labels, include_lowest=True).value_counts().sort_index()
-    for label, count in dist.items():
-        print(f"  {label:<10}: {count:>9,} ({count/len(series)*100:.2f}%)")
-
-# ============================================================================
-# MAIN EDA SCRIPT
-# ============================================================================
-def main():
-    if not INPUT_FILE.exists():
-        print(f"Error: File not found at {INPUT_FILE}")
-        return
-
-    print("Loading data... (this may take a minute)")
-    df = pd.read_csv(INPUT_FILE, low_memory=False)
+    print(f"Output: {OUTPUT_FILE}")
+    print(f"Years: {YEARS[0]}-{YEARS[-1]}")
+    print(f"Fields: {len(FIELDS)}")
+    print(f"CPU cores: {NUM_CORES}")
+    print("="*80 + "\n")
     
-    print("="*80)
-    print("EXPLORATORY DATA ANALYSIS - REGRESSION DATASET (V5 - NEW VARS)")
-    print("="*80)
-    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Source file: {INPUT_FILE}")
-    print("="*80)
-
-    # ============================================================================
-    # 1. OVERVIEW
-    # ============================================================================
-    print_header("1. DATASET OVERVIEW")
-    print(f"Total papers: {len(df):,}")
-    print(f"Total columns: {len(df.columns)}")
-    print(f"Memory usage: {df.memory_usage(deep=True).sum() / 1024**3:.2f} GB\n")
+    # Verify files
+    print("Verifying required files...")
     
-    print("Columns:")
-    for i, col in enumerate(df.columns, 1):
-        print(f"  {i:>2}. {col}")
-
-    # ============================================================================
-    # 1B. ABSTRACT ANALYSIS
-    # ============================================================================
-    print_header("1B. ABSTRACT ANALYSIS")
-    if 'abstract' in df.columns:
-        with_abs = df['abstract'].notna().sum()
-        no_abs = len(df) - with_abs
-        print(f"Papers with abstracts: {with_abs:,} ({with_abs/len(df)*100:.2f}%)")
-        print(f"Papers without abstracts: {no_abs:,} ({no_abs/len(df)*100:.2f}%)")
+    if not AUTHOR_METRICS_FILE.exists():
+        print(f"  ✗ ERROR: Author metrics not found")
+        print(f"    {AUTHOR_METRICS_FILE}")
+        sys.exit(1)
+    print(f"  ✓ Author metrics: {AUTHOR_METRICS_FILE}")
+    
+    if not CS_KEYWORDS_FILE.exists():
+        print(f"  ✗ ERROR: CS keywords not found")
+        sys.exit(1)
+    print(f"  ✓ CS keywords: {CS_KEYWORDS_FILE}")
+    
+    if not SDL_KEYWORDS_FILE.exists():
+        print(f"  ✗ ERROR: SDL keywords not found")
+        sys.exit(1)
+    print(f"  ✓ SDL keywords: {SDL_KEYWORDS_FILE}")
+    
+    # ========================================================================
+    # CRITICAL: Verify all 4 SDL venue files exist
+    # ========================================================================
+    if not SDL_BROWN_JOURNALS_FILE.exists():
+        print(f"  ✗ ERROR: Brown journals file not found")
+        print(f"    Expected: {SDL_BROWN_JOURNALS_FILE}")
+        sys.exit(1)
+    print(f"  ✓ Brown journals: {SDL_BROWN_JOURNALS_FILE}")
+    
+    if not SDL_TOMET_JOURNALS_FILE.exists():
+        print(f"  ✗ ERROR: Tomet journals file not found")
+        print(f"    Expected: {SDL_TOMET_JOURNALS_FILE}")
+        sys.exit(1)
+    print(f"  ✓ Tomet journals: {SDL_TOMET_JOURNALS_FILE}")
+    
+    if not SDL_BROWN_TOPICS_FILE.exists():
+        print(f"  ✗ ERROR: Brown topics file not found")
+        print(f"    Expected: {SDL_BROWN_TOPICS_FILE}")
+        sys.exit(1)
+    print(f"  ✓ Brown topics: {SDL_BROWN_TOPICS_FILE}")
+    
+    if not SDL_TOMET_TOPICS_FILE.exists():
+        print(f"  ✗ ERROR: Tomet topics file not found")
+        print(f"    Expected: {SDL_TOMET_TOPICS_FILE}")
+        sys.exit(1)
+    print(f"  ✓ Tomet topics: {SDL_TOMET_TOPICS_FILE}")
+    
+    # Load keywords and venues
+    print("\nLoading keywords and venues...")
+    cs_keywords = load_keywords(CS_KEYWORDS_FILE)
+    sdl_keywords = load_keywords(SDL_KEYWORDS_FILE)
+    print(f"  CS keywords: {len(cs_keywords)}")
+    print(f"  SDL keywords: {len(sdl_keywords)}")
+    
+    # Load Brown + Tomet venues (will be combined into union)
+    sdl_journals, sdl_topics = load_sdl_venues(
+        SDL_BROWN_JOURNALS_FILE, 
+        SDL_TOMET_JOURNALS_FILE,
+        SDL_BROWN_TOPICS_FILE,
+        SDL_TOMET_TOPICS_FILE
+    )
+    
+    # Build task list
+    print(f"\n{'='*80}")
+    print("Building task list...")
+    
+    tasks = []
+    for field_name, field_dir in FIELDS.items():
+        if not field_dir.exists():
+            print(f"  ✗ {field_name}: directory not found")
+            continue
+        print(f"  ✓ {field_name}")
+        for year in YEARS:
+            tasks.append((field_name, field_dir, year, AUTHOR_METRICS_FILE, 
+                         cs_keywords, sdl_keywords))
+    
+    print(f"\n  Total tasks: {len(tasks)}")
+    
+    # Process in parallel
+    print(f"\n{'='*80}")
+    print(f"PROCESSING {len(tasks)} FILES IN PARALLEL")
+    print(f"{'='*80}\n")
+    
+    start_time = time.time()
+    
+    with Pool(NUM_CORES) as pool:
+        results = pool.map(process_field_year, tasks)
+    
+    # Track results
+    successful = 0
+    failed = 0
+    not_found = 0
+    
+    print("\nProcessing complete. Results:")
+    for field_name, year, papers, total, skipped, status in results:
+        if status == "SUCCESS":
+            successful += 1
+            if successful % 10 == 0:
+                print(f"  ✓ {field_name}_{year}: {total:,} papers ({skipped:,} skipped)")
+        elif status == "FILE_NOT_FOUND":
+            not_found += 1
+        else:
+            failed += 1
+            print(f"  ✗ {field_name}_{year}: {status}")
+    
+    elapsed = time.time() - start_time
+    
+    print(f"\n{'='*80}")
+    print(f"PHASE 1 COMPLETE - {elapsed:.1f}s")
+    print(f"{'='*80}")
+    print(f"  Successful: {successful}")
+    print(f"  Not Found: {not_found}")
+    print(f"  Failed: {failed}")
+    print(f"{'='*80}\n")
+    
+    # Combine results
+    print(f"{'='*80}")
+    print("COMBINING RESULTS")
+    print(f"{'='*80}\n")
+    
+    all_papers = []
+    total_papers = 0
+    total_skipped = 0
+    field_summary = {}
+    
+    for field_name, year, papers, total, skipped, status in results:
+        all_papers.extend(papers)
+        total_papers += total
+        total_skipped += skipped
         
-        abs_lens = df['abstract'].astype(str).apply(len)
-        print(f"  Mean length (chars): {abs_lens.mean():.0f}")
-    else:
-        print("Abstract column not found.")
-
-    # ============================================================================
-    # 2. MISSING VALUES
-    # ============================================================================
-    print_header("2. MISSING VALUES ANALYSIS")
-    missing = df.isnull().sum()
-    missing = missing[missing > 0].sort_values(ascending=False)
-    for col, val in missing.items():
-        print(f"  {col}: {val:,} ({val/len(df)*100:.2f}%)")
-
-    # ============================================================================
-    # 3. DEPENDENT VARIABLE
-    # ============================================================================
-    print_header("3. DEPENDENT VARIABLE - TEAM SIZE (author_count)")
-    print(df['author_count'].describe().to_string())
+        if field_name not in field_summary:
+            field_summary[field_name] = {'papers': 0, 'skipped': 0}
+        field_summary[field_name]['papers'] += total
+        field_summary[field_name]['skipped'] += skipped
     
-    print("\nTeam size distribution:")
-    bins = [0, 1, 2, 3, 4, 9, 19, 49, 99, 99999]
-    labels = ['1', '2', '3', '4', '5-9', '10-19', '20-49', '50-99', '100+']
-    print_dist(df['author_count'], bins, labels)
-
-    # ============================================================================
-    # 4. TREATMENT VARIABLES
-    # ============================================================================
-    print_header("4. TREATMENT VARIABLES & SDL OVERLAP")
-    sdl_orig = df['SDL'].sum()
-    sdl_new = df['SDL_Keyword_Paper'].sum() if 'SDL_Keyword_Paper' in df.columns else 0
+    print("Papers by field:")
+    for field_name, stats in field_summary.items():
+        print(f"  {field_name}: {stats['papers']:,} papers ({stats['skipped']:,} skipped)")
     
-    print(f"  SDL (Original Measure):  {sdl_orig:,}")
-    print(f"  SDL (New Keyword Measure): {sdl_new:,}")
+    print(f"\nTOTAL BEFORE FILTERING: {total_papers:,} papers ({total_skipped:,} skipped)\n")
     
-    if 'SDL_Keyword_Paper' in df.columns:
-        both = len(df[(df['SDL']==1) & (df['SDL_Keyword_Paper']==1)])
-        print(f"  MATCHED in BOTH:         {both:,}")
-        
-        mask_union = (df['SDL'] == 1) | (df['SDL_Keyword_Paper'] == 1)
-        print(f"\nAverage Team Size:")
-        print(f"  SDL (Union):        {df[mask_union]['author_count'].mean():.2f}")
-        print(f"  Non-SDL (Strict):   {df[~mask_union]['author_count'].mean():.2f}")
-
-    # ============================================================================
-    # 5. FIELD DISTRIBUTION
-    # ============================================================================
-    print_header("5. FIELD DISTRIBUTION")
+    # Create DataFrame
+    print(f"{'='*80}")
+    print("CREATING DATAFRAME")
+    print(f"{'='*80}\n")
+    
+    df = pd.DataFrame(all_papers)
+    print(f"  DataFrame shape (before filtering): {df.shape}")
+    print(f"  Columns: {len(df.columns)}")
+    
+    # ========================================================================
+    # CRITICAL: SDL VENUE FILTERING (Brown OR Tomet)
+    # ========================================================================
+    print(f"\n{'='*80}")
+    print("APPLYING SDL VENUE FILTERING")
+    print("Filter: (Journal in Brown OR Tomet) AND (Topic in Brown OR Tomet)")
+    print(f"{'='*80}\n")
+    
+    print(f"  Before filtering: {len(df):,} papers")
+    
+    # Filter: Paper must have:
+    #   - Journal in (Brown journals OR Tomet journals) AND
+    #   - Topic in (Brown topics OR Tomet topics)
+    print(f"  Applying venue filters...")
+    print(f"    Journals to match (union): {len(sdl_journals):,}")
+    print(f"    Topics to match (union): {len(sdl_topics):,}")
+    
+    mask = df['journal'].isin(sdl_journals) & df['primary_topic'].isin(sdl_topics)
+    df = df[mask].copy()
+    print(f"  After venue filtering: {len(df):,} papers")
+    
+    # Remove rows with missing key variables
+    key_vars = ['author_count', 'publication_year', 'field', 
+                'first_author_papers', 'last_author_papers']
+    
+    pre_dropna = len(df)
+    df = df.dropna(subset=key_vars)
+    print(f"  Removed {pre_dropna - len(df):,} with missing key variables")
+    print(f"  FINAL after filtering: {len(df):,} papers\n")
+    
+    # Apply transformations
+    print("  Applying transformations...")
+    df['asinh_first_author_papers'] = np.arcsinh(df['first_author_papers'].astype(float))
+    df['asinh_first_author_citations'] = np.arcsinh(df['first_author_citations'].astype(float))
+    df['asinh_last_author_papers'] = np.arcsinh(df['last_author_papers'].astype(float))
+    df['asinh_last_author_citations'] = np.arcsinh(df['last_author_citations'].astype(float))
+    df['asinh_paper_citations'] = np.arcsinh(df['cited_by_count'].astype(float))
+    df['log_author_count'] = np.log(df['author_count'].astype(float).replace(0, np.nan))
+    
+    print("  ✓ Transformations complete\n")
+    
+    # Save
+    print(f"{'='*80}")
+    print("SAVING DATASET")
+    print(f"{'='*80}\n")
+    
+    print(f"  Saving to: {OUTPUT_FILE}")
+    df.to_csv(OUTPUT_FILE, index=False)
+    
+    file_size = OUTPUT_FILE.stat().st_size / (1024 * 1024)
+    print(f"  ✓ Saved: {file_size:.1f} MB")
+    
+    # Summary
+    print(f"\n{'='*80}")
+    print("SUMMARY")
+    print(f"{'='*80}\n")
+    
+    print(f"Total papers (filtered): {len(df):,}")
+    print(f"\nSDL Classifications:")
+    print(f"  SDL Brown: {df['SDL_Brown'].sum():,}")
+    print(f"  SDL Tomet: {df['SDL_Tomet'].sum():,}")
+    print(f"  SDL Keyword: {df['sdl_keyword_measure'].sum():,}")
+    print(f"  SDL Filtered Tom: {df['SDL_Filtered_Tom'].sum():,}")
+    print(f"  High Automation: {df['high_automation'].sum():,}")
+    
+    print(f"\nOther Classifications:")
+    print(f"  AI Papers: {df['AI_Paper'].sum():,}")
+    print(f"  Robotics Papers: {df['Robotics_Paper'].sum():,}")
+    print(f"  CS Experience Papers: {df['comp_sci_experience_paper'].sum():,}")
+    
+    with_abstract = df['abstract'].notna().sum()
+    print(f"\nPapers with abstracts: {with_abstract:,} ({with_abstract/len(df)*100:.1f}%)")
+    
+    print(f"\nPapers by field:")
     print(df['field'].value_counts().to_string())
-
-    # ============================================================================
-    # 5B. CS EXPERIENCE (PAPER LEVEL)
-    # ============================================================================
-    print_header("5B. CS EXPERIENCE ANALYSIS (PAPER LEVEL)")
-    if 'comp_sci_experience_paper' in df.columns:
-        cs_exp = df['comp_sci_experience_paper'].sum()
-        print(f"Papers with CS experience: {cs_exp:,} ({cs_exp/len(df)*100:.2f}%)")
-        print("\nAverage team size:")
-        print(f"  With CS experience: {df[df['comp_sci_experience_paper']==1]['author_count'].mean():.2f}")
-        print(f"  Without CS experience: {df[df['comp_sci_experience_paper']==0]['author_count'].mean():.2f}")
-
-    # ============================================================================
-    # 6. TEMPORAL DISTRIBUTION
-    # ============================================================================
-    print_header("6. TEMPORAL DISTRIBUTION")
-    print(f"{'Year':<7}| {'Total':<8} | {'SDL(Orig)':<10}")
-    print("-" * 30)
-    for year in sorted(df['publication_year'].unique()):
-        sub = df[df['publication_year'] == year]
-        print(f"{year:<7}| {len(sub):<8,} | {sub['SDL'].sum():<10}")
-
-    # ============================================================================
-    # 7. AUTHOR METRICS (FIRST AUTHOR)
-    # ============================================================================
-    print_header("7. AUTHOR METRICS STATISTICS (FIRST AUTHOR)")
-    cols = ['first_author_papers', 'first_author_citations', 'first_author_sdl_experience']
-    print(df[cols].describe().to_string())
-
-    # ============================================================================
-    # 8. CORRESPONDING AUTHOR
-    # ============================================================================
-    print_header("8. CORRESPONDING AUTHOR POSITION")
-    if 'corresponding_position' in df.columns:
-        print(df['corresponding_position'].value_counts(dropna=False).to_string())
-
-    # ============================================================================
-    # 9-13. STANDARD CHECKS (Paper Controls, Topics, Transformed, SDL Deep Dive)
-    # ============================================================================
-    # (Abbreviated for space, assume similar logic to previous script for sections 9-13)
-    print_header("9-13. STANDARD CHECKS (Summary)")
-    print(f"Avg Affiliations: {df['num_paper_affiliations'].mean():.2f}")
-    print(f"Top Topic: {df['primary_topic'].mode()[0]}")
-    if 'SDL_Keyword_Paper' in df.columns:
-        print("\nTop 5 Topics for New SDL Papers:")
-        print(df[df['SDL_Keyword_Paper']==1]['primary_topic'].value_counts().head(5).to_string())
-
-    # ============================================================================
-    # 14. CORRELATIONS
-    # ============================================================================
-    print_header("14. CORRELATION WITH TEAM SIZE")
-    print("Correlation with author_count:")
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    corrs = df[numeric_cols].corrwith(df['author_count']).sort_values(key=abs, ascending=False)
     
-    # New variables to check specifically
-    targets = ['num_paper_affiliations', 'comp_sci_experience_paper', 'SDL', 
-               'last_author_avg_team_size_overall', 'last_author_avg_team_size_managerial',
-               'last_author_unique_fields_count']
+    total_elapsed = time.time() - start_time
+    print(f"\n{'='*80}")
+    print(f"COMPLETE - Total Time: {total_elapsed:.1f}s ({total_elapsed/60:.1f} min)")
+    print(f"{'='*80}\n")
     
-    for t in targets:
-        if t in corrs:
-            print(f"  {t:<40}: {corrs[t]:.4f}")
+    return df
 
-    # ============================================================================
-    # 15. NEW: LAST AUTHOR PROFILE & CS EXPERIENCE
-    # ============================================================================
-    print_header("15. LAST AUTHOR PROFILE & CS EXPERIENCE (NEW)")
-    
-    # A. Last Author CS Experience
-    if 'last_author_has_cs_exp' in df.columns:
-        print("A. Last Author CS Experience (Author-Level)")
-        has_cs = df['last_author_has_cs_exp'].sum()
-        print(f"  Papers where Last Author has CS Exp: {has_cs:,} ({has_cs/len(df)*100:.2f}%)")
-        
-        if 'field' in df.columns:
-            print("\n  Last Author CS Exp by Paper Field:")
-            ct = pd.crosstab(df['field'], df['last_author_has_cs_exp'])
-            if 1 in ct.columns:
-                ct['% w/ CS Exp'] = ct[1] / (ct[0] + ct[1]) * 100
-                print(ct.sort_values(by='% w/ CS Exp', ascending=False).to_string())
 
-    # B. Last Author Profile
-    if 'last_author_profile' in df.columns:
-        print("\nB. Last Author Disciplinary Profile")
-        print(df['last_author_profile'].value_counts().to_string())
-        
-        print("\n  Avg Team Size by Last Author Profile:")
-        print(df.groupby('last_author_profile')['author_count'].mean().sort_values(ascending=False).to_string())
-
-    # ============================================================================
-    # 16. NEW: LAST AUTHOR TEAM SIZE HISTORY
-    # ============================================================================
-    print_header("16. LAST AUTHOR TEAM SIZE HISTORY (NEW)")
-    
-    team_vars = ['last_author_avg_team_size_overall', 
-                 'last_author_avg_team_size_managerial', 
-                 'last_author_avg_team_size_sdl']
-    
-    existing_team_vars = [v for v in team_vars if v in df.columns]
-    
-    if existing_team_vars:
-        print("Descriptive Statistics (Historical Averages):")
-        print(df[existing_team_vars].describe().to_string())
-        
-        # Hypothesis Check: 
-        # Does historical managerial team size predict current team size?
-        if 'last_author_avg_team_size_managerial' in df.columns:
-            print("\n  Correlation: Historical Managerial Size vs Current Team Size")
-            corr = df['last_author_avg_team_size_managerial'].corr(df['author_count'])
-            print(f"  Pearson Correlation: {corr:.4f}")
-            
-            # Difference Analysis
-            df['team_size_diff'] = df['author_count'] - df['last_author_avg_team_size_managerial']
-            print("\n  Difference (Current Paper - Historical Managerial Avg):")
-            print(f"  Mean Difference: {df['team_size_diff'].mean():.2f}")
-            print("  (Positive = Current paper has larger team than their historical average)")
-
-    # ============================================================================
-    # 17. NEW: LAST AUTHOR BREADTH & FIELDS
-    # ============================================================================
-    print_header("17. LAST AUTHOR BREADTH & FIELDS (NEW)")
-    
-    breadth_vars = ['last_author_unique_fields_count', 
-                    'last_author_unique_topics_count', 
-                    'last_author_unique_journals_count']
-    
-    existing_breadth = [v for v in breadth_vars if v in df.columns]
-    
-    if existing_breadth:
-        print("Breadth Statistics:")
-        print(df[existing_breadth].describe().to_string())
-    
-    # Parsing Field Counts
-    if 'last_author_field_counts' in df.columns:
-        print("\nField Counts Analysis (Sample of 1000):")
-        try:
-            sample = df['last_author_field_counts'].dropna().head(1000).apply(ast.literal_eval)
-            
-            def get_top_field_share(d):
-                if not d: return 0
-                return max(d.values()) / sum(d.values())
-                
-            shares = sample.apply(get_top_field_share)
-            print(f"  Avg Share of Papers in Top Field: {shares.mean()*100:.2f}%")
-            print(f"  (Lower number = More multidisciplinary)")
-        except Exception as e:
-            print(f"  Could not parse field counts: {e}")
-
-    print("\n" + "="*80)
-    print("END OF REPORT")
-    print("="*80)
+# ============================================================================
+# MAIN
+# ============================================================================
 
 if __name__ == "__main__":
-    main()
+    df = build_regression_dataset()

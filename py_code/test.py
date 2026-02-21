@@ -1,583 +1,624 @@
+# import requests
 # import pandas as pd
-# import re
+# import time
 # from pathlib import Path
-# import sys
+
+# # --- CONFIGURATION ---
+# PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
+
+# EMAIL = "hridanshkhaitan@gmail.com"  # Using your email for the OpenAlex polite pool
+# INPUT_FILE = PROJECT_DIR / "data/tometal_table4.csv" # Path to the table you created
+# OUTPUT_MISSING = "missing_dois.csv"
+# OUTPUT_FOUND = "found_in_openalex.csv"
+# OUTPUT_FILE = "sdl_table_4_with_oa_data.csv"
+
+# def get_oa_data(doi):
+#     """
+#     Queries OpenAlex for a specific DOI and extracts the primary research field.
+#     """
+#     # Clean the DOI for the filter
+#     clean_doi = doi.strip().replace("https://doi.org/", "")
+#     url = f"https://api.openalex.org/works"
+#     params = {
+#         'filter': f"doi:{clean_doi}",
+#         'mailto': EMAIL,
+#         'select': 'id,primary_topic' # Selecting only needed fields for speed
+#     }
+
+#     try:
+#         response = requests.get(url, params=params, timeout=10)
+#         if response.status_code == 200:
+#             results = response.json().get('results', [])
+#             if results:
+#                 work = results[0]
+#                 # Extract Field from the primary_topic object
+#                 topic = work.get('primary_topic')
+#                 field = topic.get('field', {}).get('display_name') if topic else "Unknown"
+#                 return True, field
+#         return False, "Not Found"
+#     except Exception as e:
+#         return False, f"Error: {str(e)}"
+
+# def process_table():
+#     # Load your manual table
+#     df = pd.read_csv(INPUT_FILE)
+    
+#     found_status = []
+#     fields = []
+    
+#     total = len(df)
+#     print(f"Starting OpenAlex cross-reference for {total} items...")
+
+#     for index, row in df.iterrows():
+#         doi = str(row['DOI'])
+        
+#         # Call the API
+#         is_found, field_name = get_oa_data(doi)
+        
+#         found_status.append(is_found)
+#         fields.append(field_name)
+        
+#         # Logging progress
+#         status_text = "✓" if is_found else "✗"
+#         print(f"[{index+1}/{total}] {status_text} DOI: {doi} | Field: {field_name}")
+        
+#         # Respect OpenAlex polite pool limits
+#         time.sleep(0.5)
+
+#     # Add the new columns
+#     df['Found_in_OpenAlex'] = found_status
+#     df['Field'] = fields
+
+#     # Save the updated table
+#     df.to_csv(OUTPUT_FILE, index=False)
+#     print(f"\nProcessing Complete! Updated table saved to: {OUTPUT_FILE}")
+
+# if __name__ == "__main__":
+#     process_table()
+
+
+# import requests
+# import pandas as pd
+# import json
+# import time
+# import re
+# import os
+# from pathlib import Path
+# # --- CONFIGURATION ---
+# # Based on your infrastructure context
+
+# BASE_DIRECTORY = Path("/project/def-kmcel/hridansh/openalex_project/")
+
+
+# # --- CONFIGURATION ---
+# EMAIL = "hridanshkhaitan@gmail.com"
+# INPUT_FILE = BASE_DIRECTORY / "py_code/found_in_openalex.csv"  # 53 papers from Table 4
+# OUTPUT_FILE = BASE_DIRECTORY / "high_automation_full_metadata.csv"
+
+# # --- PATHS TO KEYWORD FILES (Update based on your local paths) ---
+# #
+# AI_KEYWORDS_FILE = BASE_DIRECTORY / "data/keywords/test/AI_Keywords_combined.csv"
+# ROBO_KEYWORDS_FILE = BASE_DIRECTORY / "data/keywords/test/robotics_Keywords_generated.csv"
+
+# def load_keywords(file_path):
+#     """Loads keywords from a CSV and flattens them into a list."""
+#     if os.path.exists(file_path):
+#         # Assumes keywords are in the first column
+#         df = pd.read_csv(file_path)
+#         return df.iloc[:, 0].dropna().tolist()
+#     else:
+#         print(f"Warning: Keyword file not found at {file_path}")
+#         return []
+
+# def count_keywords(text, keywords):
+#     if not text or not keywords: return 0
+#     # Uses word boundary \b to avoid partial matches
+#     pattern = re.compile(r'\b(' + '|'.join([re.escape(str(k)) for k in keywords]) + r')\b', re.IGNORECASE)
+#     return len(re.findall(pattern, text))
+
+# def undo_inverted_index(inverted_index):
+#     if not inverted_index: return ""
+#     word_list = []
+#     for word, positions in inverted_index.items():
+#         for pos in positions:
+#             word_list.append((word, pos))
+#     word_list.sort(key=lambda x: x[1])
+#     return " ".join([x[0] for x in word_list])
+
+# def process_oa_data():
+#     # Load keywords from your project CSVs
+#     ai_list = load_keywords(AI_KEYWORDS_FILE)
+#     robo_list = load_keywords(ROBO_KEYWORDS_FILE)
+    
+#     df_refs = pd.read_csv(INPUT_FILE)
+#     final_batch = []
+
+#     print(f"Starting extraction for {len(df_refs)} papers...")
+
+#     for index, row in df_refs.iterrows():
+#         doi = row['Original_DOI'].replace("https://doi.org/", "")
+#         url = f"https://api.openalex.org/works/https://doi.org/{doi}"
+        
+#         try:
+#             response = requests.get(url, params={'mailto': EMAIL})
+#             if response.status_code == 200:
+#                 article = response.json()
+                
+#                 # 1. Basic Metadata
+#                 id_oa = article.get('id', '').replace('https://openalex.org/', '')
+#                 title = article.get('title', '')
+#                 year = article.get('publication_year')
+                
+#                 # 2. Authors & Journal
+#                 authorships = article.get('authorships', [])
+#                 first_author = authorships[0].get('raw_author_name', '') if authorships else ''
+#                 author_count = len(authorships)
+#                 journal = article.get('primary_location', {}).get('source', {}).get('display_name', '')
+
+#                 # 3. Topic Extraction
+#                 topic_names = [t.get('display_name', '') for t in article.get('topics', [])]
+#                 combined_topics = " ".join(topic_names)
+
+#                 # 4. Abstract Reconstruction
+#                 abstract = undo_inverted_index(article.get('abstract_inverted_index'))
+
+#                 # 5. Combined Text Analysis (readme.md logic)
+#                 # Scanning Title + Abstract + Topics
+#                 full_text_for_matching = f"{title} {abstract} {combined_topics}".lower()
+                
+#                 num_robo = count_keywords(full_text_for_matching, robo_list)
+#                 num_ai = count_keywords(full_text_for_matching, ai_list)
+
+#                 # 6. Row Construction
+#                 final_batch.append({
+#                     'article_id': id_oa,
+#                     'doi': f"https://doi.org/{doi}",
+#                     'title': title,
+#                     'publication_year': year,
+#                     'first_author': first_author,
+#                     'author_count': author_count,
+#                     'journal': journal,
+#                     'raw_data': json.dumps(article),
+#                     'SDL': 1, 
+#                     'number_of_Robotics_words': num_robo,
+#                     'Robotics_Paper': 1 if num_robo > 0 else 0,
+#                     'number_of_AI_words': num_ai,
+#                     'AI_Paper': 1 if num_ai > 0 else 0
+#                 })
+#                 print(f"[{index+1}] Processed: {doi}")
+            
+#             time.sleep(0.5) # Polite Pool delay
+
+#         except Exception as e:
+#             print(f"Error processing {doi}: {e}")
+
+#     # Output to CSV
+#     pd.DataFrame(final_batch).to_csv(OUTPUT_FILE, index=False)
+#     print(f"\nFinal dataset with 13 columns saved to {OUTPUT_FILE}")
+
+# if __name__ == "__main__":
+#     process_oa_data()
+
+
+# import pandas as pd
+# import os
+# import glob
+# from multiprocessing import Pool, cpu_count
+# from pathlib import Path
+
+# # --- CONFIGURATION ---
+# BASE_DIRECTORY = Path("/project/def-kmcel/hridansh/openalex_project/data/fields")
+
+# HIGH_AUTO_FILE = "/project/def-kmcel/hridansh/openalex_project/high_automation_full_metadata.csv"
+# CORES = 8 # As requested
+
+# def update_single_file(args):
+#     """
+#     Processes a single TSV file: updates existing papers to 1 or 0 
+#     and returns a list of DOIs processed to help identify what's missing.
+#     """
+#     file_path, high_auto_dois = args
+#     try:
+#         df = pd.read_csv(file_path, sep='\t')
+        
+#         # Initialize column to 0 for all existing papers
+#         df['high_automation_tometal'] = 0
+        
+#         # Vectorized update for matches
+#         mask = df['doi'].isin(high_auto_dois)
+#         df.loc[mask, 'high_automation_tometal'] = 1
+        
+#         # Save back to TSV
+#         df.to_csv(file_path, sep='\t', index=False)
+        
+#         found_dois = set(df.loc[mask, 'doi'].tolist())
+#         return found_dois
+#     except Exception as e:
+#         print(f"Error processing {file_path}: {e}")
+#         return set()
+
+# def main():
+#     # 1. Load High Automation Data
+#     high_auto_df = pd.read_csv(HIGH_AUTO_FILE)
+#     high_auto_dois = set(high_auto_df['doi'].unique())
+    
+#     # 2. Get all TSV files in the project structure
+#     search_path = os.path.join(BASE_DIRECTORY, "**", "*.tsv")
+#     tsv_files = glob.glob(search_path, recursive=True)
+    
+#     print(f"Starting parallel update of {len(tsv_files)} files using {CORES} cores...")
+    
+#     # 3. Multiprocessing Execution
+#     task_args = [(f, high_auto_dois) for f in tsv_files]
+#     with Pool(processes=CORES) as pool:
+#         results = pool.map(update_single_file, task_args)
+    
+#     # 4. Identify papers that didn't exist and need to be added
+#     all_found_dois = set().union(*results)
+#     missing_dois = high_auto_dois - all_found_dois
+    
+#     if missing_dois:
+#         print(f"Found {len(missing_dois)} papers missing from local folders. Appending them now...")
+        
+#         for m_doi in missing_dois:
+#             paper_row = high_auto_df[high_auto_df['doi'] == m_doi].copy()
+#             paper_row['high_automation_tometal'] = 1
+            
+#             # Determine correct folder and filename based on metadata
+#             # Matches logic: data/{field}/{field}_{year}.tsv
+#             year = paper_row['publication_year'].values[0]
+            
+#             # Note: You may need to adjust this mapping logic based on how 
+#             # you categorize these specific 53 papers into your 4 field folders.
+#             # Here we default to 'chemistry' or a logic based on your tech stack.
+#             field = "chemistry" 
+#             target_file = os.path.join(BASE_DIRECTORY, field, f"{field}_{year}.tsv")
+            
+#             if os.path.exists(target_file):
+#                 paper_row.to_csv(target_file, sep='\t', index=False, mode='a', header=False)
+#                 print(f"Appended {m_doi} to {target_file}")
+#             else:
+#                 print(f"Warning: Could not find target file {target_file} for missing paper.")
+
+#     print("\nUpdate complete. All existing papers set to 0, Table 4 papers set to 1.")
+
+# if __name__ == "__main__":
+#     main()
+
+#ADDING BROWN SDL PAPERS
+# import pandas as pd
+# import numpy as np
+# import os
+# import glob
+# import re
+# from concurrent.futures import ProcessPoolExecutor, as_completed
+# from tqdm import tqdm  # Progress tracking library
+
+# # --- CONFIGURATION ---
+# # Adjust these paths to your exact cluster locations
+# FIELDS_BASE_DIR = "../data/fields"   # Input folder with field_year.tsv files
+# SDL_INPUT_FILE = "../data/sdl/brown_SDL_papers.csv"
+
+# OUTPUT_DIR = "../data/fields_final"            # Output folder
+# CORES = 8                                      # Number of cores to use
+
+
+# def normalize_doi(doi):
+#     """Normalizes DOI for consistent O(1) matching."""
+#     if pd.isna(doi):
+#         return ""
+#     return str(doi).replace("https://doi.org/", "").strip().lower()
+
+# def load_sdl_reference(sdl_file):
+#     """
+#     Loads verified SDL papers, DROPS redundant columns, and prepares for integration.
+#     """
+#     if not os.path.exists(sdl_file):
+#         raise FileNotFoundError(f"SDL file not found: {sdl_file}")
+        
+#     print(f"Loading SDL reference from {sdl_file}...")
+#     df_sdl = pd.read_csv(sdl_file)
+    
+#     # Create normalized DOI for matching logic
+#     df_sdl['doi_norm'] = df_sdl['doi'].apply(normalize_doi)
+    
+#     # Set the flag
+#     df_sdl['brown_SDL_papers'] = 1
+    
+#     # --- CLEANUP: Drop Redundant Columns ---
+#     # We remove 'Full Citation' and the original 'DOI' (uppercase) 
+#     # because we already have the OpenAlex 'doi' (lowercase) and specific metadata columns.
+#     cols_to_drop = ['SDL', 'high_automation_tometal', 'Full Citation', 'DOI']
+    
+#     # Only drop if they actually exist to avoid errors
+#     existing_drop_cols = [c for c in cols_to_drop if c in df_sdl.columns]
+#     if existing_drop_cols:
+#         print(f"Dropping redundant columns: {existing_drop_cols}")
+#         df_sdl = df_sdl.drop(columns=existing_drop_cols)
+
+#     # Build lookup dict {Year: Set(DOIs)}
+#     sdl_lookup = {}
+#     if 'publication_year' in df_sdl.columns:
+#         years = df_sdl['publication_year'].dropna().unique()
+#         for year in years:
+#             year_int = int(year)
+#             dois = set(df_sdl[df_sdl['publication_year'] == year_int]['doi_norm'].values)
+#             sdl_lookup[year_int] = dois
+#     else:
+#         print("WARNING: 'publication_year' not found in SDL file. Appending logic may fail.")
+        
+#     return df_sdl, sdl_lookup
+
+# def process_single_file(file_path, df_sdl_ref, sdl_lookup):
+#     """
+#     Worker function to process one TSV file in-place.
+#     """
+#     file_name = os.path.basename(file_path)
+    
+#     try:
+#         # Extract Year from filename (e.g., "chemistry_2004.tsv")
+#         year_match = re.search(r'_(\d{4})\.tsv', file_name)
+#         if not year_match:
+#             return f"SKIPPED {file_name} (No year pattern found)"
+        
+#         file_year = int(year_match.group(1))
+        
+#         # Load Data
+#         df = pd.read_csv(file_path, sep='\t', low_memory=False)
+        
+#         # 1. Remove Old Columns from the Field File
+#         cols_to_remove = ['SDL', 'high_automation_tometal']
+#         df.drop(columns=[c for c in cols_to_remove if c in df.columns], inplace=True)
+        
+#         # 2. Initialize Target Column
+#         if 'brown_SDL_papers' not in df.columns:
+#             df['brown_SDL_papers'] = 0
+        
+#         # 3. Match Existing Papers
+#         # We use the existing 'doi' column in the field file
+#         df['temp_doi_norm'] = df['doi'].apply(normalize_doi)
+        
+#         relevant_sdl_dois = sdl_lookup.get(file_year, set())
+        
+#         existing_count = 0
+#         if relevant_sdl_dois:
+#             mask = df['temp_doi_norm'].isin(relevant_sdl_dois)
+#             df.loc[mask, 'brown_SDL_papers'] = 1
+#             existing_count = mask.sum()
+            
+#         # 4. Append Missing Papers
+#         append_count = 0
+#         if relevant_sdl_dois:
+#             current_file_dois = set(df['temp_doi_norm'].values)
+#             missing_dois = relevant_sdl_dois - current_file_dois
+            
+#             if missing_dois:
+#                 # Get the missing rows from reference
+#                 rows_to_append = df_sdl_ref[df_sdl_ref['doi_norm'].isin(missing_dois)].copy()
+                
+#                 # Drop the norm column before appending so it doesn't leak into the file
+#                 rows_to_append = rows_to_append.drop(columns=['doi_norm'], errors='ignore')
+                
+#                 # Append to the main dataframe
+#                 # ignore_index=True resets the index to continuous 0...N
+#                 df = pd.concat([df, rows_to_append], ignore_index=True)
+                
+#                 # Ensure the flag is 1 (fillna handles cases where concat might have introduced NaNs)
+#                 df['brown_SDL_papers'] = df['brown_SDL_papers'].fillna(0).astype(int)
+                
+#                 append_count = len(missing_dois)
+
+#         # 5. Cleanup & Save
+#         if 'temp_doi_norm' in df.columns:
+#             df.drop(columns=['temp_doi_norm'], inplace=True)
+            
+#         # Overwrite file
+#         df.to_csv(file_path, sep='\t', index=False)
+        
+#         return f"Processed {file_name}: Marked {existing_count} | Appended {append_count}"
+
+#     except Exception as e:
+#         return f"ERROR in {file_name}: {e}"
+
+# def main():
+#     # 1. Load Reference
+#     try:
+#         df_sdl_ref, sdl_lookup = load_sdl_reference(SDL_INPUT_FILE)
+#         print(f"Reference loaded: {len(df_sdl_ref)} papers.")
+#     except Exception as e:
+#         print(f"Critical Error Loading Reference: {e}")
+#         return
+
+#     # 2. Find Files (Recursive)
+#     search_pattern = os.path.join(FIELDS_BASE_DIR, "**", "*.tsv")
+#     files = glob.glob(search_pattern, recursive=True)
+    
+#     print(f"Found {len(files)} files in {FIELDS_BASE_DIR}")
+    
+#     if not files:
+#         print("No files found! Check path.")
+#         return
+
+#     # 3. Execute
+#     print(f"Starting processing on {CORES} cores...")
+    
+#     with ProcessPoolExecutor(max_workers=CORES) as executor:
+#         future_to_file = {
+#             executor.submit(process_single_file, f, df_sdl_ref, sdl_lookup): f 
+#             for f in files
+#         }
+        
+#         for future in tqdm(as_completed(future_to_file), total=len(files), desc="Updating Files"):
+#             res = future.result()
+#             # Only print errors to keep console clean
+#             if "ERROR" in res:
+#                 tqdm.write(res)
+
+#     print("\nProcessing Complete.")
+
+# if __name__ == "__main__":
+#     main()
+
+# import pandas as pd
+# import numpy as np
+# import os
+# import multiprocessing as mp
+# from pathlib import Path
+# from tabulate import tabulate # Optional: pip install tabulate for pretty printing
 
 # # ============================================================================
 # # CONFIGURATION
 # # ============================================================================
 
-# # Keywords file (currently set to Robotics)
-# KEYWORDS_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/keywords/test/AI_Keywords_combined.csv")
+# PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
-# # Input dataset
-# INPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/regression_dataset_filtered_v3.csv")
+# FIELDS = {
+#     'chemistry': PROJECT_DIR / "data/fields/chemistry",
+#     # 'material_science': PROJECT_DIR / "data/fields/material_science",
+#     # 'engineering': PROJECT_DIR / "data/fields/engineering",
+#     # 'computer_science': PROJECT_DIR / "data/fields/computer_science"
+# }
 
-# # Output file (v3)
-# OUTPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/regression_dataset_filtered_v4.csv")
-
-# # Columns to update
-# COUNT_COL = 'number_of_AI_words'
-# BINARY_COL = 'AI_Paper'
+# YEARS = range(2004, 2025)
+# NUM_CORES = 4
 
 # # ============================================================================
-# # FUNCTIONS
+# # WORKER FUNCTION
 # # ============================================================================
 
-# def load_keywords(file_path):
-#     print(f"Loading keywords from: {file_path}")
-#     if not file_path.exists():
-#         print(f"❌ Error: Keywords file not found at {file_path}")
-#         sys.exit(1)
-        
-#     try:
-#         df = pd.read_csv(file_path, header=None)
-#         keywords = set()
-#         for col in df.columns:
-#             clean_col = df[col].dropna().astype(str)
-#             for word in clean_col:
-#                 clean_word = word.strip().lower()
-#                 if clean_word:
-#                     keywords.add(clean_word)
-        
-#         keywords_list = sorted(list(keywords))
-#         print(f"✓ Loaded {len(keywords_list)} unique keywords.")
-#         return keywords_list
-#     except Exception as e:
-#         print(f"❌ Error reading keywords file: {e}")
-#         sys.exit(1)
-
-# def compile_keyword_patterns(keywords):
-#     print("Compiling regex patterns...")
-#     patterns = []
-#     for keyword in keywords:
-#         # \b ensures we don't match partial words (e.g. 'robotic' inside 'probotic')
-#         pattern = re.compile(r'\b' + re.escape(keyword) + r'\b', re.IGNORECASE)
-#         patterns.append(pattern)
-#     return patterns
-
-# def count_matches(text, patterns):
-#     if not isinstance(text, str) or not text:
-#         return 0
+# def check_file_sanity(args):
+#     """Analyzes a single file for row counts and missing values"""
+#     field_name, field_dir, year = args
     
-#     count = 0
-#     for pattern in patterns:
-#         matches = pattern.findall(text)
-#         count += len(matches)
-#     return count
+#     # Locate file
+#     possible_files = [
+#         field_dir / f"{field_name}_{year}_classified.tsv",
+#         field_dir / f"{field_name.replace('_', '')}_{year}_classified.tsv",
+#     ]
+#     tsv_file = next((f for f in possible_files if f.exists()), None)
+    
+#     if not tsv_file:
+#         return None
+
+#     try:
+#         # Read file (we read everything to check all columns for NaNs)
+#         df = pd.read_csv(tsv_file, sep='\t', low_memory=False)
+        
+#         row_count = len(df)
+#         # Get missing value counts per column
+#         null_counts = df.isnull().sum()
+#         cols_with_nans = null_counts[null_counts > 0].to_dict()
+        
+#         return {
+#             'field': field_name,
+#             'year': year,
+#             'total_papers': row_count,
+#             'columns_found': list(df.columns),
+#             'missing_values': cols_with_nans,
+#             'has_nans': len(cols_with_nans) > 0
+#         }
+#     except Exception as e:
+#         return {'field': field_name, 'year': year, 'error': str(e)}
 
 # # ============================================================================
 # # MAIN EXECUTION
 # # ============================================================================
 
 # def main():
-#     print("="*60)
-#     print("RE-RUNNING ROBOTICS CLASSIFICATION (Title + Abstract + Topics)")
-#     print("="*60)
+#     print("="*80)
+#     print("DATASET SANITY CHECK (Row Counts & Missing Values)")
+#     print("="*80)
+
+#     tasks = []
+#     for name, path in FIELDS.items():
+#         if path.exists():
+#             for year in YEARS:
+#                 tasks.append((name, path, year))
+
+#     print(f"Analyzing {len(tasks)} files using {NUM_CORES} cores...")
+
+#     with mp.Pool(NUM_CORES) as pool:
+#         results = pool.map(check_file_sanity, tasks)
+
+#     # Filter out None results (missing files) and organize by field
+#     valid_results = [r for r in results if r is not None]
     
-#     # 1. Load Data
-#     print(f"Reading dataset: {INPUT_FILE}")
-#     if not INPUT_FILE.exists():
-#         print(f"❌ Error: Input file not found.")
-#         sys.exit(1)
+#     for field in FIELDS.keys():
+#         field_data = [r for r in valid_results if r['field'] == field]
+#         if not field_data:
+#             continue
+
+#         print(f"\n\n>>> FIELD: {field.upper()}")
         
-#     df = pd.read_csv(INPUT_FILE, low_memory=False)
-#     print(f"✓ Loaded {len(df):,} papers.")
-    
-#     # 2. Load Keywords
-#     keywords = load_keywords(KEYWORDS_FILE)
-#     patterns = compile_keyword_patterns(keywords)
-    
-#     # 3. Prepare Search Text (Title + Abstract + Topics)
-#     print("\nPreparing combined search text (Title + Abstract + Topics)...")
-    
-#     # We combine columns with a space separator. 
-#     # fillna('') ensures we don't lose data if one field is missing.
-#     search_text = (
-#         df['title'].fillna('') + ' ' + 
-#         df['abstract'].fillna('') + ' ' + 
-#         df['all_topics'].fillna('')
-#     )
-    
-#     # 4. Process Papers
-#     print(f"Scanning combined text for {len(patterns)} keywords...")
-#     print("This may take a few minutes...")
-    
-#     counts = search_text.apply(lambda x: count_matches(x, patterns))
-    
-#     # 5. Update DataFrame
-#     print("\nUpdating columns...")
-    
-#     old_binary_sum = df[BINARY_COL].sum() if BINARY_COL in df.columns else 0
-    
-#     df[COUNT_COL] = counts
-#     df[BINARY_COL] = (counts > 0).astype(int)
-    
-#     new_binary_sum = df[BINARY_COL].sum()
-    
-#     # 6. Statistics
-#     print("-" * 60)
-#     print("CLASSIFICATION RESULTS")
-#     print("-" * 60)
-#     print(f"Previous Robotics Papers: {old_binary_sum:,}")
-#     print(f"New Robotics Papers:      {new_binary_sum:,}")
-#     print(f"Difference:               {new_binary_sum - old_binary_sum:+,}")
-#     print("-" * 60)
-    
-#     # Sanity Check: Check for "robot" matches that are still 0
-#     # Note: We verify against the COMBINED text now
-#     missed = df[
-#         (search_text.str.contains('robot', case=False, na=False)) & 
-#         (df[BINARY_COL] == 0)
-#     ]
-#     print(f"Papers with 'robot' in Title/Abs/Topics but labeled 0: {len(missed)}")
-    
-#     # 7. Save
-#     print(f"\nSaving to: {OUTPUT_FILE}")
-#     df.to_csv(OUTPUT_FILE, index=False)
-#     print("✅ Done.")
+#         table_rows = []
+#         for res in field_data:
+#             if 'error' in res:
+#                 table_rows.append([res['year'], "ERROR", "-", res['error']])
+#                 continue
+
+#             # Format the missing values dict into a readable string
+#             nan_info = ""
+#             if res['has_nans']:
+#                 nan_info = ", ".join([f"{col}: {count}" for col, count in res['missing_values'].items()])
+#             else:
+#                 nan_info = "None"
+
+#             table_rows.append([
+#                 res['year'], 
+#                 f"{res['total_papers']:,}", 
+#                 "YES" if res['has_nans'] else "CLEAN", 
+#                 nan_info
+#             ])
+
+#         headers = ["Year", "Total Papers", "Any NaNs?", "Missing Value Details (Col: Count)"]
+#         print(tabulate(table_rows, headers=headers, tablefmt="grid"))
 
 # if __name__ == "__main__":
 #     main()
 
 
-## ADDING SDL KEYWORD MEASURES
+import requests
+import json
 
-# import pandas as pd
-# import re
-# from pathlib import Path
-# import sys
+# Your dimensions.ai login credentials
+EMAIL = "h.khaitan@mail.utoronto.ca"
+PASSWORD = "03#Hridanshkha"
 
-# # ============================================================================
-# # CONFIGURATION
-# # ============================================================================
+# Step 1: Authenticate
+login_url = "https://app.dimensions.ai/api/auth.json"
+login_resp = requests.post(
+    login_url,
+    json={"username": EMAIL, "password": PASSWORD}
+)
 
-# # INPUT: The output from your last step (v3)
-# INPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/regression_dataset_subset.csv")
+print("Login status:", login_resp.status_code)
+print("Response:", login_resp.json())
 
-# # KEYWORDS: Your SDL keywords file
-# KEYWORDS_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/keywords/sdl_Keywords.csv")
-
-# # OUTPUT: New version (v4)
-# OUTPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/regression_dataset_filtered_v4.csv")
-
-# # ============================================================================
-# # FUNCTIONS
-# # ============================================================================
-
-# def load_keywords(file_path):
-#     print(f"Loading keywords from: {file_path}")
-#     if not file_path.exists():
-#         print(f"❌ Error: Keywords file not found at {file_path}")
-#         sys.exit(1)
-        
-#     try:
-#         # Assumes one keyword per row
-#         df = pd.read_csv(file_path, header=None)
-#         keywords = set()
-#         for col in df.columns:
-#             clean_col = df[col].dropna().astype(str)
-#             for word in clean_col:
-#                 clean_word = word.strip().lower()
-#                 if clean_word:
-#                     keywords.add(clean_word)
-        
-#         k_list = sorted(list(keywords))
-#         print(f"✓ Loaded {len(k_list)} unique SDL keywords.")
-#         return k_list
-#     except Exception as e:
-#         print(f"❌ Error reading keywords file: {e}")
-#         sys.exit(1)
-
-# def compile_patterns(keywords):
-#     print("Compiling regex patterns...")
-#     # \b ensures exact word matches
-#     return [re.compile(r'\b' + re.escape(k) + r'\b', re.IGNORECASE) for k in keywords]
-
-# def count_matches(text, patterns):
-#     if not isinstance(text, str) or not text:
-#         return 0
-#     count = 0
-#     for pattern in patterns:
-#         if pattern.search(text): 
-#              matches = pattern.findall(text)
-#              count += len(matches)
-#     return count
-
-# # ============================================================================
-# # MAIN
-# # ============================================================================
-
-# def main():
-#     print("="*60)
-#     print("ADDING SDL KEYWORD MEASURES (NO CHUNKING)")
-#     print("="*60)
-
-#     # 1. Setup
-#     if not INPUT_FILE.exists():
-#         print(f"❌ Input file not found: {INPUT_FILE}")
-#         sys.exit(1)
-        
-#     keywords = load_keywords(KEYWORDS_FILE)
-#     patterns = compile_patterns(keywords)
+# If login worked, you'll get a token
+if "token" in login_resp.json():
+    token = login_resp.json()["token"]
+    print("\nAuthentication successful! Token received.")
     
-#     # 2. Load Data
-#     print(f"Reading full dataset from {INPUT_FILE}...")
-#     df = pd.read_csv(INPUT_FILE, low_memory=False)
-#     print(f"✓ Loaded {len(df):,} rows.")
+    # Step 2: Try a simple test query
+    headers = {"Authorization": f"JWT {token}"}
     
-#     # 3. Create Search Text
-#     print("Creating combined text field (Title + Abstract + Topics)...")
-#     # Combine columns safely
-#     titles = df['title'].fillna('') if 'title' in df.columns else pd.Series(['']*len(df))
-#     abstracts = df['abstract'].fillna('') if 'abstract' in df.columns else pd.Series(['']*len(df))
-#     topics = df['all_topics'].fillna('') if 'all_topics' in df.columns else pd.Series(['']*len(df))
+    test_query = """
+    search publications
+    where year = 2020
+    and title = "self-driving laboratory"
+    return publications[id+title+year+authors]
+    limit 5
+    """
     
-#     combined_text = titles + ' ' + abstracts + ' ' + topics
+    resp = requests.post(
+        "https://app.dimensions.ai/api/dsl.json",
+        data=test_query,
+        headers=headers
+    )
     
-#     # 4. Count Matches
-#     print(f"Scanning {len(df):,} papers against {len(patterns)} keywords...")
-#     counts = combined_text.apply(lambda x: count_matches(x, patterns))
+    print("\nQuery status:", resp.status_code)
+    result = resp.json()
+    print("Result:", json.dumps(result, indent=2))
     
-#     # 5. Add Columns
-#     print("Updating dataframe...")
-#     df['number_of_SDL_words'] = counts
-#     df['SDL_Keyword_Paper'] = (counts > 0).astype(int)
-    
-#     total_sdl_matches = df['SDL_Keyword_Paper'].sum()
-    
-#     # 6. Save
-#     print(f"Saving to {OUTPUT_FILE}...")
-#     df.to_csv(OUTPUT_FILE, index=False)
-    
-#     # 7. Summary
-#     print("-" * 60)
-#     print("DONE")
-#     print("-" * 60)
-#     print(f"Total Papers:       {len(df):,}")
-#     print(f"SDL Keyword Matches:{total_sdl_matches:,}")
-#     print(f"Saved to:           {OUTPUT_FILE}")
-#     print("-" * 60)
-
-# if __name__ == "__main__":
-#     main()
-import pandas as pd
-import numpy as np
-import sys
-from pathlib import Path
-from datetime import datetime
-
-# ============================================================================
-# CONFIGURATION
-# ============================================================================
-
-# INPUT: Your latest dataset (v4) containing both SDL measures
-INPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/regression_dataset_subset.csv")
-OUTPUT_FILE = Path("/project/def-kmcel/hridansh/openalex_project/data/regression/test/eda_report_v4_sdl_comparison.txt")
-
-# ============================================================================
-# HELPER FUNCTIONS
-# ============================================================================
-
-def print_section(title):
-    print("=" * 80)
-    print(title)
-    print("=" * 80)
-
-def calculate_stats(df):
-    # ------------------------------------------------------------------------
-    # 0. HEADER & OVERVIEW
-    # ------------------------------------------------------------------------
-    print("=" * 80)
-    print("EXPLORATORY DATA ANALYSIS - REGRESSION DATASET (V4)")
-    print("=" * 80)
-    print(f"\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"Source file: {INPUT_FILE}")
-    print("=" * 80 + "\n")
-
-    print_section("DATASET OVERVIEW")
-    print("Sample: SDL VENUE MATCHED PAPERS")
-    print(f"Total papers: {len(df):,}")
-    print(f"Total columns: {len(df.columns)}")
-    print(f"Memory usage: {df.memory_usage(deep=True).sum() / 1e9:.2f} GB\n")
-    
-    print("Columns:")
-    for i, col in enumerate(df.columns, 1):
-        print(f"  {i:>2}. {col}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 1B. ABSTRACT ANALYSIS
-    # ------------------------------------------------------------------------
-    print_section("1B. ABSTRACT ANALYSIS")
-    
-    if 'abstract' in df.columns:
-        has_abstract = df['abstract'].notna()
-        print(f"Papers with abstracts: {has_abstract.sum():,} ({has_abstract.mean()*100:.2f}%)")
-        print(f"Papers without abstracts: {(~has_abstract).sum():,} ({(~has_abstract).mean()*100:.2f}%)\n")
-        
-        # Calc lengths only for non-null abstracts
-        abstract_lens = df.loc[has_abstract, 'abstract'].astype(str).str.len()
-        print("Abstract length statistics (characters):")
-        print(f"  Mean: {abstract_lens.mean():.0f}")
-        print(f"  Median: {abstract_lens.median():.0f}")
-        print(f"  Min: {abstract_lens.min()}")
-        print(f"  Max: {abstract_lens.max()}\n")
-
-        # Word count estimation
-        word_counts = df.loc[has_abstract, 'abstract'].astype(str).str.split().str.len()
-        print("Abstract word count:")
-        print(f"  Mean: {word_counts.mean():.0f}")
-        print(f"  Median: {word_counts.median():.0f}")
-        print(f"  Max: {word_counts.max()}\n")
-
-        print("Abstracts by field:")
-        for field in df['field'].unique():
-            field_mask = df['field'] == field
-            n_field = field_mask.sum()
-            n_abs = (field_mask & has_abstract).sum()
-            print(f"  {field:<20}: {n_abs:,} / {n_field:,} ({n_abs/n_field*100:.2f}%)")
-    else:
-        print("No abstract column found.")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 2. MISSING VALUES ANALYSIS
-    # ------------------------------------------------------------------------
-    print_section("2. MISSING VALUES ANALYSIS")
-    print("Columns with missing values:")
-    missing = df.isnull().sum()
-    missing = missing[missing > 0].sort_values(ascending=False)
-    for col, count in missing.items():
-        print(f"  {col}: {count:,} ({count/len(df)*100:.2f}%)")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 3. DEPENDENT VARIABLE
-    # ------------------------------------------------------------------------
-    print_section("3. DEPENDENT VARIABLE - TEAM SIZE (author_count)")
-    print(df['author_count'].describe().to_string())
-    print("\nTeam size distribution:")
-    
-    bins = [0, 1, 2, 3, 4, 9, 19, 49, 99, 99999]
-    labels = ['1', '2', '3', '4', '5-9', '10-19', '20-49', '50-99', '100+']
-    cuts = pd.cut(df['author_count'], bins=bins, labels=labels)
-    dist = cuts.value_counts().sort_index()
-    
-    for label, count in dist.items():
-        print(f"  {label:<8}: {count:,} ({count/len(df)*100:.2f}%)")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 4. TREATMENT VARIABLES (UPDATED WITH NEW SDL MEASURE)
-    # ------------------------------------------------------------------------
-    print_section("4. TREATMENT VARIABLES & SDL OVERLAP")
-    
-    # Define masks
-    sdl_orig_mask = df['SDL'] == 1
-    sdl_new_mask = df['SDL_Keyword_Paper'] == 1  # The new measure
-    ai_mask = df['AI_Paper'] == 1
-    robo_mask = df['Robotics_Paper'] == 1
-    
-    # Basic Counts
-    print("Paper Counts by Category:")
-    print(f"  SDL (Original Measure):  {sdl_orig_mask.sum():,} ({sdl_orig_mask.mean()*100:.2f}%)")
-    print(f"  SDL (New Phrase Measure):{sdl_new_mask.sum():,} ({sdl_new_mask.mean()*100:.2f}%)")
-    print(f"  AI Papers:               {ai_mask.sum():,} ({ai_mask.mean()*100:.2f}%)")
-    print(f"  Robotics Papers:         {robo_mask.sum():,} ({robo_mask.mean()*100:.2f}%)")
-    
-    # --- NEW: SDL OVERLAP ANALYSIS ---
-    print("\n" + "-"*40)
-    print("SDL MEASURE COMPARISON (Original vs New)")
-    print("-" * 40)
-    
-    overlap_both = (sdl_orig_mask & sdl_new_mask).sum()
-    only_orig = (sdl_orig_mask & ~sdl_new_mask).sum()
-    only_new = (~sdl_orig_mask & sdl_new_mask).sum()
-    union_total = overlap_both + only_orig + only_new
-    
-    print(f"Total Unique SDL Papers (Union): {union_total:,}")
-    print(f"  1. MATCHED in BOTH:      {overlap_both:,}")
-    print(f"  2. Only in ORIGINAL:     {only_orig:,}")
-    print(f"  3. Only in NEW MEASURE:  {only_new:,}")
-    
-    print("\nOverlap Logic Check:")
-    if sdl_orig_mask.sum() > 0:
-        print(f"  % of Original captured by New: {overlap_both/sdl_orig_mask.sum()*100:.1f}%")
-    if sdl_new_mask.sum() > 0:
-        print(f"  % of New captured by Original: {overlap_both/sdl_new_mask.sum()*100:.1f}%")
-
-    # Team Sizes
-    print("\nAverage Team Size by Group:")
-    print(f"  SDL (Original):     {df.loc[sdl_orig_mask, 'author_count'].mean():.2f}")
-    print(f"  SDL (New Measure):  {df.loc[sdl_new_mask, 'author_count'].mean():.2f}")
-    print(f"  SDL (Union):        {df.loc[sdl_orig_mask | sdl_new_mask, 'author_count'].mean():.2f}")
-    print(f"  Non-SDL (Strict):   {df.loc[~(sdl_orig_mask | sdl_new_mask), 'author_count'].mean():.2f}")
-    print(f"  AI Papers:          {df.loc[ai_mask, 'author_count'].mean():.2f}")
-    print(f"  Robotics Papers:    {df.loc[robo_mask, 'author_count'].mean():.2f}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 5. FIELD DISTRIBUTION
-    # ------------------------------------------------------------------------
-    print_section("5. FIELD DISTRIBUTION")
-    print(df['field'].value_counts().to_string())
-    
-    print("\nSDL Papers by Field (Original vs New):")
-    print(f"{'Field':<20} | {'Original':<10} | {'New':<10}")
-    print("-" * 45)
-    for field in df['field'].unique():
-        f_mask = df['field'] == field
-        n_orig = (f_mask & sdl_orig_mask).sum()
-        n_new = (f_mask & sdl_new_mask).sum()
-        print(f"{field:<20} | {n_orig:<10} | {n_new:<10}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 5B. CS EXPERIENCE
-    # ------------------------------------------------------------------------
-    print_section("5B. CS EXPERIENCE ANALYSIS")
-    cs_exp = df['comp_sci_experience_paper'] == 1
-    
-    print(f"Papers with CS experience: {cs_exp.sum():,} ({cs_exp.mean()*100:.2f}%)")
-    
-    print("\nCS experience by field:")
-    for field in df['field'].unique():
-        field_mask = df['field'] == field
-        n_cs = (field_mask & cs_exp).sum()
-        n_total = field_mask.sum()
-        print(f"  {field:<20}: {n_cs:,} / {n_total:,} ({n_cs/n_total*100:.2f}%)")
-    
-    print("\nAverage team size:")
-    print(f"  With CS experience: {df.loc[cs_exp, 'author_count'].mean():.2f}")
-    print(f"  Without CS experience: {df.loc[~cs_exp, 'author_count'].mean():.2f}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 6. TEMPORAL DISTRIBUTION
-    # ------------------------------------------------------------------------
-    print_section("6. TEMPORAL DISTRIBUTION")
-    print(f"{'Year':<6} | {'Total':<8} | {'SDL(Orig)':<10} | {'SDL(New)':<10}")
-    print("-" * 40)
-    years = sorted(df['publication_year'].unique())
-    for year in years:
-        y_mask = df['publication_year'] == year
-        n_papers = y_mask.sum()
-        n_orig = (y_mask & sdl_orig_mask).sum()
-        n_new = (y_mask & sdl_new_mask).sum()
-        print(f"{year:<6} | {n_papers:<8,} | {n_orig:<10} | {n_new:<10}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 7. AUTHOR METRICS
-    # ------------------------------------------------------------------------
-    print_section("7. AUTHOR METRICS STATISTICS")
-    cols = ['first_author_papers', 'first_author_citations', 'first_author_sdl_experience']
-    print("First author metrics:")
-    print(df[cols].describe().to_string())
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 8. CORRESPONDING POS
-    # ------------------------------------------------------------------------
-    print_section("8. CORRESPONDING AUTHOR POSITION")
-    if 'corresponding_position' in df.columns:
-        print(df['corresponding_position'].fillna('missing').value_counts().to_string())
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 9. CONTROLS & 10. TOPICS
-    # ------------------------------------------------------------------------
-    print_section("9. PAPER-LEVEL CONTROLS")
-    print("Affiliations per paper:")
-    print(df['num_paper_affiliations'].describe().to_string())
-    
-    print("\nTop 15 journals:")
-    print(df['journal'].value_counts().head(15).to_string())
-
-    print_section("10. ALL TOPICS ANALYSIS")
-    print("Top 15 topics (primary):")
-    print(df['primary_topic'].value_counts().head(15).to_string())
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 11. TRANSFORMED
-    # ------------------------------------------------------------------------
-    print_section("11. TRANSFORMED VARIABLES")
-    transform_cols = [c for c in df.columns if 'asinh' in c or 'log_' in c]
-    for col in transform_cols:
-        print(f"{col}: Mean={df[col].mean():.4f}, Std={df[col].std():.4f}")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 13. SDL DEEP DIVE (EXPANDED)
-    # ------------------------------------------------------------------------
-    print_section("13. SDL PAPER DEEP DIVE")
-    
-    print("Top 10 Topics for ORIGINAL SDL Papers:")
-    print(df.loc[sdl_orig_mask, 'primary_topic'].value_counts().head(10).to_string())
-    
-    print("\nTop 10 Topics for NEW PHRASE SDL Papers:")
-    print(df.loc[sdl_new_mask, 'primary_topic'].value_counts().head(10).to_string())
-    
-    print("\nTop 10 Topics for 'ONLY NEW' Papers (missed by original):")
-    only_new_mask = (~sdl_orig_mask & sdl_new_mask)
-    if only_new_mask.sum() > 0:
-        print(df.loc[only_new_mask, 'primary_topic'].value_counts().head(10).to_string())
-    else:
-        print("  (None)")
-    print("")
-
-    # ------------------------------------------------------------------------
-    # 14. CORRELATION
-    # ------------------------------------------------------------------------
-    print_section("14. CORRELATION WITH TEAM SIZE")
-    numeric_df = df.select_dtypes(include=[np.number])
-    corrs = numeric_df.corrwith(df['author_count']).sort_values(ascending=False)
-    
-    interest_cols = ['num_paper_affiliations', 'comp_sci_experience_paper', 
-                     'AI_Paper', 'Robotics_Paper', 'SDL', 'SDL_Keyword_Paper', 
-                     'cited_by_count']
-    
-    print("Correlation with author_count:")
-    for col in interest_cols:
-        if col in corrs:
-            print(f"  {col:<30}: {corrs[col]:.4f}")
-    
-    print("\n" + "="*80)
-    print("END OF REPORT")
-    print("="*80)
-
-# ============================================================================
-# MAIN
-# ============================================================================
-
-if __name__ == "__main__":
-    if not INPUT_FILE.exists():
-        print(f"Error: Input file {INPUT_FILE} not found.")
-        sys.exit(1)
-        
-    print(f"Loading data from {INPUT_FILE}...")
-    df = pd.read_csv(INPUT_FILE, low_memory=False)
-    
-    # Redirect output to file AND print to console
-    with open(OUTPUT_FILE, 'w') as f:
-        class Tee(object):
-            def __init__(self, *files):
-                self.files = files
-            def write(self, obj):
-                for f in self.files:
-                    f.write(obj)
-            def flush(self):
-                for f in self.files:
-                    f.flush()
-        
-        original_stdout = sys.stdout
-        sys.stdout = Tee(sys.stdout, f)
-        
-        try:
-            calculate_stats(df)
-        finally:
-            sys.stdout = original_stdout
-
-    print(f"\nReport saved to {OUTPUT_FILE}")
+else:
+    print("Authentication failed - check credentials")
