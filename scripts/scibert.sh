@@ -38,7 +38,7 @@ python -c "import torch; print(f'GPU Available: {torch.cuda.is_available()} ({to
 echo ""
 
 # Run the training script
-time python scibert_2.py
+time python scibert.py
 
 echo ""
 echo "=========================================="

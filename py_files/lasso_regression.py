@@ -17,10 +17,10 @@ import joblib
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 
 # Input: Your regression dataset with abstracts (490k papers)
-REGRESSION_DATA = PROJECT_DIR / "data" / "regression/test" / "regression_dataset_filtered.csv"
+REGRESSION_DATA = PROJECT_DIR / "data" / "regression" / "regression_dataset_subset.csv"
 
 # Output directory
-OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression/test" 
+OUTPUT_DIR = PROJECT_DIR / "data/lasso_regression" 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 

@@ -1,9 +1,14 @@
+"""
+This script will add AI/Robotics dummy variables and keyword counts for papers in the fields datasets.
+It'll take the keyword lists and match them against abstracts, topics and titles. 
+"""
+
 import pandas as pd, json, re, os
 
 email = "hridanshkhaitan@gmail.com"
 output_directory = "data/fields/engineering/"
 batch_size = 500000
-words_file = "data/keywords/AI_Keywords.csv"
+words_file = "data/keywords/AI_Keywords.csv" # CHANGE TO ROBOTICS
 keyword = 'AI'
 
 def load_keywords():

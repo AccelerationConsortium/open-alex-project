@@ -1,3 +1,8 @@
+"""
+Data Extraction Script for OpenAlex API
+
+The script retrieves papers by fields and years, processes the data, and saves it in TSV format. 
+"""
 import requests
 import pandas as pd, json, os, time
 import traceback
@@ -118,9 +123,9 @@ def year_by_year_extraction(year, field_name, field_id):
 
 def extract_one_row(): 
     """This function will take save one row of data from a specific OpenAlex based data file """
-    output_directory = "../data/fields/engineering"
+    output_directory = "../data/fields/computer_science"
 
-    location = os.path.join(output_directory, "engineering_2020_sdl_classified.tsv")
+    location = os.path.join(output_directory, "computer_science_2020.tsv")
     df = pd.read_csv(location, sep='\t', nrows=1)
     print (df.head())
     # Save row 
@@ -130,8 +135,8 @@ def extract_one_row():
 
 if __name__ == "__main__":
     # Corrected the years to run 2004, 2005, and 2006
-    for target_year in [2023]:
-        for name, f_id in FIELD_IDS.items():
-            year_by_year_extraction(target_year, name, f_id)
+    # for target_year in [2023]:
+    #     for name, f_id in FIELD_IDS.items():
+    #         year_by_year_extraction(target_year, name, f_id)
 
-    # extract_one_row() 
+    extract_one_row() 
