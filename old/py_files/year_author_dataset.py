@@ -1,412 +1,3 @@
-# import pandas as pd
-# import json
-# from collections import Counter
-# import numpy as np
-# from pathlib import Path
-# import sys
-# from datetime import datetime
-
-# # ============================================================================
-# # CONFIGURATION
-# # ============================================================================
-# batch_size = 500000
-# years = range(2012, 2026)
-
-# project_dir = Path("/project/def-kmcel/hridansh/openalex_project")
-# data_dir = project_dir / "data/fields"
-
-# fields = {
-#     'chemistry': data_dir / "chemistry",
-#     'materials_science': data_dir / "material_science", 
-#     'engineering': data_dir / "engineering",
-#     'computer_science': data_dir / "computer_science"
-# }
-
-# output_dir = project_dir / "data/yearly_data/test"
-# output_dir.mkdir(parents=True, exist_ok=True)
-# output_csv = output_dir / "author_metrics_yearly.csv"
-
-# # ============================================================================
-# # HELPER FUNCTIONS
-# # ============================================================================
-
-# def clean_id(raw_id):
-#     """Remove URL prefix from OpenAlex IDs."""
-#     if not raw_id:
-#         return ''
-#     return str(raw_id).replace('https://openalex.org/', '')
-
-
-# def parse_authorships(raw_data_json):
-#     """Extract authorship information, positions, and institutions."""
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return []
-    
-#     try:
-#         data = json.loads(raw_data_json)
-#         authorships = data.get('authorships', [])
-#         num_authors = len(authorships)
-#         result = []
-        
-#         for idx, authorship in enumerate(authorships):
-#             author = authorship.get('author', {})
-#             author_id = clean_id(author.get('id'))
-            
-#             if not author_id:
-#                 continue
-            
-#             institutions = []
-#             for inst in authorship.get('institutions', []):
-#                 inst_id = clean_id(inst.get('id'))
-#                 if inst_id:
-#                     institutions.append(inst_id)
-            
-#             result.append({
-#                 'author_id': author_id,
-#                 'author_name': author.get('display_name', ''),
-#                 'is_first': (idx == 0),
-#                 'is_last': (idx == num_authors - 1),
-#                 'institutions': institutions
-#             })
-#         return result
-#     except:
-#         return []
-
-
-# def parse_metadata_granular(raw_data_json):
-#     """Extract topic, journal, corr_ids, citation count, and publication year."""
-#     topic, journal, corr_ids, citations, pub_year = None, None, [], 0, None
-    
-#     if pd.isna(raw_data_json) or raw_data_json == '':
-#         return topic, journal, corr_ids, citations, pub_year
-
-#     try:
-#         data = json.loads(raw_data_json)
-        
-#         # Topic (Primary)
-#         topics = data.get('topics', [])
-#         topic = topics[0].get('display_name') if topics else None
-        
-#         # Journal
-#         journal = data.get('primary_location', {}).get('source', {}).get('display_name')
-        
-#         # Corresponding Authors
-#         corr_ids = [clean_id(aid) for aid in data.get('corresponding_author_ids', []) if aid]
-        
-#         # Citations
-#         citations = data.get('cited_by_count', 0) or 0
-        
-#         # Publication Year
-#         pub_date = data.get('publication_date')
-#         if pub_date:
-#             try:
-#                 pub_year = int(pub_date.split('-')[0])
-#             except:
-#                 pass
-        
-#     except:
-#         pass
-
-#     return topic, journal, corr_ids, citations, pub_year
-
-
-# # ============================================================================
-# # PAPER DATA STRUCTURE
-# # ============================================================================
-
-# def init_paper_entry():
-#     """Factory function for storing individual paper data."""
-#     return {
-#         'year': None,
-#         'field': '',
-#         'topic': '',
-#         'journal': '',
-#         'citations': 0,
-#         'institutions': set(),
-#         'is_first': False,
-#         'is_last': False,
-#         'is_corresponding': False,
-#         'is_sdl': False,
-#         'is_ai': False,
-#         'is_robotics': False
-#     }
-
-
-# # ============================================================================
-# # MAIN BUILD FUNCTION
-# # ============================================================================
-
-# def build_author_yearly_dataset(years):
-#     """
-#     Build author-level dataset with yearly cumulative metrics.
-#     Each row represents one author in one year.
-#     """
-    
-#     print("Building yearly author dataset with cumulative metrics")
-#     print(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-    
-#     # Store all papers for each author (we'll aggregate by year later)
-#     # Structure: {author_id: [list of paper entries]}
-#     all_author_papers = {}
-    
-#     total_papers_processed = 0
-    
-#     # ========================================================================
-#     # PHASE 1: Collect all papers for each author
-#     # ========================================================================
-    
-#     print("PHASE 1: Collecting all papers by author")
-#     print("=" * 70)
-    
-#     for field_name, field_path in fields.items():
-#         print(f"\nProcessing {field_name}")
-        
-#         field_papers = 0
-        
-#         if not field_path.exists():
-#             print(f"  Warning: Path not found {field_path}")
-#             continue
-
-#         for year in years:
-#             # Handle filename variations
-#             tsv_files = [
-#                 field_path / f"{field_name}_{year}.tsv",
-#                 field_path / f"{field_name.replace('_', '')}_{year}.tsv"
-#             ]
-#             tsv_file = next((f for f in tsv_files if f.exists()), None)
-            
-#             if not tsv_file:
-#                 continue
-
-#             year_papers = 0
-            
-#             try:
-#                 # Determine available columns
-#                 sample = pd.read_csv(tsv_file, sep='\t', nrows=1)
-#                 available_cols = set(sample.columns)
-#                 required_cols = ['raw_data', 'SDL', 'AI_Paper', 'Robotics_Paper']
-#                 use_cols = [c for c in required_cols if c in available_cols]
-
-#                 if 'raw_data' not in use_cols:
-#                     continue
-
-#                 for chunk in pd.read_csv(
-#                     tsv_file, 
-#                     sep='\t', 
-#                     usecols=use_cols,
-#                     chunksize=batch_size, 
-#                     low_memory=False,
-#                     on_bad_lines='skip'
-#                 ):
-#                     for i in chunk.index:
-#                         try:
-#                             raw_data = chunk.at[i, 'raw_data']
-                            
-#                             # Parse authorship
-#                             authorships = parse_authorships(raw_data)
-#                             if not authorships:
-#                                 continue
-                            
-#                             # Parse metadata
-#                             topic, journal, corr_ids, citations, pub_year = parse_metadata_granular(raw_data)
-                            
-#                             # Skip if we don't have publication year
-#                             if not pub_year:
-#                                 continue
-                            
-#                             # Get flags
-#                             is_sdl = chunk.at[i, 'SDL'] == 1 if 'SDL' in chunk else False
-#                             is_ai = chunk.at[i, 'AI_Paper'] == 1 if 'AI_Paper' in chunk else False
-#                             is_robotics = chunk.at[i, 'Robotics_Paper'] == 1 if 'Robotics_Paper' in chunk else False
-                            
-#                             # Create paper entry for each author
-#                             for auth in authorships:
-#                                 a_id = auth['author_id']
-                                
-#                                 if a_id not in all_author_papers:
-#                                     all_author_papers[a_id] = []
-                                
-#                                 paper_data = {
-#                                     'year': pub_year,
-#                                     'author_name': auth['author_name'],
-#                                     'field': field_name,
-#                                     'topic': topic,
-#                                     'journal': journal,
-#                                     'citations': citations,
-#                                     'institutions': auth['institutions'],
-#                                     'is_first': auth['is_first'],
-#                                     'is_last': auth['is_last'],
-#                                     'is_corresponding': a_id in corr_ids,
-#                                     'is_sdl': is_sdl,
-#                                     'is_ai': is_ai,
-#                                     'is_robotics': is_robotics
-#                                 }
-                                
-#                                 all_author_papers[a_id].append(paper_data)
-                            
-#                             year_papers += 1
-                            
-#                         except Exception:
-#                             continue
-                
-#                 print(f"  Year {year}: {year_papers:,} papers processed")
-#                 field_papers += year_papers
-                
-#             except Exception as e:
-#                 print(f"  Year {year}: Error - {str(e)[:100]}")
-#                 continue
-        
-#         print(f"  Field total: {field_papers:,} papers")
-#         total_papers_processed += field_papers
-
-#     print(f"\nTotal papers collected: {total_papers_processed:,}")
-#     print(f"Total unique authors: {len(all_author_papers):,}")
-    
-#     # ========================================================================
-#     # PHASE 2: Generate yearly cumulative metrics
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("PHASE 2: Generating yearly cumulative metrics")
-#     print("=" * 70)
-    
-#     rows = []
-#     authors_processed = 0
-    
-#     for author_id, papers in all_author_papers.items():
-#         authors_processed += 1
-        
-#         if authors_processed % 50000 == 0:
-#             print(f"  Processed {authors_processed:,} / {len(all_author_papers):,} authors...")
-        
-#         # Sort papers by year
-#         papers_sorted = sorted(papers, key=lambda x: x['year'])
-        
-#         # Get all years this author was active
-#         author_years = sorted(set(p['year'] for p in papers_sorted))
-        
-#         # For each year, calculate cumulative metrics
-#         for target_year in author_years:
-#             # Get all papers up to and including target_year
-#             papers_to_date = [p for p in papers_sorted if p['year'] <= target_year]
-            
-#             if not papers_to_date:
-#                 continue
-            
-#             # Get most common author name
-#             author_name = Counter([p['author_name'] for p in papers_to_date if p['author_name']]).most_common(1)[0][0] if papers_to_date else ''
-            
-#             # Count metrics
-#             total_papers = len(papers_to_date)
-#             first_author_papers = sum(1 for p in papers_to_date if p['is_first'])
-#             last_author_papers = sum(1 for p in papers_to_date if p['is_last'])
-#             corresponding_author_papers = sum(1 for p in papers_to_date if p['is_corresponding'])
-            
-#             # Citation metrics
-#             total_citations = sum(p['citations'] for p in papers_to_date)
-#             citations_list = [p['citations'] for p in papers_to_date]
-#             avg_citations = np.mean(citations_list) if citations_list else 0
-            
-#             # Field/topic/journal metrics
-#             fields_list = [p['field'] for p in papers_to_date if p['field']]
-#             topics_list = [p['topic'] for p in papers_to_date if p['topic']]
-#             journals_list = [p['journal'] for p in papers_to_date if p['journal']]
-            
-#             top_field, top_field_count = Counter(fields_list).most_common(1)[0] if fields_list else ('', 0)
-#             top_topic, top_topic_count = Counter(topics_list).most_common(1)[0] if topics_list else ('', 0)
-#             top_journal, top_journal_count = Counter(journals_list).most_common(1)[0] if journals_list else ('', 0)
-            
-#             num_unique_fields = len(set(fields_list))
-#             num_unique_topics = len(set(topics_list))
-#             num_unique_journals = len(set(journals_list))
-            
-#             # Affiliation metrics
-#             all_institutions = set()
-#             for p in papers_to_date:
-#                 all_institutions.update(p['institutions'])
-            
-#             num_affiliations = len(all_institutions)
-#             top_affiliation = list(all_institutions)[0] if all_institutions else ''
-            
-#             # Special paper types
-#             sdl_papers = sum(1 for p in papers_to_date if p['is_sdl'])
-#             ai_papers = sum(1 for p in papers_to_date if p['is_ai'])
-#             robotics_papers = sum(1 for p in papers_to_date if p['is_robotics'])
-            
-#             # Create row
-#             rows.append({
-#                 'author_id': author_id,
-#                 'year': target_year,
-#                 'author_name': author_name,
-#                 'total_papers_to_date': total_papers,
-#                 'first_author_papers_to_date': first_author_papers,
-#                 'last_author_papers_to_date': last_author_papers,
-#                 'corresponding_author_papers_to_date': corresponding_author_papers,
-#                 'total_citations_to_date': int(total_citations),
-#                 'avg_citations_per_paper_to_date': round(avg_citations, 2),
-#                 'top_field_to_date': top_field,
-#                 'top_field_count_to_date': top_field_count,
-#                 'num_unique_fields_to_date': num_unique_fields,
-#                 'top_topic_to_date': top_topic,
-#                 'top_topic_count_to_date': top_topic_count,
-#                 'num_unique_topics_to_date': num_unique_topics,
-#                 'top_journal_to_date': top_journal,
-#                 'top_journal_count_to_date': top_journal_count,
-#                 'num_unique_journals_to_date': num_unique_journals,
-#                 'num_affiliations_to_date': num_affiliations,
-#                 'top_affiliation_to_date': top_affiliation,
-#                 'sdl_papers_to_date': sdl_papers,
-#                 'ai_papers_to_date': ai_papers,
-#                 'robotics_papers_to_date': robotics_papers
-#             })
-    
-#     print(f"  Processed {authors_processed:,} authors")
-#     print(f"  Generated {len(rows):,} (author, year) rows")
-    
-#     # ========================================================================
-#     # PHASE 3: Create DataFrame and save
-#     # ========================================================================
-    
-#     print(f"\n{'='*70}")
-#     print("PHASE 3: Creating DataFrame and saving")
-#     print("=" * 70)
-    
-#     df = pd.DataFrame(rows)
-    
-#     # Sort by author_id and year
-#     df = df.sort_values(['author_id', 'year']).reset_index(drop=True)
-    
-#     print(f"\nDataset dimensions: {df.shape}")
-#     print(f"  Unique authors: {df['author_id'].nunique():,}")
-#     print(f"  Year range: {df['year'].min()} - {df['year'].max()}")
-#     print(f"  Avg years per author: {len(df) / df['author_id'].nunique():.2f}")
-    
-#     # Display column information
-#     print(f"\n📋 Columns in dataset ({len(df.columns)}):")
-#     for i, col in enumerate(df.columns, 1):
-#         print(f"   {i:2}. {col}")
-    
-#     # Sample data
-#     print(f"\nSample data (first author's timeline):")
-#     sample_author = df['author_id'].iloc[0]
-#     print(df[df['author_id'] == sample_author][['author_id', 'year', 'total_papers_to_date', 
-#                                                    'total_citations_to_date', 'top_field_to_date']].to_string(index=False))
-    
-#     # Save to CSV
-#     print(f"\n💾 Saving to: {output_csv}")
-#     df.to_csv(output_csv, index=False)
-    
-#     print(f"\n{'='*70}")
-#     print("✅ YEARLY AUTHOR DATASET CREATED SUCCESSFULLY!")
-#     print("=" * 70)
-#     print(f"Completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    
-#     return df
-
-
-# if __name__ == "__main__":
-#     df = build_author_yearly_dataset(years)
-
 
 # """
 # Build author-level dataset with THREE-YEAR BACKWARD-LOOKING ROLLING AVERAGES
@@ -616,8 +207,8 @@
 #     field_name, field_dir, year = args
     
 #     possible_files = [
-#         field_dir / f"{field_name}_{year}_sdl_classified.tsv",
-#         field_dir / f"{field_name}_{year}_sdl_classified.tsv",
+#         field_dir / f"{field_name}_{year}.tsv",
+#         field_dir / f"{field_name}_{year}.tsv",
 #     ]
 #     tsv_file = next((f for f in possible_files if f.exists()), None)
     
@@ -655,10 +246,18 @@
 #                     authorships = parse_authorships(raw)
 #                     if not authorships: continue
                     
-#                     paper_year = row.get('publication_year')
-#                     if pd.isna(paper_year): continue
-#                     paper_year = int(paper_year)
+#                     # paper_year = row.get('publication_year')
+#                     # if pd.isna(paper_year): continue
+#                     # paper_year = int(paper_year)
                     
+#                     paper_year = row.get('publication_year')
+#                     if pd.isna(paper_year):
+#                         paper_year = year  # fall back to the year from the task args tuple
+#                     else:
+#                         paper_year = int(paper_year)
+
+
+
 #                     # Paper-level metadata - ENSURE PROPER TYPES
 #                     citations = parse_cited_by_count(raw)
 #                     citations = int(citations) if not pd.isna(citations) else 0
@@ -1170,7 +769,7 @@
 
 """
 Exploratory Data Analysis (EDA) for 3-Year Rolling Author Metrics Dataset
-Adapted from original author metrics EDA for time-varying (author-year) structure
+Adapted for author_metrics_3yr_rolling.csv output structure
 """
 
 import pandas as pd
@@ -1186,7 +785,7 @@ warnings.filterwarnings('ignore')
 
 PROJECT_DIR = Path("/project/def-kmcel/hridansh/openalex_project")
 DATA_FILE = PROJECT_DIR / "data" / "yearly_data/test" / "author_metrics_3yr_rolling.csv"
-OUTPUT_DIR = PROJECT_DIR / "data" / "yearly_data/test" 
+OUTPUT_DIR = PROJECT_DIR / "data" / "yearly_data/test"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_FILE = OUTPUT_DIR / "eda_author_3yr_rolling.txt"
 
@@ -1195,15 +794,14 @@ OUTPUT_FILE = OUTPUT_DIR / "eda_author_3yr_rolling.txt"
 # ============================================================================
 
 def format_number(num):
-    """Format large numbers with commas"""
     return f"{num:,}"
 
 def format_percentage(num, total):
-    """Format percentage"""
+    if total == 0:
+        return "0.00%"
     return f"{num/total*100:.2f}%"
 
 def print_section(title, level=1):
-    """Print formatted section headers"""
     if level == 1:
         return f"\n{'='*80}\n{title}\n{'='*80}\n"
     elif level == 2:
@@ -1212,7 +810,6 @@ def print_section(title, level=1):
         return f"\n{title}:\n"
 
 def categorize_count(count, bins, labels):
-    """Categorize counts into bins"""
     for i, (lower, upper) in enumerate(bins):
         if lower <= count < upper:
             return labels[i]
@@ -1223,70 +820,65 @@ def categorize_count(count, bins, labels):
 # ============================================================================
 
 def generate_eda():
-    """Generate comprehensive EDA report"""
-    
     print("Loading data... (this may take a minute due to size)")
-    
-    # Start output
+
     output = []
     output.append(print_section("EXPLORATORY DATA ANALYSIS - 3-YEAR ROLLING AUTHOR METRICS", 1))
     output.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
     output.append(f"Source file: {DATA_FILE}\n")
     output.append("="*80 + "\n")
-    
-    # Load data
-    df = pd.read_csv(DATA_FILE)
-    
+
+    df = pd.read_csv(DATA_FILE, low_memory=False)
+
     # ========================================================================
     # 1. DATASET OVERVIEW
     # ========================================================================
     output.append(print_section("1. DATASET OVERVIEW", 1))
-    
+
     total_records = len(df)
     unique_authors = df['author_id'].nunique()
     total_columns = len(df.columns)
     memory_mb = df.memory_usage(deep=True).sum() / (1024**2)
-    
+
     output.append(f"Total author-year records: {format_number(total_records)}\n")
     output.append(f"Unique authors: {format_number(unique_authors)}\n")
     output.append(f"Total columns: {total_columns}\n")
     output.append(f"Memory usage: {memory_mb:.2f} MB\n")
-    
     output.append(f"\nColumns:\n")
     for i, col in enumerate(df.columns, 1):
         output.append(f"  {i:2d}. {col}\n")
-    
+
     # ========================================================================
     # 2. TEMPORAL COVERAGE
     # ========================================================================
     output.append(print_section("2. TEMPORAL COVERAGE", 1))
-    
+
     year_min = df['year'].min()
     year_max = df['year'].max()
     year_range = year_max - year_min + 1
-    
+
     output.append(f"Year range: {year_min}-{year_max} ({year_range} years)\n\n")
-    
     output.append("Records by year:\n")
     year_counts = df['year'].value_counts().sort_index()
     for year, count in year_counts.items():
         output.append(f"  {year}: {format_number(count):>12s}\n")
-    
     output.append(f"\nAverage records per year: {format_number(int(total_records / year_range))}\n")
-    
+
     # ========================================================================
-    # 3. PRIOR YEARS AVAILABILITY (DATA QUALITY INDICATOR)
+    # 3. PRIOR YEARS AVAILABILITY
     # ========================================================================
     output.append(print_section("3. PRIOR YEARS AVAILABILITY (DATA QUALITY)", 1))
-    
+
+    # FIX: num_prior_years_available = 0 means author published in year T but had
+    # no papers in [T-3, T-2, T-1]. This is expected for first-year authors.
     prior_years_dist = df['num_prior_years_available'].value_counts().sort_index()
-    output.append("Distribution of prior years available:\n")
+    output.append("Distribution of prior years available (0 = no prior data, up to 3 = full window):\n")
     for num_years, count in prior_years_dist.items():
         pct = format_percentage(count, total_records)
-        output.append(f"  {num_years} year(s): {format_number(count):>12s} ({pct})\n")
-    
-    # Year-by-year breakdown
-    output.append("\nPrior years availability by year:\n")
+        label = "no prior data" if num_years == 0 else f"{num_years} prior year(s)"
+        output.append(f"  {num_years} ({label}): {format_number(count):>12s} ({pct})\n")
+
+    output.append("\nPrior years availability by publication year:\n")
     prior_by_year = df.groupby('year')['num_prior_years_available'].value_counts().unstack(fill_value=0)
     for year in sorted(df['year'].unique()):
         if year in prior_by_year.index:
@@ -1295,339 +887,407 @@ def generate_eda():
                 count = prior_by_year.loc[year, num_prior]
                 output.append(f"{num_prior}yr={format_number(count):>8s}  ")
             output.append("\n")
-    
+
+    # Records with FULL 3-year window vs partial
+    full_window = (df['num_prior_years_available'] == 3).sum()
+    partial_window = (df['num_prior_years_available'].between(1, 2)).sum()
+    no_prior = (df['num_prior_years_available'] == 0).sum()
+
+    output.append(f"\nSummary:\n")
+    output.append(f"  Full 3-year window available: {format_number(full_window)} ({format_percentage(full_window, total_records)})\n")
+    output.append(f"  Partial window (1-2 years):   {format_number(partial_window)} ({format_percentage(partial_window, total_records)})\n")
+    output.append(f"  No prior data (0 years):      {format_number(no_prior)} ({format_percentage(no_prior, total_records)})\n")
+
     # ========================================================================
     # 4. MISSING VALUES ANALYSIS
     # ========================================================================
     output.append(print_section("4. MISSING VALUES ANALYSIS", 1))
-    
+
     missing = df.isnull().sum()
     missing = missing[missing > 0].sort_values(ascending=False)
-    
+
     if len(missing) > 0:
+        output.append(f"Columns with missing values ({len(missing)} total):\n")
         for col, count in missing.items():
             pct = format_percentage(count, total_records)
             output.append(f"  {col}: {format_number(count)} ({pct})\n")
     else:
         output.append("  No missing values detected.\n")
-    
+
     # ========================================================================
     # 5. PUBLICATION COUNTS STATISTICS (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("5. PUBLICATION COUNTS STATISTICS (3-YEAR WINDOW)", 1))
-    
+
     paper_cols = [
         'total_papers_3yr', 'first_author_papers_3yr', 'last_author_papers_3yr',
         'corresponding_author_papers_3yr', 'sdl_brown_papers_3yr', 'sdl_tomet_papers_3yr',
         'high_automation_papers_3yr', 'ai_papers_3yr', 'robotics_papers_3yr'
     ]
-    
-    # Filter to only existing columns
     paper_cols = [col for col in paper_cols if col in df.columns]
-    
+
+    output.append("Descriptive statistics:\n")
     output.append(df[paper_cols].describe().to_string() + "\n\n")
-    
-    # Detailed distributions for key metrics
-    output.append("Publication count distributions (3-year window):\n\n")
-    
+
+    # NOTE: Records where total_papers_3yr == 0 are authors publishing in year T
+    # for the first time (no prior 3-year window). Showing distributions for
+    # records WITH prior data only, for interpretability.
+    has_prior = df[df['total_papers_3yr'] > 0]
+    n_has_prior = len(has_prior)
+    output.append(f"Records with prior papers in 3-year window: {format_number(n_has_prior)} "
+                  f"({format_percentage(n_has_prior, total_records)})\n\n")
+
+    output.append("Publication count distributions (3-year window, among records with prior data):\n\n")
+
+    bins = [(0, 1), (1, 5), (5, 10), (10, 20), (20, 50), (50, 100), (100, 500), (500, 1000), (1000, float('inf'))]
+    labels = ['0', '1-4', '5-9', '10-19', '20-49', '50-99', '100-499', '500-999', '1000+']
+
     for col in ['total_papers_3yr', 'first_author_papers_3yr', 'last_author_papers_3yr']:
         if col not in df.columns:
             continue
-            
+
         output.append(f"{col}:\n")
-        
-        bins = [(0, 1), (1, 5), (5, 10), (10, 20), (20, 50), (50, 100), (100, 500), (500, 1000), (1000, float('inf'))]
-        labels = ['0', '1-4', '5-9', '10-19', '20-49', '50-99', '100-499', '500-999', '1000+']
-        
         df['temp_cat'] = df[col].apply(lambda x: categorize_count(x, bins, labels))
         dist = df['temp_cat'].value_counts().reindex(labels, fill_value=0)
-        
+
         for cat, count in dist.items():
             pct = format_percentage(count, total_records)
             output.append(f"  {cat:10s}: {format_number(count):>12s} ({pct})\n")
-        
         output.append("\n")
         df.drop('temp_cat', axis=1, inplace=True)
-    
+
     # ========================================================================
     # 6. CITATION STATISTICS (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("6. CITATION STATISTICS (3-YEAR WINDOW)", 1))
-    
+
     citation_cols = ['total_citations_3yr', 'avg_citations_per_paper_3yr']
     citation_cols = [col for col in citation_cols if col in df.columns]
-    
+
     output.append(df[citation_cols].describe().to_string() + "\n\n")
-    
+
     output.append("Citation milestones (3-year window):\n")
     if 'total_citations_3yr' in df.columns:
-        milestones = [0, 10, 100, 1000, 10000]
-        for threshold in milestones:
+        for threshold in [0, 10, 100, 1000, 10000]:
             count = (df['total_citations_3yr'] >= threshold).sum()
-            if threshold == 0:
-                output.append(f"  Author-years with {threshold} citations: {format_number(count)}\n")
-            else:
-                output.append(f"  Author-years with {threshold}+ citations: {format_number(count)}\n")
-    
+            label = f"{threshold}" if threshold == 0 else f"{threshold}+"
+            output.append(f"  Author-years with {label} citations: {format_number(count)}\n")
+
     # ========================================================================
     # 7. FIELD DISTRIBUTION (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("7. FIELD DISTRIBUTION (3-YEAR WINDOW)", 1))
-    
+
     if 'top_field_3yr' in df.columns:
-        output.append("Author-years by top field:\n")
-        field_dist = df['top_field_3yr'].value_counts()
+        output.append("Author-years by top field (includes empty string for no-prior-data records):\n")
+        field_dist = df['top_field_3yr'].fillna('').value_counts()
         output.append(field_dist.to_string() + "\n\n")
-        
-        output.append("Multi-field activity (3-year window):\n")
+
+        # Among records with prior data only
+        output.append("Author-years by top field (records WITH prior data only):\n")
+        field_dist_prior = has_prior['top_field_3yr'].fillna('').value_counts()
+        output.append(field_dist_prior.to_string() + "\n\n")
+
         if 'num_unique_fields_3yr' in df.columns:
+            output.append("Multi-field activity (3-year window):\n")
             field_counts = df['num_unique_fields_3yr'].value_counts().sort_index()
             for num_fields, count in field_counts.items():
                 pct = format_percentage(count, total_records)
                 plural = "field" if num_fields == 1 else "fields"
                 output.append(f"  {num_fields} {plural}: {format_number(count):>12s} ({pct})\n")
-    
+
     # ========================================================================
     # 8. AUTHOR PROFILES (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("8. AUTHOR PROFILES (3-YEAR WINDOW)", 1))
-    
+
     if 'author_profile_3yr' in df.columns:
-        profile_dist = df['author_profile_3yr'].value_counts().head(15)
-        output.append("Top 15 author profiles:\n")
-        output.append(profile_dist.to_string() + "\n")
-    
+        output.append("Top 20 author profiles (all records):\n")
+        profile_dist = df['author_profile_3yr'].fillna('Unknown').value_counts().head(20)
+        output.append(profile_dist.to_string() + "\n\n")
+
+        output.append("Top 20 author profiles (records WITH prior data only):\n")
+        profile_dist_prior = has_prior['author_profile_3yr'].fillna('Unknown').value_counts().head(20)
+        output.append(profile_dist_prior.to_string() + "\n")
+
     # ========================================================================
     # 9. LONGITUDINAL AUTHOR ANALYSIS
     # ========================================================================
     output.append(print_section("9. LONGITUDINAL AUTHOR ANALYSIS", 1))
-    
-    # Authors by number of years observed
+
     years_per_author = df.groupby('author_id')['year'].nunique()
-    
+
     output.append("Distribution of observation years per author:\n")
     years_dist = years_per_author.value_counts().sort_index()
-    for num_years, count in years_dist.head(20).items():
+    for num_years, count in years_dist.head(22).items():
         pct = format_percentage(count, unique_authors)
         output.append(f"  {num_years:2d} year(s): {format_number(count):>10s} ({pct})\n")
-    
-    if len(years_dist) > 20:
-        remaining = years_dist.iloc[20:].sum()
-        output.append(f"  ... {format_number(int(remaining))} more categories\n")
-    
+
+    if len(years_dist) > 22:
+        remaining = years_dist.iloc[22:].sum()
+        output.append(f"  ... {format_number(int(remaining))} more\n")
+
     output.append(f"\nAverage years observed per author: {years_per_author.mean():.2f}\n")
     output.append(f"Median years observed per author: {years_per_author.median():.0f}\n")
-    
+
+    # FIX: Authors who appear in only 1 year — these are authors with no prior
+    # window data AND no future data in the dataset. Distinguish from
+    # single-year publishers by checking if they have total_papers_3yr > 0.
+    one_year_authors = (years_per_author == 1).sum()
+    output.append(f"\nAuthors observed in exactly 1 year: {format_number(one_year_authors)} "
+                  f"({format_percentage(one_year_authors, unique_authors)})\n")
+    output.append("  (These authors appear only once across all field-year files)\n")
+
     # ========================================================================
-    # 10. TOP AUTHORS (BY 3-YEAR METRICS)
+    # 10. TOP AUTHOR-YEAR RECORDS
     # ========================================================================
     output.append(print_section("10. TOP AUTHOR-YEAR RECORDS", 1))
-    
-    # Most productive author-years
-    output.append(print_section("Top 20 most productive author-years (3-year window):", 2))
-    
+
     if 'total_papers_3yr' in df.columns:
-        top_productive = df.nlargest(20, 'total_papers_3yr')[
-            ['author_name', 'year', 'total_papers_3yr', 'total_citations_3yr', 
-             'top_field_3yr', 'top_topic_3yr']
-        ]
+        output.append(print_section("Top 20 most productive author-years (3-year window):", 2))
+        cols_to_show = [c for c in ['author_name', 'year', 'num_prior_years_available',
+                                     'total_papers_3yr', 'total_citations_3yr',
+                                     'top_field_3yr', 'top_topic_3yr'] if c in df.columns]
+        top_productive = df.nlargest(20, 'total_papers_3yr')[cols_to_show]
         output.append(top_productive.to_string(index=False) + "\n")
-    
-    # Most cited author-years
-    output.append(print_section("Top 20 most cited author-years (3-year window):", 2))
-    
+
     if 'total_citations_3yr' in df.columns:
-        top_cited = df.nlargest(20, 'total_citations_3yr')[
-            ['author_name', 'year', 'total_papers_3yr', 'total_citations_3yr',
-             'avg_citations_per_paper_3yr', 'top_field_3yr']
-        ]
+        output.append(print_section("Top 20 most cited author-years (3-year window):", 2))
+        cols_to_show = [c for c in ['author_name', 'year', 'num_prior_years_available',
+                                     'total_papers_3yr', 'total_citations_3yr',
+                                     'avg_citations_per_paper_3yr', 'top_field_3yr'] if c in df.columns]
+        top_cited = df.nlargest(20, 'total_citations_3yr')[cols_to_show]
         output.append(top_cited.to_string(index=False) + "\n")
-    
+
     # ========================================================================
     # 11. SDL/AI/ROBOTICS INVOLVEMENT (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("11. SDL/AI/ROBOTICS INVOLVEMENT (3-YEAR WINDOW)", 1))
-    
-    sdl_brown_count = (df['sdl_brown_papers_3yr'] > 0).sum() if 'sdl_brown_papers_3yr' in df.columns else 0
-    sdl_tomet_count = (df['sdl_tomet_papers_3yr'] > 0).sum() if 'sdl_tomet_papers_3yr' in df.columns else 0
-    high_auto_count = (df['high_automation_papers_3yr'] > 0).sum() if 'high_automation_papers_3yr' in df.columns else 0
-    
-    output.append("Author-years with papers in SDL categories:\n")
-    output.append(f"  Author-years with >=1 sdl_brown paper: {format_number(sdl_brown_count)}\n")
-    output.append(f"  Author-years with >=1 sdl_tomet paper: {format_number(sdl_tomet_count)}\n")
-    output.append(f"  Author-years with >=1 high_automation paper: {format_number(high_auto_count)}\n")
-    
-    # Top SDL author-years
-    if 'sdl_tomet_papers_3yr' in df.columns:
-        output.append(print_section("Top 20 SDL author-years (by tomet papers, 3-year window):", 2))
-        
-        top_sdl = df[df['sdl_tomet_papers_3yr'] > 0].nlargest(20, 'sdl_tomet_papers_3yr')[
-            ['author_name', 'year', 'total_papers_3yr', 'sdl_brown_papers_3yr',
-             'sdl_tomet_papers_3yr', 'high_automation_papers_3yr', 'top_field_3yr']
-        ]
-        output.append(top_sdl.to_string(index=False) + "\n")
-    
+
+    sdl_cols = {
+        'sdl_brown_papers_3yr': 'SDL Brown',
+        'sdl_tomet_papers_3yr': 'SDL Tomet',
+        'high_automation_papers_3yr': 'High Automation',
+        'ai_papers_3yr': 'AI',
+        'robotics_papers_3yr': 'Robotics',
+    }
+
+    output.append("Author-years with at least 1 paper in category (3-year window):\n")
+    for col, label in sdl_cols.items():
+        if col in df.columns:
+            count = (df[col] > 0).sum()
+            pct = format_percentage(count, total_records)
+            output.append(f"  {label}: {format_number(count)} ({pct})\n")
+
     # SDL trends over time
-    output.append(print_section("SDL trends over time:", 2))
-    
-    for col in ['sdl_brown_papers_3yr', 'sdl_tomet_papers_3yr', 'high_automation_papers_3yr']:
+    output.append(print_section("SDL/AI/Robotics trends over time:", 2))
+
+    for col, label in sdl_cols.items():
         if col not in df.columns:
             continue
-        
-        output.append(f"\n{col} by year:\n")
-        sdl_by_year = df.groupby('year')[col].agg(['sum', 'mean', lambda x: (x > 0).sum()])
-        sdl_by_year.columns = ['total_papers', 'avg_per_author_year', 'author_years_with_papers']
-        
+
+        output.append(f"\n{label} ({col}) by year:\n")
+        sdl_by_year = df.groupby('year')[col].agg(
+            total_papers='sum',
+            avg_per_author_year='mean',
+            author_years_with_papers=lambda x: (x > 0).sum()
+        )
+
         for year, row in sdl_by_year.iterrows():
             output.append(f"  {year}: Total={int(row['total_papers']):>6d}, "
-                         f"Avg={row['avg_per_author_year']:>5.2f}, "
+                         f"Avg={row['avg_per_author_year']:>5.3f}, "
                          f"AuthorYears={int(row['author_years_with_papers']):>6d}\n")
-    
+
+    # Top SDL author-years
+    if 'sdl_tomet_papers_3yr' in df.columns:
+        output.append(print_section("Top 20 SDL author-years (by Tomet papers, 3-year window):", 2))
+        sdl_display_cols = [c for c in ['author_name', 'year', 'num_prior_years_available',
+                                         'total_papers_3yr', 'sdl_brown_papers_3yr',
+                                         'sdl_tomet_papers_3yr', 'high_automation_papers_3yr',
+                                         'top_field_3yr'] if c in df.columns]
+        top_sdl = df[df['sdl_tomet_papers_3yr'] > 0].nlargest(20, 'sdl_tomet_papers_3yr')[sdl_display_cols]
+        output.append(top_sdl.to_string(index=False) + "\n")
+
     # ========================================================================
     # 12. TEAM SIZE ANALYSIS (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("12. TEAM SIZE ANALYSIS (3-YEAR WINDOW)", 1))
-    
+
     team_size_cols = [
         'avg_team_size_3yr', 'avg_team_size_last_author_3yr',
         'avg_team_size_sdl_brown_3yr', 'avg_team_size_sdl_tomet_3yr',
         'avg_team_size_high_automation_3yr'
     ]
     team_size_cols = [col for col in team_size_cols if col in df.columns]
-    
-    output.append("Descriptive Statistics:\n")
+
+    output.append("Descriptive statistics (all records, including zeros for no-prior-data):\n")
     output.append(df[team_size_cols].describe().to_string() + "\n\n")
-    
-    # Distribution of overall avg team size
+
+    # FIX: Zeros in avg_team_size_3yr mean no prior data, not actual team size of 0.
+    # Show stats for non-zero values separately to avoid misleading means.
+    output.append("Descriptive statistics (records where avg_team_size_3yr > 0 only):\n")
+    non_zero_team = df[df['avg_team_size_3yr'] > 0]
+    output.append(non_zero_team[team_size_cols].describe().to_string() + "\n\n")
+
     if 'avg_team_size_3yr' in df.columns:
-        output.append("Distribution of Overall Avg Team Size (3-year window):\n")
-        
+        output.append("Distribution of Overall Avg Team Size (3-year window, non-zero only):\n")
         bins = [(0, 1), (1, 2), (2, 4), (4, 7), (7, 11), (11, 21), (21, float('inf'))]
-        labels = ['0', '1', '2-3', '4-6', '7-10', '11-20', '20+']
-        
-        # Only for non-zero values
-        non_zero = df[df['avg_team_size_3yr'] > 0].copy()
-        non_zero['temp_cat'] = non_zero['avg_team_size_3yr'].apply(lambda x: categorize_count(x, bins, labels))
-        dist = non_zero['temp_cat'].value_counts().reindex(labels, fill_value=0)
-        
+        labels = ['<1', '1-2', '2-4', '4-7', '7-11', '11-20', '20+']
+        n_nonzero = len(non_zero_team)
+
+        non_zero_team = non_zero_team.copy()
+        non_zero_team['temp_cat'] = non_zero_team['avg_team_size_3yr'].apply(
+            lambda x: categorize_count(x, bins, labels))
+        dist = non_zero_team['temp_cat'].value_counts().reindex(labels, fill_value=0)
         for cat, count in dist.items():
-            pct = format_percentage(count, len(non_zero))
+            pct = format_percentage(count, n_nonzero)
             output.append(f"  {cat:10s}: {format_number(count):>12s} ({pct})\n")
-    
-    # Team size trends over time
-    output.append(print_section("Team size trends over time:", 2))
-    
+
+    output.append(print_section("Team size trends over time (mean among non-zero records):", 2))
+
     for col in ['avg_team_size_3yr', 'avg_team_size_last_author_3yr']:
         if col not in df.columns:
             continue
-        
-        output.append(f"\n{col} by year:\n")
-        team_by_year = df.groupby('year')[col].agg(['mean', 'median', 'std'])
-        
-        for year, row in team_by_year.iterrows():
+
+        output.append(f"\n{col} by year (non-zero records only):\n")
+        non_zero_by_year = df[df[col] > 0].groupby('year')[col].agg(['mean', 'median', 'std', 'count'])
+
+        for year, row in non_zero_by_year.iterrows():
             output.append(f"  {year}: Mean={row['mean']:>5.2f}, "
                          f"Median={row['median']:>5.2f}, "
-                         f"Std={row['std']:>5.2f}\n")
-    
+                         f"Std={row['std']:>5.2f}, "
+                         f"N={int(row['count']):>8,}\n")
+
     # ========================================================================
     # 13. CS EXPERIENCE ANALYSIS (3-YEAR WINDOW)
     # ========================================================================
     output.append(print_section("13. CS EXPERIENCE ANALYSIS (3-YEAR WINDOW)", 1))
-    
+
     if 'has_cs_experience_3yr' in df.columns:
         cs_exp_count = (df['has_cs_experience_3yr'] == 1).sum()
         cs_exp_pct = format_percentage(cs_exp_count, total_records)
-        
-        output.append(f"Total author-years with CS experience: {format_number(cs_exp_count)} ({cs_exp_pct})\n\n")
-        
-        output.append("CS experience rate by field:\n")
+        output.append(f"Total author-years with CS experience (3yr window): {format_number(cs_exp_count)} ({cs_exp_pct})\n\n")
+
         if 'top_field_3yr' in df.columns:
-            cs_by_field = pd.crosstab(df['top_field_3yr'], df['has_cs_experience_3yr'])
+            output.append("CS experience rate by top field:\n")
+            cs_by_field = pd.crosstab(
+                df['top_field_3yr'].fillna('Unknown'),
+                df['has_cs_experience_3yr'],
+                margins=True
+            )
+            cs_by_field.columns = [f'cs_exp={c}' for c in cs_by_field.columns]
             output.append(cs_by_field.to_string() + "\n")
-    
+
     # ========================================================================
     # 14. HIGH AUTOMATION OVERLAP ANALYSIS
     # ========================================================================
     output.append(print_section("14. HIGH AUTOMATION OVERLAP ANALYSIS", 1))
-    
+
     if 'high_automation_papers_3yr' in df.columns:
         high_auto_records = df[df['high_automation_papers_3yr'] > 0]
-        
-        output.append(f"Author-years with >=1 High Automation Paper: {format_number(len(high_auto_records))}\n\n")
-        
-        if len(high_auto_records) > 0:
+        n_high_auto = len(high_auto_records)
+
+        output.append(f"Author-years with >=1 High Automation paper (3yr window): {format_number(n_high_auto)}\n\n")
+
+        if n_high_auto > 0:
             output.append("Among High Automation author-years:\n")
-            
-            if 'sdl_brown_papers_3yr' in df.columns:
-                brown_overlap = (high_auto_records['sdl_brown_papers_3yr'] > 0).sum()
-                brown_pct = format_percentage(brown_overlap, len(high_auto_records))
-                output.append(f"  Also have SDL Brown paper: {format_number(brown_overlap)} ({brown_pct})\n")
-            
-            if 'sdl_tomet_papers_3yr' in df.columns:
-                tomet_overlap = (high_auto_records['sdl_tomet_papers_3yr'] > 0).sum()
-                tomet_pct = format_percentage(tomet_overlap, len(high_auto_records))
-                output.append(f"  Also have SDL Tomet paper: {format_number(tomet_overlap)} ({tomet_pct})\n")
-            
-            output.append("\nAvg Team Size Comparison (High Auto author-years):\n")
-            if 'avg_team_size_3yr' in df.columns:
-                overall_avg = high_auto_records['avg_team_size_3yr'].mean()
-                output.append(f"  Overall (3-year): {overall_avg:.2f}\n")
-            
-            if 'avg_team_size_high_automation_3yr' in df.columns:
-                high_auto_avg = high_auto_records['avg_team_size_high_automation_3yr'].mean()
-                output.append(f"  On High Auto Papers (3-year): {high_auto_avg:.2f}\n")
-    
+            for col, label in [('sdl_brown_papers_3yr', 'SDL Brown'),
+                                ('sdl_tomet_papers_3yr', 'SDL Tomet'),
+                                ('ai_papers_3yr', 'AI'),
+                                ('robotics_papers_3yr', 'Robotics')]:
+                if col in df.columns:
+                    overlap = (high_auto_records[col] > 0).sum()
+                    output.append(f"  Also have {label} paper: {format_number(overlap)} "
+                                  f"({format_percentage(overlap, n_high_auto)})\n")
+
+            output.append("\nAvg Team Size Comparison (High Automation author-years, non-zero only):\n")
+            for col, label in [('avg_team_size_3yr', 'Overall'),
+                                ('avg_team_size_high_automation_3yr', 'On High Auto Papers'),
+                                ('avg_team_size_last_author_3yr', 'As Last Author')]:
+                if col in high_auto_records.columns:
+                    non_zero_vals = high_auto_records[high_auto_records[col] > 0][col]
+                    if len(non_zero_vals) > 0:
+                        output.append(f"  {label}: mean={non_zero_vals.mean():.2f}, "
+                                      f"median={non_zero_vals.median():.2f}\n")
+
     # ========================================================================
     # 15. YEAR-OVER-YEAR CHANGES (AUTHOR EVOLUTION)
     # ========================================================================
     output.append(print_section("15. YEAR-OVER-YEAR CHANGES (AUTHOR EVOLUTION)", 1))
-    
-    # Only analyze authors with 2+ years of data
-    multi_year_authors = df.groupby('author_id').filter(lambda x: len(x) >= 2)
-    
-    if len(multi_year_authors) > 0:
-        output.append(f"Authors with 2+ years of observation: {format_number(multi_year_authors['author_id'].nunique())}\n\n")
-        
-        # Calculate year-over-year changes for key metrics
-        if 'total_papers_3yr' in df.columns:
-            output.append("Average year-over-year growth rates (for authors with 2+ years):\n")
-            
-            for col in ['total_papers_3yr', 'total_citations_3yr', 'avg_team_size_3yr']:
-                if col not in df.columns:
-                    continue
-                
-                # Sort by author and year
-                sorted_df = multi_year_authors.sort_values(['author_id', 'year'])
-                
-                # Calculate percent change
-                sorted_df['yoy_change'] = sorted_df.groupby('author_id')[col].pct_change() * 100
-                
-                # Filter out infinite and extreme values
-                valid_changes = sorted_df['yoy_change'].replace([np.inf, -np.inf], np.nan).dropna()
-                valid_changes = valid_changes[(valid_changes >= -100) & (valid_changes <= 1000)]
-                
-                if len(valid_changes) > 0:
-                    output.append(f"  {col}:\n")
-                    output.append(f"    Mean change: {valid_changes.mean():>6.2f}%\n")
-                    output.append(f"    Median change: {valid_changes.median():>6.2f}%\n")
-                    output.append(f"    Std dev: {valid_changes.std():>6.2f}%\n")
-    
+
+    # Only authors with 2+ observed years AND prior data
+    multi_year_ids = df.groupby('author_id').filter(
+        lambda x: len(x) >= 2 and (x['total_papers_3yr'] > 0).any()
+    )
+    n_multi = multi_year_ids['author_id'].nunique()
+
+    output.append(f"Authors with 2+ years of observation (and at least 1 year with prior data): "
+                  f"{format_number(n_multi)}\n\n")
+
+    if n_multi > 0:
+        output.append("Average year-over-year changes:\n")
+
+        for col in ['total_papers_3yr', 'total_citations_3yr', 'avg_team_size_3yr']:
+            if col not in df.columns:
+                continue
+
+            # FIX: Use .copy() to avoid SettingWithCopyWarning
+            sorted_df = multi_year_ids[['author_id', 'year', col]].sort_values(
+                ['author_id', 'year']
+            ).copy()
+
+            # Only compute change where BOTH years have non-zero values
+            # (zeros indicate no prior data, not true zeros)
+            sorted_df['prev_val'] = sorted_df.groupby('author_id')[col].shift(1)
+            valid_mask = (sorted_df[col] > 0) & (sorted_df['prev_val'] > 0)
+            sorted_df['yoy_change'] = np.where(
+                valid_mask,
+                (sorted_df[col] - sorted_df['prev_val']) / sorted_df['prev_val'] * 100,
+                np.nan
+            )
+
+            valid_changes = sorted_df['yoy_change'].dropna()
+            # Clip extreme outliers
+            valid_changes = valid_changes[valid_changes.between(-100, 1000)]
+
+            if len(valid_changes) > 0:
+                output.append(f"\n  {col}:\n")
+                output.append(f"    N transitions: {format_number(len(valid_changes))}\n")
+                output.append(f"    Mean change:   {valid_changes.mean():>6.2f}%\n")
+                output.append(f"    Median change: {valid_changes.median():>6.2f}%\n")
+                output.append(f"    Std dev:       {valid_changes.std():>6.2f}%\n")
+                output.append(f"    % increasing:  {format_percentage((valid_changes > 0).sum(), len(valid_changes))}\n")
+                output.append(f"    % decreasing:  {format_percentage((valid_changes < 0).sum(), len(valid_changes))}\n")
+
+    # ========================================================================
+    # 16. AFFILIATIONS ANALYSIS (3-YEAR WINDOW)
+    # ========================================================================
+    output.append(print_section("16. AFFILIATIONS ANALYSIS (3-YEAR WINDOW)", 1))
+
+    if 'num_affiliations_3yr' in df.columns:
+        output.append("Affiliations per author-year (3-year window):\n")
+        output.append(df['num_affiliations_3yr'].describe().to_string() + "\n\n")
+
+        aff_dist = df['num_affiliations_3yr'].value_counts().sort_index().head(15)
+        output.append("Distribution (top 15 values):\n")
+        for n_aff, count in aff_dist.items():
+            pct = format_percentage(count, total_records)
+            output.append(f"  {n_aff} affiliation(s): {format_number(count):>10s} ({pct})\n")
+
     # ========================================================================
     # FOOTER
     # ========================================================================
     output.append("\n" + "="*80 + "\n")
     output.append("END OF REPORT\n")
     output.append("="*80 + "\n")
-    
-    # Save to file
+
     with open(OUTPUT_FILE, 'w') as f:
         f.writelines(output)
-    
-    # Also print to console
+
     print(''.join(output))
-    
     print(f"\n\nReport saved to: {OUTPUT_FILE}")
     print(f"File size: {OUTPUT_FILE.stat().st_size / 1024:.2f} KB")
+
 
 # ============================================================================
 # MAIN
@@ -1636,11 +1296,10 @@ def generate_eda():
 if __name__ == "__main__":
     print(f"\nStarting EDA for 3-Year Rolling Author Metrics...")
     print(f"Data file: {DATA_FILE}\n")
-    
+
     if not DATA_FILE.exists():
         print(f"ERROR: Data file not found: {DATA_FILE}")
         exit(1)
-    
+
     generate_eda()
-    
     print("\n✓ EDA Complete!")

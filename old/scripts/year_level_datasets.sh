@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=year_regression_dataset
 #SBATCH --account=def-kmcel                  
-#SBATCH --time=1:00:00                      
-#SBATCH --mem=128G                           
-#SBATCH --cpus-per-task=1                 
+#SBATCH --time=3:00:00                      
+#SBATCH --mem=256G                           
+#SBATCH --cpus-per-task=8                 
 #SBATCH --output=../logs/%x-%j.out
 #SBATCH --error=../logs/%x-%j.err
 
@@ -19,7 +19,7 @@ module load python/3.11
 source ~/openalex_env/bin/activate
 
 # Navigate to project directory
-cd /project/def-kmcel/hridansh/openalex_project/py_code
+cd /project/def-kmcel/hridansh/openalex_project/py_files
 
 # Print Python info
 echo ""
@@ -28,7 +28,7 @@ python --version
 echo ""
 
 # Run the author extraction
-python temporal_trends.py
+python year_regression_dataset.py
 
 echo ""
 echo "=========================================="

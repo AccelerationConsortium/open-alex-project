@@ -1,0 +1,39 @@
+Loading /project/def-kmcel/hridansh/openalex_project/data/regression/regression_dataset_subset.csv ...
+Loaded 506,941 papers (2012–2024)
+Generating Chart 1: SDL counts by year ...
+Generating Chart 2: SDL share by year ...
+Generating Chart 3: SDL definitions comparison ...
+Generating Chart 4: Team size trends ...
+Generating Chart 5: SDL by field over time ...
+Generating Chart 6: SDL / AI / Robotics overlap ...
+Generating Chart 7: Team size distribution ...
+
+============================================================
+SUMMARY STATISTICS FOR SLIDES
+============================================================
+
+Dataset: 506,941 papers (2012–2024, venue-filtered)
+SDL papers (Tomet): 398 (0.08%)
+Mean team size — SDL:     7.57
+Mean team size — Non-SDL: 5.56
+SDL papers missing abstract: 80
+
+Mean citations — SDL:     356.8
+Mean citations — Non-SDL: 41.5
+
+SDL paper counts by field:
+field
+engineering          181
+materials_science    124
+computer_science      62
+chemistry             31
+
+Charts saved to: /lustre06/project/6109420/hridansh/openalex_project/py_files/testing/presentation_charts/
+Files:
+  chart1_sdl_counts_by_year.png
+  chart2_sdl_share_by_year.png
+  chart3_sdl_definitions_comparison.png
+  chart4_team_size_sdl_vs_non_sdl.png
+  chart5_sdl_by_field.png
+  chart6_sdl_ai_robotics_overlap.png
+  chart7_team_size_distribution.png

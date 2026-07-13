@@ -5,7 +5,7 @@
 #SBATCH --mem=256G                           
 #SBATCH --cpus-per-task=1
 #SBATCH --output=../logs/%x-%j.out
-#SBATCH --error=../logs/%x-%j.err
+#SBATCH --error=../logs/%x-%j.err 
 
 echo "=========================================="
 echo "Creating Regression Dataset"
@@ -21,7 +21,7 @@ source ~/openalex_env/bin/activate
 # module load python/3.10.13
 # source ~/venvs/regression_env/bin/activate
 # Navigate to project directory 
-cd /project/def-kmcel/hridansh/openalex_project/py_files
+cd /project/def-kmcel/hridansh/openalex_project/py_files/testing
 
 # Print Python info
 echo ""
@@ -30,7 +30,7 @@ python --version
 echo ""
 
 # Run the regression dataset creation
-time python scibert_analysis.py
+time python sdl_diagnostic2.py
     
 echo ""
 echo "=========================================="
